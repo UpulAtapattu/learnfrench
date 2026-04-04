@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>French Conjugation Trainer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+      background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 650px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Header Section */
+    .header-section {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 5px 0;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #4da3ff;
+      margin: 0 0 15px 0;
+      font-weight: 500;
+    }
+
+    .guidance-box {
+      background: rgba(255, 255, 255, 0.08);
+      border-left: 4px solid #4da3ff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      text-align: left;
+      margin: 0 auto;
+      max-width: 95%;
+    }
+
+    .guidance-box p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #ddd;
+    }
+
+    .guidance-box strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Word & Input */
+    h2 {
+      font-size: 3rem;
+      margin: 10px 0;
+      letter-spacing: 1px;
+      color: #4da3ff;
+    }
+
+    input {
+      width: 100%;
+      font-size: 1.8rem;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      text-align: center;
+      background: #222;
+      color: #fff;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4da3ff;
+      background: #1e1e1e;
+    }
+
+    input.correct {
+      border-color: #4ade80;
+      background: #1a3320;
+      color: #4ade80;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    #meaningBtn {
+      background: #333;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+
+    #meaningBtn:hover {
+      background: #444;
+    }
+
+    #nextBtn {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #003311;
+      display: none;
+      margin-top: 20px;
+    }
+
+    #meaning {
+      min-height: 1.5em;
+      font-size: 1.1rem;
+      opacity: 0.85;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Table Styles */
+    .table-container {
+      width: 100%;
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    th {
+      background: #2a2a2a;
+      color: #aaa;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    /* The "Pointer" Effect */
+    tr.active-row {
+      background-color: #4da3ff33;
+      border-left: 4px solid #4da3ff;
+    }
+
+    tr.active-row td {
+      color: #fff;
+    }
+
+    .translation {
+      color: #888;
+      font-size: 0.85rem;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Highlight class */
+    .accent-change {
+      color: #ffeb3b; /* Bright Yellow */
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255, 235, 59, 0.5);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 400px) {
+      h2 { font-size: 2.2rem; }
+      td, th { padding: 8px 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    
+    <header class="header-section">
+      <h1>Regular -re Verbs</h1>
+      <p class="subtitle">Pattern: -s, -s, -(t/d), -ons, -ez, -ent</p>
+
+      <div class="guidance-box">
+        <p>
+          <strong>The Rule:</strong> Drop the <strong>-re</strong> from the infinitive. <br>
+          Add <strong>-s</strong> for Je and Tu. <br>
+          Add <strong>nothing</strong> for Il/Elle (the stem usually ends in 'd'). <br>
+          Add <strong>-ons, -ez, -ent</strong> for the plural forms.
+        </p>
+      </div>
+    </header>
+
+    <h2 id="word"></h2>
+    <div id="meaning"></div>
+
+    <input id="input" autocomplete="off" autofocus inputmode="text" spellcheck="false" placeholder="Type the verb..." />
+
+    <button id="meaningBtn">Show Pronunciation</button>
+
+    <div id="conjugation-container" class="table-container">
+      <table id="conjugation-table">
+        <thead>
+          <tr>
+            <th>Pronoun</th>
+            <th>Sentence</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <button id="nextBtn">Next Verb ➔</button>
+  </div>
+
+  <script>
+    // 1. DATA: Verbs
+    const verbs = [
+      { fr: "vendre", en: "to sell", pron: "vahn-dr" },
+      { fr: "attendre", en: "to wait", pron: "ah-tahn-dr" },
+      { fr: "défendre", en: "to defend/forbid", pron: "day-fahn-dr" },
+      { fr: "descendre", en: "to go down", pron: "day-sahn-dr" },
+      { fr: "détendre", en: "to release/relax", pron: "day-tahn-dr" },
+      { fr: "entendre", en: "to hear", pron: "ahn-tahn-dr" },
+      { fr: "étendre", en: "to spread out/extend", pron: "ay-tahn-dr" },
+      { fr: "mordre", en: "to bite", pron: "mor-dr" },
+      { fr: "perdre", en: "to lose", pron: "pair-dr" },
+      { fr: "prétendre", en: "to claim", pron: "pray-tahn-dr" },
+      { fr: "rendre", en: "to return/give back", pron: "rahn-dr" },
+      { fr: "répandre", en: "to spread/spill", pron: "ray-pahn-dr" },
+      { fr: "répondre", en: "to answer", pron: "ray-pohn-dr" },
+      { fr: "tendre", en: "to stretch/hold out", pron: "tahn-dr" },
+      { fr: "tordre", en: "to twist", pron: "tor-dr" }
+    ];
+
+    // 2. DATA: Sentences
+    const sentences = [
+      {
+        verb: "vendre",
+        je: { fr: "Je vends ma voiture.", en: "I sell my car." },
+        tu: { fr: "Tu vends des fleurs ?", en: "Do you sell flowers?" },
+        singular: { fr: "Il vend sa maison.", en: "He sells his house." },
+        nous: { fr: "Nous vendons des fruits.", en: "We sell fruits." },
+        vous: { fr: "Vous vendez à crédit ?", en: "Do you sell on credit?" },
+        plural: { fr: "Ils vendent tout.", en: "They sell everything." }
+      },
+      {
+        verb: "attendre",
+        je: { fr: "J'attends le bus.", en: "I wait for the bus." },
+        tu: { fr: "Tu attends quelqu'un ?", en: "Are you waiting for someone?" },
+        singular: { fr: "Elle attend une réponse.", en: "She waits for an answer." },
+        nous: { fr: "Nous attendons la fin.", en: "We wait for the end." },
+        vous: { fr: "Vous attendez dehors.", en: "You wait outside." },
+        plural: { fr: "Ils attendent le train.", en: "They wait for the train." }
+      },
+      {
+        verb: "défendre",
+        je: { fr: "Je défends mon ami.", en: "I defend my friend." },
+        tu: { fr: "Tu défends tes idées.", en: "You defend your ideas." },
+        singular: { fr: "Il défend son territoire.", en: "He defends his territory." },
+        nous: { fr: "Nous défendons la paix.", en: "We defend peace." },
+        vous: { fr: "Vous défendez l'accès ?", en: "Do you forbid access?" },
+        plural: { fr: "Ils défendent le château.", en: "They defend the castle." }
+      },
+      {
+        verb: "descendre",
+        je: { fr: "Je descends l'escalier.", en: "I go down the stairs." },
+        tu: { fr: "Tu descends à la gare ?", en: "Are you getting off at the station?" },
+        singular: { fr: "Elle descend en ville.", en: "She goes down to town." },
+        nous: { fr: "Nous descendons du train.", en: "We get off the train." },
+        vous: { fr: "Vous descendez les poubelles.", en: "You take down the trash." },
+        plural: { fr: "Ils descendent la rue.", en: "They go down the street." }
+      },
+      {
+        verb: "détendre",
+        je: { fr: "Je détends l'atmosphère.", en: "I relax the atmosphere." },
+        tu: { fr: "Tu détends tes muscles.", en: "You relax your muscles." },
+        singular: { fr: "La musique le détend.", en: "Music relaxes him." },
+        nous: { fr: "Nous détendons les cordes.", en: "We loosen the ropes." },
+        vous: { fr: "Vous détendez vos jambes.", en: "You relax your legs." },
+        plural: { fr: "Elles se détendent ici.", en: "They relax here." }
+      },
+      {
+        verb: "entendre",
+        je: { fr: "J'entends un bruit.", en: "I hear a noise." },
+        tu: { fr: "Tu entends la musique ?", en: "Do you hear the music?" },
+        singular: { fr: "Il entend mal.", en: "He hears poorly." },
+        nous: { fr: "Nous entendons des voix.", en: "We hear voices." },
+        vous: { fr: "Vous entendez ça ?", en: "Do you hear that?" },
+        plural: { fr: "Ils entendent tout.", en: "They hear everything." }
+      },
+      {
+        verb: "étendre",
+        je: { fr: "J'étends le linge.", en: "I hang out the laundry." },
+        tu: { fr: "Tu étends tes jambes.", en: "You stretch your legs." },
+        singular: { fr: "Il étend son influence.", en: "He extends his influence." },
+        nous: { fr: "Nous étendons la nappe.", en: "We spread the tablecloth." },
+        vous: { fr: "Vous étendez la pâte.", en: "You roll out the dough." },
+        plural: { fr: "Ils étendent leurs bras.", en: "They spread their arms." }
+      },
+      {
+        verb: "mordre",
+        je: { fr: "Je mords dans la pomme.", en: "I bite into the apple." },
+        tu: { fr: "Tu mords tes ongles ?", en: "Do you bite your nails?" },
+        singular: { fr: "Le chien mord.", en: "The dog bites." },
+        nous: { fr: "Nous mordons à l'hameçon.", en: "We take the bait." },
+        vous: { fr: "Vous mordez le stylo.", en: "You bite the pen." },
+        plural: { fr: "Ils mordent la poussière.", en: "They bite the dust." }
+      },
+      {
+        verb: "perdre",
+        je: { fr: "Je perds mes clés.", en: "I lose my keys." },
+        tu: { fr: "Tu perds ton temps.", en: "You are wasting your time." },
+        singular: { fr: "Il perd le match.", en: "He loses the match." },
+        nous: { fr: "Nous perdons patience.", en: "We are losing patience." },
+        vous: { fr: "Vous perdez la tête ?", en: "Are you losing your mind?" },
+        plural: { fr: "Ils perdent de l'argent.", en: "They are losing money." }
+      },
+      {
+        verb: "prétendre",
+        je: { fr: "Je prétends savoir.", en: "I claim to know." },
+        tu: { fr: "Tu prétends être riche.", en: "You claim to be rich." },
+        singular: { fr: "Il prétend avoir raison.", en: "He claims to be right." },
+        nous: { fr: "Nous prétendons rien.", en: "We claim nothing." },
+        vous: { fr: "Vous prétendez le contraire.", en: "You claim the opposite." },
+        plural: { fr: "Ils prétendent être amis.", en: "They claim to be friends." }
+      },
+      {
+        verb: "rendre",
+        je: { fr: "Je rends le livre.", en: "I return the book." },
+        tu: { fr: "Tu rends la monnaie.", en: "You give back change." },
+        singular: { fr: "Cela le rend heureux.", en: "That makes him happy." },
+        nous: { fr: "Nous rendons hommage.", en: "We pay tribute." },
+        vous: { fr: "Vous rendez les armes ?", en: "Are you surrendering?" },
+        plural: { fr: "Ils rendent service.", en: "They do a favor." }
+      },
+      {
+        verb: "répandre",
+        je: { fr: "Je répands la nouvelle.", en: "I spread the news." },
+        tu: { fr: "Tu répands du sel.", en: "You spread salt." },
+        singular: { fr: "Il répand la joie.", en: "He spreads joy." },
+        nous: { fr: "Nous répandons des rumeurs.", en: "We spread rumors." },
+        vous: { fr: "Vous répandez l'engrais.", en: "You spread fertilizer." },
+        plural: { fr: "Ils répandent la terreur.", en: "They spread terror." }
+      },
+      {
+        verb: "répondre",
+        je: { fr: "Je réponds au téléphone.", en: "I answer the phone." },
+        tu: { fr: "Tu réponds à la question.", en: "You answer the question." },
+        singular: { fr: "Il répond poliment.", en: "He answers politely." },
+        nous: { fr: "Nous répondons présents.", en: "We answer present." },
+        vous: { fr: "Vous répondez vite.", en: "You answer quickly." },
+        plural: { fr: "Ils répondent par lettre.", en: "They answer by letter." }
+      },
+      {
+        verb: "tendre",
+        je: { fr: "Je tends la main.", en: "I hold out my hand." },
+        tu: { fr: "Tu tends le fil.", en: "You stretch the wire." },
+        singular: { fr: "Il tend l'oreille.", en: "He strains his ear." },
+        nous: { fr: "Nous tendons vers ce but.", en: "We strive for this goal." },
+        vous: { fr: "Vous tendez le bras.", en: "You stretch your arm." },
+        plural: { fr: "Ils tendent un piège.", en: "They set a trap." }
+      },
+      {
+        verb: "tordre",
+        je: { fr: "Je tords le linge.", en: "I twist the laundry." },
+        tu: { fr: "Tu tords la vérité.", en: "You twist the truth." },
+        singular: { fr: "Il tords le métal.", en: "He twists the metal." },
+        nous: { fr: "Nous tordons de rire.", en: "We are doubled over laughing." },
+        vous: { fr: "Vous tordez la cheville.", en: "You twist your ankle." },
+        plural: { fr: "Ils tordent le cou aux idées.", en: "They twist ideas." }
+      }
+    ];
+
+    // 3. LOGIC
+    let index = 0;
+    let isStudying = false; 
+
+    const wordEl = document.getElementById("word");
+    const inputEl = document.getElementById("input");
+    const meaningEl = document.getElementById("meaning");
+    const meaningBtn = document.getElementById("meaningBtn");
+    const tableContainer = document.getElementById("conjugation-container");
+    const tableBody = document.getElementById("table-body");
+    const nextBtn = document.getElementById("nextBtn");
+
+    // HIGHLIGHT LOGIC FOR -RE VERBS
+    // Pattern: -s, -s, -(nothing), -ons, -ez, -ent
+    function highlightEnding(sentence, pronoun) {
+      let words = sentence.split(" ");
+      
+      // Heuristic: Verb is usually the word after the pronoun (or first word if Je/J')
+      let verbIndex = 1; 
+      if (words[0].toLowerCase().includes("'")) verbIndex = 0; // J'attends
+      
+      let targetWord = words[verbIndex];
+      
+      if (targetWord) {
+        let cleanWord = targetWord.replace(/[.,?!]/g, "");
+        let suffix = "";
+        
+        // Determine highlighting based on pronoun/ending rules for -RE verbs
+        if (cleanWord.endsWith("ons")) suffix = "ons";
+        else if (cleanWord.endsWith("ez")) suffix = "ez";
+        else if (cleanWord.endsWith("ent")) suffix = "ent";
+        else if (cleanWord.endsWith("s") && (pronoun === 'je' || pronoun === 'tu')) suffix = "s";
+        // For Il/Elle, nothing is added to the 'd' stem, so we don't highlight anything specific
+        // OR we could highlight the 'd' to show the stem is intact. Let's stick to added endings.
+        
+        if (suffix) {
+            const stem = cleanWord.substring(0, cleanWord.length - suffix.length);
+            const punctuation = targetWord.substring(cleanWord.length);
+            words[verbIndex] = `${stem}<span class="accent-change">${suffix}</span>${punctuation}`;
+        }
+      }
+
+      return words.join(" ");
+    }
+
+    function speakText(text, lang) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      window.speechSynthesis.speak(u);
+    }
+
+    function showWord() {
+      isStudying = false;
+      wordEl.textContent = verbs[index].fr;
+      meaningEl.textContent = verbs[index].en;
+      inputEl.value = "";
+      inputEl.disabled = false;
+      inputEl.focus();
+      inputEl.classList.remove("correct");
+
+      tableContainer.style.display = "none";
+      nextBtn.style.display = "none";
+    }
+
+    function renderTable() {
+      const data = sentences[index];
+      const keys = [
+        { key: "je", label: "Je/J'" },
+        { key: "tu", label: "Tu" },
+        { key: "singular", label: "Il/Elle/On" },
+        { key: "nous", label: "Nous" },
+        { key: "vous", label: "Vous" },
+        { key: "plural", label: "Ils/Elles" },
+      ];
+
+      let html = "";
+      keys.forEach((k, i) => {
+        // Apply the highlight
+        const formattedSentence = highlightEnding(data[k.key].fr, k.key);
+
+        html += `
+      <tr id="row-${i}" onclick="readRow(${i})">
+        <td><strong>${k.label}</strong></td>
+        <td>
+          ${formattedSentence} <span class="translation">${data[k.key].en}</span>
+        </td>
+      </tr>
+    `;
+      });
+      tableBody.innerHTML = html;
+    }
+
+    function readAllSentences() {
+      window.speechSynthesis.cancel(); 
+
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+
+      keys.forEach((key, i) => {
+        const text = data[key].fr;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "fr-FR";
+        utterance.rate = 0.9; 
+
+        utterance.onstart = () => {
+          document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+          document.getElementById(`row-${i}`).classList.add("active-row");
+        };
+
+        utterance.onend = () => {
+          document.getElementById(`row-${i}`).classList.remove("active-row");
+        };
+
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    window.readRow = function (rowIndex) {
+      window.speechSynthesis.cancel();
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+      const text = data[keys[rowIndex]].fr;
+
+      document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+      const row = document.getElementById(`row-${rowIndex}`);
+      row.classList.add("active-row");
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      u.onend = () => row.classList.remove("active-row");
+      window.speechSynthesis.speak(u);
+    };
+
+    inputEl.addEventListener("input", () => {
+      if (isStudying) return; 
+
+      const val = inputEl.value.toLowerCase().trim();
+      if (val === verbs[index].fr.toLowerCase()) {
+        isStudying = true;
+        inputEl.classList.add("correct");
+        inputEl.disabled = true; 
+
+        meaningEl.textContent = verbs[index].pron;
+        renderTable();
+        tableContainer.style.display = "block";
+        nextBtn.style.display = "block";
+        nextBtn.focus(); 
+
+        setTimeout(() => {
+          readAllSentences();
+        }, 500);
+      }
+    });
+
+    meaningBtn.addEventListener("click", () => {
+      meaningEl.textContent = verbs[index].pron;
+    });
+
+    nextBtn.addEventListener("click", () => {
+      window.speechSynthesis.cancel(); 
+      index++;
+      if (index < verbs.length) {
+        showWord();
+      } else {
+        document.querySelector(".app").innerHTML = `
+        <h1>🎉 Félicitations !</h1>
+        <h2>You finished the list.</h2>
+        <button onclick="location.reload()">Restart</button>
+      `;
+      }
+    });
+
+    showWord();
+  </script>
+</body>
+
+</html>

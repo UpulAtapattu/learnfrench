@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>French Conjugation Trainer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+      background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 650px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Header Section */
+    .header-section {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 5px 0;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #4da3ff;
+      margin: 0 0 15px 0;
+      font-weight: 500;
+    }
+
+    .guidance-box {
+      background: rgba(255, 255, 255, 0.08);
+      border-left: 4px solid #4da3ff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      text-align: left;
+      margin: 0 auto;
+      max-width: 95%;
+    }
+
+    .guidance-box p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #ddd;
+    }
+
+    .guidance-box strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Word & Input */
+    h2 {
+      font-size: 3rem;
+      margin: 10px 0;
+      letter-spacing: 1px;
+      color: #4da3ff;
+    }
+
+    input {
+      width: 100%;
+      font-size: 1.8rem;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      text-align: center;
+      background: #222;
+      color: #fff;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4da3ff;
+      background: #1e1e1e;
+    }
+
+    input.correct {
+      border-color: #4ade80;
+      background: #1a3320;
+      color: #4ade80;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    #meaningBtn {
+      background: #333;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+
+    #meaningBtn:hover {
+      background: #444;
+    }
+
+    #nextBtn {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #003311;
+      display: none;
+      margin-top: 20px;
+    }
+
+    #meaning {
+      min-height: 1.5em;
+      font-size: 1.1rem;
+      opacity: 0.85;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Table Styles */
+    .table-container {
+      width: 100%;
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    th {
+      background: #2a2a2a;
+      color: #aaa;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    /* The "Pointer" Effect */
+    tr.active-row {
+      background-color: #4da3ff33;
+      border-left: 4px solid #4da3ff;
+    }
+
+    tr.active-row td {
+      color: #fff;
+    }
+
+    .translation {
+      color: #888;
+      font-size: 0.85rem;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Highlight class for 'iss' */
+    .accent-change {
+      color: #ffeb3b; /* Bright Yellow */
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255, 235, 59, 0.5);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 400px) {
+      h2 { font-size: 2.2rem; }
+      td, th { padding: 8px 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    
+    <header class="header-section">
+      <h1>Regular -ir Verbs (Type 1)</h1>
+      <p class="subtitle">Pattern: -is, -is, -it, -issons, -issez, -issent</p>
+
+      <div class="guidance-box">
+        <p>
+          <strong>The "ISS" Rule:</strong> These verbs are regular. In the plural forms (<em>Nous, Vous, Ils/Elles</em>), you must insert <strong>-iss-</strong> before the ending.
+        </p>
+      </div>
+    </header>
+
+    <h2 id="word"></h2>
+    <div id="meaning"></div>
+
+    <input id="input" autocomplete="off" autofocus inputmode="text" spellcheck="false" placeholder="Type the verb..." />
+
+    <button id="meaningBtn">Show Pronunciation</button>
+
+    <div id="conjugation-container" class="table-container">
+      <table id="conjugation-table">
+        <thead>
+          <tr>
+            <th>Pronoun</th>
+            <th>Sentence</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <button id="nextBtn">Next Verb ➔</button>
+  </div>
+
+  <script>
+    // 1. DATA: Verbs + Generated Sentences
+    const verbs = [
+      { fr: "choisir", en: "to choose", pron: "shwah-zeer" },
+      { fr: "accomplir", en: "to accomplish", pron: "ah-kohm-pleer" },
+      { fr: "adoucir", en: "to soften", pron: "ah-doo-seer" },
+      { fr: "agrandir", en: "to enlarge", pron: "ah-grahn-deer" },
+      { fr: "applaudir", en: "to applaud", pron: "ah-ploh-deer" },
+      { fr: "bâtir", en: "to build", pron: "bah-teer" },
+      { fr: "bénir", en: "to bless", pron: "bay-neer" },
+      { fr: "éclaircir", en: "to lighten/clear", pron: "ay-klair-seer" },
+      { fr: "s'épanouir", en: "to bloom/blossom", pron: "say-pah-nweer" },
+      { fr: "s'évanouir", en: "to faint", pron: "say-vah-nweer" },
+      { fr: "finir", en: "to finish", pron: "fee-neer" },
+      { fr: "grandir", en: "to grow up", pron: "grahn-deer" },
+      { fr: "grossir", en: "to put on weight", pron: "groh-seer" },
+      { fr: "investir", en: "to invest", pron: "an-ves-teer" },
+      { fr: "maigrir", en: "to lose weight", pron: "meh-greer" },
+      { fr: "mincir", en: "to slim down", pron: "man-seer" },
+      { fr: "obéir", en: "to obey", pron: "oh-bay-eer" },
+      { fr: "pâlir", en: "to turn pale", pron: "pah-leer" },
+      { fr: "rafraîchir", en: "to refresh", pron: "rah-fray-sheer" },
+      { fr: "ralentir", en: "to slow down", pron: "rah-lahn-teer" },
+      { fr: "réfléchir", en: "to think/reflect", pron: "ray-flay-sheer" },
+      { fr: "remplir", en: "to fill", pron: "rahn-pleer" },
+      { fr: "réussir", en: "to succeed", pron: "ray-ew-seer" },
+      { fr: "rougir", en: "to blush", pron: "roo-zheer" },
+      { fr: "saisir", en: "to seize", pron: "say-zeer" },
+      { fr: "vieillir", en: "to grow old", pron: "vyay-yeer" }
+    ];
+
+    const sentences = [
+      {
+        verb: "choisir",
+        je: { fr: "Je choisis ce livre.", en: "I choose this book." },
+        tu: { fr: "Tu choisis le menu.", en: "You choose the menu." },
+        singular: { fr: "Il choisit la bonne route.", en: "He chooses the right road." },
+        nous: { fr: "Nous choisissons ensemble.", en: "We choose together." },
+        vous: { fr: "Vous choisissez la couleur ?", en: "Do you choose the color?" },
+        plural: { fr: "Ils choisissent de rester.", en: "They choose to stay." }
+      },
+      {
+        verb: "accomplir",
+        je: { fr: "J'accomplis ma mission.", en: "I accomplish my mission." },
+        tu: { fr: "Tu accomplis des miracles.", en: "You accomplish miracles." },
+        singular: { fr: "Elle accomplit son devoir.", en: "She accomplishes her duty." },
+        nous: { fr: "Nous accomplissons ce projet.", en: "We accomplish this project." },
+        vous: { fr: "Vous accomplissez beaucoup.", en: "You accomplish a lot." },
+        plural: { fr: "Ils accomplissent leur rêve.", en: "They accomplish their dream." }
+      },
+      {
+        verb: "adoucir",
+        je: { fr: "J'adoucis la sauce.", en: "I soften the sauce." },
+        tu: { fr: "Tu adoucis ton ton.", en: "You soften your tone." },
+        singular: { fr: "La crème adoucit la peau.", en: "Cream softens the skin." },
+        nous: { fr: "Nous adoucissons la peine.", en: "We soften the pain." },
+        vous: { fr: "Vous adoucissez les angles.", en: "You smooth things over." },
+        plural: { fr: "Ils adoucissent leurs propos.", en: "They soften their words." }
+      },
+      {
+        verb: "agrandir",
+        je: { fr: "J'agrandis la photo.", en: "I enlarge the photo." },
+        tu: { fr: "Tu agrandis la maison ?", en: "Are you enlarging the house?" },
+        singular: { fr: "Il agrandit sa collection.", en: "He enlarges his collection." },
+        nous: { fr: "Nous agrandissons le jardin.", en: "We enlarge the garden." },
+        vous: { fr: "Vous agrandissez votre cercle.", en: "You enlarge your circle." },
+        plural: { fr: "Ils agrandissent l'espace.", en: "They enlarge the space." }
+      },
+      {
+        verb: "applaudir",
+        je: { fr: "J'applaudis l'effort.", en: "I applaud the effort." },
+        tu: { fr: "Tu applaudis le spectacle.", en: "You applaud the show." },
+        singular: { fr: "Le public applaudit fort.", en: "The audience applauds loudly." },
+        nous: { fr: "Nous applaudissons les acteurs.", en: "We applaud the actors." },
+        vous: { fr: "Vous applaudissez à la fin ?", en: "Do you applaud at the end?" },
+        plural: { fr: "Ils applaudissent le gagnant.", en: "They applaud the winner." }
+      },
+      {
+        verb: "bâtir",
+        je: { fr: "Je bâtis un avenir.", en: "I build a future." },
+        tu: { fr: "Tu bâtis une maison.", en: "You build a house." },
+        singular: { fr: "Il bâtit une carrière.", en: "He builds a career." },
+        nous: { fr: "Nous bâtissons un mur.", en: "We are building a wall." },
+        vous: { fr: "Vous bâtissez sur du sable.", en: "You build on sand." },
+        plural: { fr: "Ils bâtissent des ponts.", en: "They build bridges." }
+      },
+      {
+        verb: "bénir",
+        je: { fr: "Je bénis ce jour.", en: "I bless this day." },
+        tu: { fr: "Tu bénis le repas.", en: "You bless the meal." },
+        singular: { fr: "Le prêtre bénit la foule.", en: "The priest blesses the crowd." },
+        nous: { fr: "Nous bénissons notre chance.", en: "We bless our luck." },
+        vous: { fr: "Vous bénissez les enfants ?", en: "Do you bless the children?" },
+        plural: { fr: "Ils bénissent l'union.", en: "They bless the union." }
+      },
+      {
+        verb: "éclaircir",
+        je: { fr: "J'éclaircis le mystère.", en: "I clear up the mystery." },
+        tu: { fr: "Tu éclaircis tes cheveux.", en: "You lighten your hair." },
+        singular: { fr: "Le ciel s'éclaircit.", en: "The sky is clearing up." },
+        nous: { fr: "Nous éclaircissons la situation.", en: "We clarify the situation." },
+        vous: { fr: "Vous éclaircissez la sauce.", en: "You thin the sauce." },
+        plural: { fr: "Ils éclaircissent les rangs.", en: "They thin the ranks." }
+      },
+      {
+        verb: "s'épanouir",
+        je: { fr: "Je m'épanouis ici.", en: "I blossom here." },
+        tu: { fr: "Tu t'épanouis au travail.", en: "You blossom at work." },
+        singular: { fr: "La fleur s'épanouit.", en: "The flower blooms." },
+        nous: { fr: "Nous nous épanouissons ensemble.", en: "We blossom together." },
+        vous: { fr: "Vous vous épanouissez en été.", en: "You bloom in summer." },
+        plural: { fr: "Elles s'épanouissent vite.", en: "They bloom quickly." }
+      },
+      {
+        verb: "s'évanouir",
+        je: { fr: "Je m'évanouis de peur.", en: "I faint from fear." },
+        tu: { fr: "Tu t'évanouis souvent ?", en: "Do you faint often?" },
+        singular: { fr: "Elle s'évanouit dans la foule.", en: "She faints in the crowd." },
+        nous: { fr: "Nous nous évanouissons de fatigue.", en: "We faint from exhaustion." },
+        vous: { fr: "Vous vous évanouissez à la vue du sang.", en: "You faint at the sight of blood." },
+        plural: { fr: "Ils s'évanouissent de chaleur.", en: "They faint from the heat." }
+      },
+      {
+        verb: "finir",
+        je: { fr: "Je finis mon assiette.", en: "I finish my plate." },
+        tu: { fr: "Tu finis à quelle heure ?", en: "What time do you finish?" },
+        singular: { fr: "Il finit son travail.", en: "He finishes his work." },
+        nous: { fr: "Nous finissons de manger.", en: "We finish eating." },
+        vous: { fr: "Vous finissez le projet.", en: "You finish the project." },
+        plural: { fr: "Elles finissent les devoirs.", en: "They finish the homework." }
+      },
+      {
+        verb: "grandir",
+        je: { fr: "Je grandis chaque jour.", en: "I grow every day." },
+        tu: { fr: "Tu grandis trop vite.", en: "You grow too fast." },
+        singular: { fr: "L'enfant grandit bien.", en: "The child grows well." },
+        nous: { fr: "Nous grandissons ensemble.", en: "We grow up together." },
+        vous: { fr: "Vous grandissez en sagesse.", en: "You grow in wisdom." },
+        plural: { fr: "Les arbres grandissent haut.", en: "The trees grow high." }
+      },
+      {
+        verb: "grossir",
+        je: { fr: "Je grossis si je mange ça.", en: "I gain weight if I eat that." },
+        tu: { fr: "Tu grossis un peu.", en: "You are gaining a little weight." },
+        singular: { fr: "La rivière grossit.", en: "The river is swelling." },
+        nous: { fr: "Nous grossissons en hiver.", en: "We gain weight in winter." },
+        vous: { fr: "Vous grossissez la vue ?", en: "Do you magnify the view?" },
+        plural: { fr: "Les rangs grossissent.", en: "The ranks are swelling." }
+      },
+      {
+        verb: "investir",
+        je: { fr: "J'investis en bourse.", en: "I invest in the stock market." },
+        tu: { fr: "Tu investis ton temps.", en: "You invest your time." },
+        singular: { fr: "Il investit dans l'or.", en: "He invests in gold." },
+        nous: { fr: "Nous investissons pour l'avenir.", en: "We invest for the future." },
+        vous: { fr: "Vous investissez beaucoup.", en: "You invest a lot." },
+        plural: { fr: "Ils investissent dans l'immobilier.", en: "They invest in real estate." }
+      },
+      {
+        verb: "maigrir",
+        je: { fr: "Je maigris facilement.", en: "I lose weight easily." },
+        tu: { fr: "Tu maigris à vue d'œil.", en: "You are visibly losing weight." },
+        singular: { fr: "Elle maigrit avant l'été.", en: "She loses weight before summer." },
+        nous: { fr: "Nous maigrissons ensemble.", en: "We lose weight together." },
+        vous: { fr: "Vous maigrissez trop vite.", en: "You lose weight too fast." },
+        plural: { fr: "Ils maigrissent avec ce régime.", en: "They lose weight with this diet." }
+      },
+      {
+        verb: "mincir",
+        je: { fr: "Je mincis pour ma santé.", en: "I slim down for my health." },
+        tu: { fr: "Tu mincis du visage.", en: "Your face is slimming down." },
+        singular: { fr: "Il mincit grâce au sport.", en: "He slims down thanks to sports." },
+        nous: { fr: "Nous mincissons avant les fêtes.", en: "We slim down before the holidays." },
+        vous: { fr: "Vous mincissez très bien.", en: "You are slimming down nicely." },
+        plural: { fr: "Elles mincissent toutes.", en: "They are all slimming down." }
+      },
+      {
+        verb: "obéir",
+        je: { fr: "J'obéis aux règles.", en: "I obey the rules." },
+        tu: { fr: "Tu obéis à tes parents.", en: "You obey your parents." },
+        singular: { fr: "Le chien obéit.", en: "The dog obeys." },
+        nous: { fr: "Nous obéissons à la loi.", en: "We obey the law." },
+        vous: { fr: "Vous obéissez aux ordres.", en: "You obey orders." },
+        plural: { fr: "Ils obéissent sans discuter.", en: "They obey without arguing." }
+      },
+      {
+        verb: "pâlir",
+        je: { fr: "Je pâlis de frayeur.", en: "I turn pale with fright." },
+        tu: { fr: "Tu pâlis quand tu as peur.", en: "You turn pale when scared." },
+        singular: { fr: "Son visage pâlit.", en: "His face turns pale." },
+        nous: { fr: "Nous pâlissons à cette nouvelle.", en: "We pale at this news." },
+        vous: { fr: "Vous pâlissez soudainement.", en: "You are suddenly turning pale." },
+        plural: { fr: "Les étoiles pâlissent.", en: "The stars are fading." }
+      },
+      {
+        verb: "rafraîchir",
+        je: { fr: "Je rafraîchis la page.", en: "I refresh the page." },
+        tu: { fr: "Tu rafraîchis la pièce.", en: "You cool down the room." },
+        singular: { fr: "La pluie rafraîchit l'air.", en: "The rain cools the air." },
+        nous: { fr: "Nous rafraîchissons les boissons.", en: "We chill the drinks." },
+        vous: { fr: "Vous rafraîchissez votre mémoire.", en: "You refresh your memory." },
+        plural: { fr: "Ils rafraîchissent les murs.", en: "They freshen up the walls." }
+      },
+      {
+        verb: "ralentir",
+        je: { fr: "Je ralentis au virage.", en: "I slow down at the turn." },
+        tu: { fr: "Tu ralentis la cadence.", en: "You slow the pace." },
+        singular: { fr: "La voiture ralentit.", en: "The car slows down." },
+        nous: { fr: "Nous ralentissons le rythme.", en: "We slow the rhythm." },
+        vous: { fr: "Vous ralentissez trop.", en: "You slow down too much." },
+        plural: { fr: "Les travaux ralentissent tout.", en: "The works slow everything down." }
+      },
+      {
+        verb: "réfléchir",
+        je: { fr: "Je réfléchis à l'offre.", en: "I think about the offer." },
+        tu: { fr: "Tu réfléchis trop.", en: "You think too much." },
+        singular: { fr: "Il réfléchit avant d'agir.", en: "He thinks before acting." },
+        nous: { fr: "Nous réfléchissons au problème.", en: "We reflect on the problem." },
+        vous: { fr: "Vous réfléchissez à quoi ?", en: "What are you thinking about?" },
+        plural: { fr: "Ils réfléchissent à une solution.", en: "They are thinking of a solution." }
+      },
+      {
+        verb: "remplir",
+        je: { fr: "Je remplis la bouteille.", en: "I fill the bottle." },
+        tu: { fr: "Tu remplis le formulaire.", en: "You fill out the form." },
+        singular: { fr: "Il remplit son verre.", en: "He fills his glass." },
+        nous: { fr: "Nous remplissons la salle.", en: "We fill the room." },
+        vous: { fr: "Vous remplissez les conditions.", en: "You fulfill the conditions." },
+        plural: { fr: "Ils remplissent les sacs.", en: "They fill the bags." }
+      },
+      {
+        verb: "réussir",
+        je: { fr: "Je réussis l'examen.", en: "I pass the exam." },
+        tu: { fr: "Tu réussis ton gâteau.", en: "You succeed with your cake." },
+        singular: { fr: "Elle réussit dans la vie.", en: "She succeeds in life." },
+        nous: { fr: "Nous réussissons ensemble.", en: "We succeed together." },
+        vous: { fr: "Vous réussissez tout.", en: "You succeed at everything." },
+        plural: { fr: "Ils réussissent leur coup.", en: "They pull it off." }
+      },
+      {
+        verb: "rougir",
+        je: { fr: "Je rougis de honte.", en: "I blush with shame." },
+        tu: { fr: "Tu rougis facilement.", en: "You blush easily." },
+        singular: { fr: "Il rougit quand on lui parle.", en: "He blushes when spoken to." },
+        nous: { fr: "Nous rougissons du compliment.", en: "We blush at the compliment." },
+        vous: { fr: "Vous rougissez de plaisir.", en: "You flush with pleasure." },
+        plural: { fr: "Elles rougissent au soleil.", en: "They turn red in the sun." }
+      },
+      {
+        verb: "saisir",
+        je: { fr: "Je saisis l'occasion.", en: "I seize the opportunity." },
+        tu: { fr: "Tu saisis le sens ?", en: "Do you grasp the meaning?" },
+        singular: { fr: "Il saisit son épée.", en: "He seizes his sword." },
+        nous: { fr: "Nous saisissons la chance.", en: "We seize the luck." },
+        vous: { fr: "Vous saisissez les données.", en: "You enter the data." },
+        plural: { fr: "Ils saisissent les biens.", en: "They seize the goods." }
+      },
+      {
+        verb: "vieillir",
+        je: { fr: "Je vieillis doucement.", en: "I grow old slowly." },
+        tu: { fr: "Tu vieillis bien.", en: "You are aging well." },
+        singular: { fr: "Le vin vieillit en cave.", en: "Wine ages in the cellar." },
+        nous: { fr: "Nous vieillissons tous.", en: "We all grow old." },
+        vous: { fr: "Vous vieillissez sans rides.", en: "You age without wrinkles." },
+        plural: { fr: "Les photos vieillissent.", en: "Photos age." }
+      }
+    ];
+
+    // 2. LOGIC
+    let index = 0;
+    let isStudying = false; 
+
+    const wordEl = document.getElementById("word");
+    const inputEl = document.getElementById("input");
+    const meaningEl = document.getElementById("meaning");
+    const meaningBtn = document.getElementById("meaningBtn");
+    const tableContainer = document.getElementById("conjugation-container");
+    const tableBody = document.getElementById("table-body");
+    const nextBtn = document.getElementById("nextBtn");
+
+    // NEW LOGIC: Highlights the 'iss' string specific to Type 1 IR verbs
+    function highlightStemChange(sentence, verbInfinitive) {
+      let words = sentence.split(" ");
+      
+      // Handle reflexives (remove "s'" or "se " to find the stem)
+      let cleanInfinitive = verbInfinitive.toLowerCase();
+      if (cleanInfinitive.startsWith("s'")) cleanInfinitive = cleanInfinitive.substring(2);
+      if (cleanInfinitive.startsWith("se ")) cleanInfinitive = cleanInfinitive.substring(3);
+
+      const stemStart = cleanInfinitive.substring(0, 3);
+
+      const verbIndex = words.findIndex(w => {
+        // Remove pronouns (j', m', t', s', l') for cleaner matching
+        const cleanWord = w.toLowerCase().replace(/^[jmtsl]'/g, "");
+        return cleanWord.startsWith(stemStart);
+      });
+
+      if (verbIndex !== -1) {
+        let targetWord = words[verbIndex];
+        
+        // Check for 'iss' (The plural rule)
+        if (targetWord.includes("iss")) {
+           words[verbIndex] = targetWord.replace("iss", '<span class="accent-change">iss</span>');
+        }
+      }
+
+      return words.join(" ");
+    }
+
+    function speakText(text, lang) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      window.speechSynthesis.speak(u);
+    }
+
+    function showWord() {
+      isStudying = false;
+      wordEl.textContent = verbs[index].fr;
+      meaningEl.textContent = verbs[index].en;
+      inputEl.value = "";
+      inputEl.disabled = false;
+      inputEl.focus();
+      inputEl.classList.remove("correct");
+
+      tableContainer.style.display = "none";
+      nextBtn.style.display = "none";
+    }
+
+    function renderTable() {
+      const data = sentences[index];
+      const keys = [
+        { key: "je", label: "Je/J'" },
+        { key: "tu", label: "Tu" },
+        { key: "singular", label: "Il/Elle/On" },
+        { key: "nous", label: "Nous" },
+        { key: "vous", label: "Vous" },
+        { key: "plural", label: "Ils/Elles" },
+      ];
+
+      let html = "";
+      keys.forEach((k, i) => {
+        // Apply the highlight
+        const formattedSentence = highlightStemChange(data[k.key].fr, data.verb);
+
+        html += `
+      <tr id="row-${i}" onclick="readRow(${i})">
+        <td><strong>${k.label}</strong></td>
+        <td>
+          ${formattedSentence} <span class="translation">${data[k.key].en}</span>
+        </td>
+      </tr>
+    `;
+      });
+      tableBody.innerHTML = html;
+    }
+
+    function readAllSentences() {
+      window.speechSynthesis.cancel(); 
+
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+
+      keys.forEach((key, i) => {
+        const text = data[key].fr;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "fr-FR";
+        utterance.rate = 0.9; 
+
+        utterance.onstart = () => {
+          document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+          document.getElementById(`row-${i}`).classList.add("active-row");
+        };
+
+        utterance.onend = () => {
+          document.getElementById(`row-${i}`).classList.remove("active-row");
+        };
+
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    window.readRow = function (rowIndex) {
+      window.speechSynthesis.cancel();
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+      const text = data[keys[rowIndex]].fr;
+
+      document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+      const row = document.getElementById(`row-${rowIndex}`);
+      row.classList.add("active-row");
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      u.onend = () => row.classList.remove("active-row");
+      window.speechSynthesis.speak(u);
+    };
+
+    inputEl.addEventListener("input", () => {
+      if (isStudying) return; 
+
+      const val = inputEl.value.toLowerCase().trim();
+      if (val === verbs[index].fr.toLowerCase()) {
+        isStudying = true;
+        inputEl.classList.add("correct");
+        inputEl.disabled = true; 
+
+        meaningEl.textContent = verbs[index].pron;
+        renderTable();
+        tableContainer.style.display = "block";
+        nextBtn.style.display = "block";
+        nextBtn.focus(); 
+
+        setTimeout(() => {
+          readAllSentences();
+        }, 500);
+      }
+    });
+
+    meaningBtn.addEventListener("click", () => {
+      meaningEl.textContent = verbs[index].pron;
+    });
+
+    nextBtn.addEventListener("click", () => {
+      window.speechSynthesis.cancel(); 
+      index++;
+      if (index < verbs.length) {
+        showWord();
+      } else {
+        document.querySelector(".app").innerHTML = `
+        <h1>🎉 Félicitations !</h1>
+        <h2>You finished the list.</h2>
+        <button onclick="location.reload()">Restart</button>
+      `;
+      }
+    });
+
+    showWord();
+  </script>
+</body>
+
+</html>

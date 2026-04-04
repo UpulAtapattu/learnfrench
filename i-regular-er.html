@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>French Conjugation Trainer</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
+        color: #eee;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 50px;
+      }
+
+      .app {
+        width: 100%;
+        max-width: 600px; /* Made wider for the table */
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+        font-weight: 500;
+        opacity: 0.85;
+        margin: 0;
+      }
+      h2 {
+        font-size: 3rem;
+        margin: 10px 0;
+        letter-spacing: 1px;
+        color: #4da3ff;
+      }
+
+      input {
+        width: 100%;
+        font-size: 1.8rem;
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+        text-align: center;
+        background: #222;
+        color: #fff;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #4da3ff;
+        background: #1e1e1e;
+      }
+      input.correct {
+        border-color: #4ade80;
+        background: #1a3320;
+        color: #4ade80;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        transition:
+          transform 0.15s ease,
+          opacity 0.15s ease;
+      }
+
+      button:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+      }
+
+      #meaningBtn {
+        background: #333;
+        color: #ccc;
+        margin-bottom: 10px;
+      }
+      #meaningBtn:hover {
+        background: #444;
+      }
+
+      #nextBtn {
+        background: linear-gradient(135deg, #4ade80, #22c55e);
+        color: #003311;
+        display: none; /* Hidden initially */
+        margin-top: 20px;
+      }
+
+      #meaning {
+        min-height: 1.5em;
+        font-size: 1.1rem;
+        opacity: 0.85;
+        text-align: center;
+        font-style: italic;
+      }
+
+      /* Table Styles */
+      .table-container {
+        width: 100%;
+        margin-top: 20px;
+        display: none; /* Hidden until correct */
+        animation: fadeIn 0.5s ease;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #222;
+        border-radius: 10px;
+        overflow: hidden;
+        font-size: 0.95rem;
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #333;
+      }
+
+      th {
+        background: #2a2a2a;
+        color: #aaa;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+      }
+
+      /* The "Pointer" Effect */
+      tr.active-row {
+        background-color: #4da3ff33; /* Blue highlight */
+        border-left: 4px solid #4da3ff;
+      }
+
+      tr.active-row td {
+        color: #fff;
+      }
+
+      .translation {
+        color: #888;
+        font-size: 0.85rem;
+        display: block;
+        margin-top: 4px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Mobile tweak */
+      @media (max-width: 400px) {
+        h2 {
+          font-size: 2.2rem;
+        }
+        td,
+        th {
+          padding: 8px 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <h1>French Present Tense - Regular ER verbs</h1>
+
+      <h2 id="word"></h2>
+      <div id="meaning"></div>
+
+      <input
+        id="input"
+        autocomplete="off"
+        autofocus
+        inputmode="text"
+        spellcheck="false"
+        placeholder="Type the verb..."
+      />
+
+      <button id="meaningBtn">Show Pronunciation</button>
+
+      <div id="conjugation-container" class="table-container">
+        <table id="conjugation-table">
+          <thead>
+            <tr>
+              <th>Pronoun</th>
+              <th>Sentence</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+
+      <button id="nextBtn">Next Verb ➔</button>
+    </div>
+
+    <script>
+      // 1. DATA: Verbs + Sentences
+      const verbs = [
+        { fr: "accepter", en: "to accept", pron: "ak-sep-tay" },
+        { fr: "aimer", en: "to like, to love", pron: "eh-may" },
+        { fr: "annuler", en: "to cancel", pron: "ah-new-lay" },
+        { fr: "apporter", en: "to bring", pron: "ah-por-tay" },
+        { fr: "attraper", en: "to catch", pron: "ah-trah-pay" },
+        { fr: "augmenter", en: "to increase", pron: "ohg-mahn-tay" },
+        { fr: "bavarder", en: "to chat", pron: "bah-var-day" },
+        { fr: "casser", en: "to break", pron: "kah-say" },
+        { fr: "chercher", en: "to look for", pron: "shair-shay" },
+        { fr: "commander", en: "to order", pron: "koh-mahn-day" },
+        { fr: "couper", en: "to cut", pron: "koo-pay" },
+        { fr: "danser", en: "to dance", pron: "dahn-say" },
+        { fr: "déjeuner", en: "to have lunch", pron: "day-zheu-nay" },
+        { fr: "demander", en: "to ask", pron: "duh-mahn-day" },
+        { fr: "dessiner", en: "to draw", pron: "deh-see-nay" },
+        { fr: "donner", en: "to give", pron: "doh-nay" },
+        { fr: "emprunter", en: "to borrow", pron: "ahn-prun-tay" },
+        { fr: "étudier", en: "to study", pron: "ay-tew-dyay" },
+        { fr: "exprimer", en: "to express", pron: "ek-spree-may" },
+        { fr: "gagner", en: "to win, to earn", pron: "gah-nyay" },
+        { fr: "garder", en: "to keep", pron: "gar-day" },
+        { fr: "habiter", en: "to live", pron: "ah-bee-tay" },
+        { fr: "laver", en: "to wash", pron: "lah-vay" },
+        { fr: "mériter", en: "to deserve", pron: "may-ree-tay" },
+        { fr: "oublier", en: "to forget", pron: "oo-blee-ay" },
+        { fr: "porter", en: "to carry", pron: "por-tay" },
+        { fr: "prêter", en: "to lend", pron: "preh-tay" },
+        { fr: "refuser", en: "to refuse", pron: "ruh-few-zay" },
+        { fr: "regarder", en: "to watch", pron: "ruh-gar-day" },
+        { fr: "saluer", en: "to greet", pron: "sah-lwee-ay" },
+        { fr: "sauter", en: "to jump", pron: "soh-tay" },
+        { fr: "tomber", en: "to fall", pron: "tohm-bay" },
+        { fr: "travailler", en: "to work", pron: "trah-vah-yay" },
+        { fr: "visiter", en: "to visit (a place)", pron: "vee-zee-tay" },
+      ];
+
+      const sentences = [
+        {
+          verb: "accepter",
+          je: { fr: "J'accepte ton aide.", en: "I accept your help." },
+          tu: {
+            fr: "Acceptes-tu l'invitation ?",
+            en: "Do you accept the invitation?",
+          },
+          singular: {
+            fr: "Elle accepte le poste.",
+            en: "She accepts the position.",
+          },
+          nous: { fr: "Nous acceptons avec joie.", en: "We accept with joy." },
+          vous: {
+            fr: "Acceptez-vous les cartes ?",
+            en: "Do you accept cards?",
+          },
+          plural: {
+            fr: "Ils acceptent nos conditions.",
+            en: "They accept our conditions.",
+          },
+        },
+        {
+          verb: "aimer",
+          je: { fr: "J'aime le chocolat.", en: "I like chocolate." },
+          tu: { fr: "Aimes-tu lire ?", en: "Do you like to read?" },
+          singular: { fr: "Il aime sa famille.", en: "He loves his family." },
+          nous: { fr: "Nous aimons la France.", en: "We love France." },
+          vous: { fr: "Aimez-vous voyager ?", en: "Do you like to travel?" },
+          plural: { fr: "Elles aiment danser.", en: "They like to dance." },
+        },
+        {
+          verb: "annuler",
+          je: {
+            fr: "J'annule ma réservation.",
+            en: "I am cancelling my reservation.",
+          },
+          tu: {
+            fr: "Annules-tu la réunion ?",
+            en: "Are you cancelling the meeting?",
+          },
+          singular: {
+            fr: "On annule le vol.",
+            en: "We are cancelling the flight.",
+          },
+          nous: {
+            fr: "Nous annulons le projet.",
+            en: "We are cancelling the project.",
+          },
+          vous: {
+            fr: "Annulez-vous la commande ?",
+            en: "Are you cancelling the order?",
+          },
+          plural: {
+            fr: "Ils annulent le concert.",
+            en: "They are cancelling the concert.",
+          },
+        },
+        {
+          verb: "apporter",
+          je: { fr: "J'apporte un gâteau.", en: "I am bringing a cake." },
+          tu: { fr: "Apportes-tu du vin ?", en: "Are you bringing wine?" },
+          singular: {
+            fr: "Elle apporte les documents.",
+            en: "She is bringing the documents.",
+          },
+          nous: {
+            fr: "Nous apportons des cadeaux.",
+            en: "We are bringing gifts.",
+          },
+          vous: {
+            fr: "Apportez-vous vos valises ?",
+            en: "Are you bringing your suitcases?",
+          },
+          plural: {
+            fr: "Ils apportent de bonnes nouvelles.",
+            en: "They are bringing good news.",
+          },
+        },
+        {
+          verb: "attraper",
+          je: { fr: "J'attrape le ballon.", en: "I catch the ball." },
+          tu: {
+            fr: "Attrapes-tu souvent un rhume ?",
+            en: "Do you often catch a cold?",
+          },
+          singular: { fr: "Il attrape le train.", en: "He catches the train." },
+          nous: {
+            fr: "Nous attrapons des papillons.",
+            en: "We are catching butterflies.",
+          },
+          vous: { fr: "Attrapez-vous le bus ?", en: "Do you catch the bus?" },
+          plural: {
+            fr: "Elles attrapent le voleur.",
+            en: "They catch the thief.",
+          },
+        },
+        {
+          verb: "augmenter",
+          je: {
+            fr: "J'augmente le volume.",
+            en: "I am increasing the volume.",
+          },
+          tu: {
+            fr: "Augmentes-tu la vitesse ?",
+            en: "Are you increasing the speed?",
+          },
+          singular: { fr: "Le prix augmente.", en: "The price is increasing." },
+          nous: {
+            fr: "Nous augmentons nos efforts.",
+            en: "We are increasing our efforts.",
+          },
+          vous: {
+            fr: "Augmentez-vous la production ?",
+            en: "Are you increasing production?",
+          },
+          plural: {
+            fr: "Les températures augmentent.",
+            en: "Temperatures are rising.",
+          },
+        },
+        {
+          verb: "bavarder",
+          je: {
+            fr: "Je bavarde avec mes amis.",
+            en: "I chat with my friends.",
+          },
+          tu: {
+            fr: "Bavardes-tu au téléphone ?",
+            en: "Do you chat on the phone?",
+          },
+          singular: {
+            fr: "Elle bavarde trop en classe.",
+            en: "She chats too much in class.",
+          },
+          nous: {
+            fr: "Nous bavardons en travaillant.",
+            en: "We chat while working.",
+          },
+          vous: { fr: "Bavardez-vous souvent ?", en: "Do you chat often?" },
+          plural: {
+            fr: "Ils bavardent dans le couloir.",
+            en: "They are chatting in the hallway.",
+          },
+        },
+        {
+          verb: "casser",
+          je: { fr: "Je casse un œuf.", en: "I break an egg." },
+          tu: {
+            fr: "Casses-tu le silence ?",
+            en: "Are you breaking the silence?",
+          },
+          singular: { fr: "La branche casse.", en: "The branch breaks." },
+          nous: {
+            fr: "Nous cassons le code.",
+            en: "We are breaking the code.",
+          },
+          vous: {
+            fr: "Cassez-vous la croûte ?",
+            en: "Are you having a snack?",
+          },
+          plural: {
+            fr: "Ils cassent la fenêtre.",
+            en: "They break the window.",
+          },
+        },
+        {
+          verb: "chercher",
+          je: { fr: "Je cherche mes clés.", en: "I am looking for my keys." },
+          tu: {
+            fr: "Cherches-tu un nouvel appartement ?",
+            en: "Are you looking for a new apartment?",
+          },
+          singular: {
+            fr: "Il cherche un travail.",
+            en: "He is looking for a job.",
+          },
+          nous: {
+            fr: "Nous cherchons un restaurant.",
+            en: "We are looking for a restaurant.",
+          },
+          vous: {
+            fr: "Cherchez-vous quelque chose ?",
+            en: "Are you looking for something?",
+          },
+          plural: {
+            fr: "Elles cherchent la sortie.",
+            en: "They are looking for the exit.",
+          },
+        },
+        {
+          verb: "commander",
+          je: { fr: "Je commande une pizza.", en: "I am ordering a pizza." },
+          tu: {
+            fr: "Commandes-tu souvent en ligne ?",
+            en: "Do you order online often?",
+          },
+          singular: {
+            fr: "Elle commande un café.",
+            en: "She orders a coffee.",
+          },
+          nous: {
+            fr: "Nous commandons de la nourriture.",
+            en: "We are ordering food.",
+          },
+          vous: {
+            fr: "Commandez-vous maintenant ?",
+            en: "Are you ordering now?",
+          },
+          plural: {
+            fr: "Ils commandent des livres.",
+            en: "They are ordering books.",
+          },
+        },
+        {
+          verb: "couper",
+          je: { fr: "Je coupe le pain.", en: "I cut the bread." },
+          tu: { fr: "Coupes-tu l'eau ?", en: "Are you cutting the water?" },
+          singular: {
+            fr: "Il coupe le moteur.",
+            en: "He shuts off the engine.",
+          },
+          nous: {
+            fr: "Nous coupons par le parc.",
+            en: "We are cutting through the park.",
+          },
+          vous: {
+            fr: "Coupez-vous le gâteau ?",
+            en: "Are you cutting the cake?",
+          },
+          plural: { fr: "Ils coupent du bois.", en: "They are chopping wood." },
+        },
+        {
+          verb: "danser",
+          je: { fr: "Je danse toute la nuit.", en: "I dance all night." },
+          tu: { fr: "Danses-tu bien ?", en: "Do you dance well?" },
+          singular: {
+            fr: "Elle danse avec grâce.",
+            en: "She dances gracefully.",
+          },
+          nous: { fr: "Nous dansons à la fête.", en: "We dance at the party." },
+          vous: { fr: "Dansez-vous le tango ?", en: "Do you dance the tango?" },
+          plural: { fr: "Ils dansent ensemble.", en: "They dance together." },
+        },
+        {
+          verb: "déjeuner",
+          je: { fr: "Je déjeune à midi.", en: "I have lunch at noon." },
+          tu: {
+            fr: "Déjeunes-tu au bureau ?",
+            en: "Do you have lunch at the office?",
+          },
+          singular: {
+            fr: "Il déjeune rapidement.",
+            en: "He eats lunch quickly.",
+          },
+          nous: {
+            fr: "Nous déjeunons au restaurant.",
+            en: "We are having lunch at a restaurant.",
+          },
+          vous: { fr: "Déjeunez-vous ici ?", en: "Are you having lunch here?" },
+          plural: {
+            fr: "Elles déjeunent vers 13h.",
+            en: "They have lunch around 1pm.",
+          },
+        },
+        {
+          verb: "demander",
+          je: { fr: "Je demande l'heure.", en: "I ask for the time." },
+          tu: {
+            fr: "Demandes-tu son avis ?",
+            en: "Are you asking his opinion?",
+          },
+          singular: {
+            fr: "Elle demande de l'aide.",
+            en: "She is asking for help.",
+          },
+          nous: {
+            fr: "Nous demandons une faveur.",
+            en: "We are asking a favor.",
+          },
+          vous: {
+            fr: "Demandez-vous le chemin ?",
+            en: "Are you asking for directions?",
+          },
+          plural: {
+            fr: "Ils demandent la note.",
+            en: "They ask for the bill.",
+          },
+        },
+        {
+          verb: "dessiner",
+          je: { fr: "Je dessine un chat.", en: "I am drawing a cat." },
+          tu: { fr: "Dessines-tu souvent ?", en: "Do you draw often?" },
+          singular: {
+            fr: "Il dessine un paysage.",
+            en: "He is drawing a landscape.",
+          },
+          nous: {
+            fr: "Nous dessinons un portrait.",
+            en: "We are drawing a portrait.",
+          },
+          vous: {
+            fr: "Dessinez-vous d'après nature ?",
+            en: "Do you draw from nature?",
+          },
+          plural: {
+            fr: "Elles dessinent très bien.",
+            en: "They draw very well.",
+          },
+        },
+        {
+          verb: "donner",
+          je: { fr: "Je donne mon avis.", en: "I give my opinion." },
+          tu: { fr: "Donnes-tu des cours ?", en: "Do you give lessons?" },
+          singular: { fr: "Il donne un cadeau.", en: "He gives a gift." },
+          nous: {
+            fr: "Nous donnons une fête.",
+            en: "We are throwing a party.",
+          },
+          vous: { fr: "Donnez-vous votre sang ?", en: "Do you donate blood?" },
+          plural: { fr: "Ils donnent de l'argent.", en: "They give money." },
+        },
+        {
+          verb: "emprunter",
+          je: { fr: "J'emprunte un livre.", en: "I am borrowing a book." },
+          tu: { fr: "Empruntes-tu souvent ?", en: "Do you borrow often?" },
+          singular: {
+            fr: "Elle emprunte de l'argent.",
+            en: "She borrows money.",
+          },
+          nous: {
+            fr: "Nous empruntons la voiture.",
+            en: "We are borrowing the car.",
+          },
+          vous: {
+            fr: "Empruntez-vous ce chemin ?",
+            en: "Do you take this path?",
+          },
+          plural: {
+            fr: "Ils empruntent des outils.",
+            en: "They are borrowing tools.",
+          },
+        },
+        {
+          verb: "étudier",
+          je: { fr: "J'étudie le français.", en: "I study French." },
+          tu: { fr: "Étudies-tu l'histoire ?", en: "Do you study history?" },
+          singular: {
+            fr: "Il étudie la médecine.",
+            en: "He studies medicine.",
+          },
+          nous: { fr: "Nous étudions ensemble.", en: "We study together." },
+          vous: {
+            fr: "Étudiez-vous ce soir ?",
+            en: "Are you studying tonight?",
+          },
+          plural: {
+            fr: "Ils étudient pour l'examen.",
+            en: "They are studying for the exam.",
+          },
+        },
+        {
+          verb: "exprimer",
+          je: { fr: "J'exprime mes sentiments.", en: "I express my feelings." },
+          tu: {
+            fr: "Exprimes-tu ton opinion ?",
+            en: "Do you express your opinion?",
+          },
+          singular: {
+            fr: "Elle exprime sa joie.",
+            en: "She expresses her joy.",
+          },
+          nous: {
+            fr: "Nous exprimons nos doutes.",
+            en: "We express our doubts.",
+          },
+          vous: {
+            fr: "Exprimez-vous clairement ?",
+            en: "Do you express yourself clearly?",
+          },
+          plural: {
+            fr: "Ils expriment leur colère.",
+            en: "They express their anger.",
+          },
+        },
+        {
+          verb: "gagner",
+          je: { fr: "Je gagne ma vie.", en: "I earn a living." },
+          tu: { fr: "Gagnes-tu souvent ?", en: "Do you win often?" },
+          singular: { fr: "Il gagne le match.", en: "He wins the match." },
+          nous: { fr: "Nous gagnons du temps.", en: "We save time." },
+          vous: { fr: "Gagnez-vous assez ?", en: "Do you earn enough?" },
+          plural: { fr: "Ils gagnent un prix.", en: "They win a prize." },
+        },
+        {
+          verb: "garder",
+          je: { fr: "Je garde mon calme.", en: "I keep my cool." },
+          tu: { fr: "Gardes-tu le secret ?", en: "Can you keep a secret?" },
+          singular: {
+            fr: "Elle garde les enfants.",
+            en: "She is babysitting the children.",
+          },
+          nous: { fr: "Nous gardons la forme.", en: "We stay in shape." },
+          vous: { fr: "Gardez-vous espoir ?", en: "Do you keep hope?" },
+          plural: {
+            fr: "Ils gardent leurs habitudes.",
+            en: "They keep their habits.",
+          },
+        },
+        {
+          verb: "habiter",
+          je: { fr: "J'habite à Paris.", en: "I live in Paris." },
+          tu: { fr: "Habites-tu loin ?", en: "Do you live far?" },
+          singular: { fr: "Il habite en ville.", en: "He lives in the city." },
+          nous: { fr: "Nous habitons ensemble.", en: "We live together." },
+          vous: { fr: "Habitez-vous ici ?", en: "Do you live here?" },
+          plural: {
+            fr: "Elles habitent près de la mer.",
+            en: "They live near the sea.",
+          },
+        },
+        {
+          verb: "laver",
+          je: { fr: "Je lave la voiture.", en: "I wash the car." },
+          tu: { fr: "Laves-tu tes mains ?", en: "Are you washing your hands?" },
+          singular: { fr: "Elle lave le sol.", en: "She washes the floor." },
+          nous: {
+            fr: "Nous lavons la vaisselle.",
+            en: "We are washing the dishes.",
+          },
+          vous: {
+            fr: "Lavez-vous les légumes ?",
+            en: "Are you washing the vegetables?",
+          },
+          plural: {
+            fr: "Ils lavent leur linge.",
+            en: "They are washing their laundry.",
+          },
+        },
+        {
+          verb: "mériter",
+          je: { fr: "Je mérite une réponse.", en: "I deserve an answer." },
+          tu: { fr: "Mérites-tu ce cadeau ?", en: "Do you deserve this gift?" },
+          singular: {
+            fr: "Elle mérite le poste.",
+            en: "She deserves the position.",
+          },
+          nous: { fr: "Nous méritons mieux.", en: "We deserve better." },
+          vous: {
+            fr: "Méritez-vous des vacances ?",
+            en: "Do you deserve a vacation?",
+          },
+          plural: {
+            fr: "Ils méritent une récompense.",
+            en: "They deserve a reward.",
+          },
+        },
+        {
+          verb: "oublier",
+          je: {
+            fr: "J'oublie souvent mes clés.",
+            en: "I often forget my keys.",
+          },
+          tu: { fr: "Oublies-tu ton sac ?", en: "Did you forget your bag?" },
+          singular: {
+            fr: "Il oublie son numéro.",
+            en: "He forgets his number.",
+          },
+          nous: {
+            fr: "Nous oublions nos soucis.",
+            en: "We forget our worries.",
+          },
+          vous: { fr: "Oubliez-vous jamais ?", en: "Do you ever forget?" },
+          plural: {
+            fr: "Elles oublient l'heure.",
+            en: "They lose track of time.",
+          },
+        },
+        {
+          verb: "porter",
+          je: { fr: "Je porte un manteau.", en: "I am wearing a coat." },
+          tu: { fr: "Portes-tu des lunettes ?", en: "Do you wear glasses?" },
+          singular: {
+            fr: "Elle porte une valise.",
+            en: "She is carrying a suitcase.",
+          },
+          nous: {
+            fr: "Nous portons assistance.",
+            en: "We provide assistance.",
+          },
+          vous: {
+            fr: "Portez-vous un chapeau ?",
+            en: "Are you wearing a hat?",
+          },
+          plural: {
+            fr: "Ils portent un uniforme.",
+            en: "They wear a uniform.",
+          },
+        },
+        {
+          verb: "prêter",
+          je: { fr: "Je prête mon stylo.", en: "I lend my pen." },
+          tu: { fr: "Prêtes-tu ta voiture ?", en: "Do you lend your car?" },
+          singular: { fr: "Il prête de l'argent.", en: "He lends money." },
+          nous: { fr: "Nous prêtons attention.", en: "We pay attention." },
+          vous: {
+            fr: "Prêtez-vous vos livres ?",
+            en: "Do you lend your books?",
+          },
+          plural: {
+            fr: "Elles prêtent leurs affaires.",
+            en: "They lend their things.",
+          },
+        },
+        {
+          verb: "refuser",
+          je: { fr: "Je refuse cette offre.", en: "I refuse this offer." },
+          tu: { fr: "Refuses-tu de venir ?", en: "Do you refuse to come?" },
+          singular: {
+            fr: "Elle refuse de répondre.",
+            en: "She refuses to answer.",
+          },
+          nous: { fr: "Nous refusons de payer.", en: "We refuse to pay." },
+          vous: { fr: "Refusez-vous l'accès ?", en: "Do you refuse access?" },
+          plural: { fr: "Ils refusent la défaite.", en: "They refuse defeat." },
+        },
+        {
+          verb: "regarder",
+          je: {
+            fr: "Je regarde la télévision.",
+            en: "I am watching television.",
+          },
+          tu: {
+            fr: "Regardes-tu le paysage ?",
+            en: "Are you looking at the landscape?",
+          },
+          singular: {
+            fr: "Il regarde par la fenêtre.",
+            en: "He looks out the window.",
+          },
+          nous: {
+            fr: "Nous regardons un film.",
+            en: "We are watching a movie.",
+          },
+          vous: {
+            fr: "Regardez-vous le match ?",
+            en: "Are you watching the match?",
+          },
+          plural: {
+            fr: "Elles regardent les étoiles.",
+            en: "They are looking at the stars.",
+          },
+        },
+        {
+          verb: "saluer",
+          je: { fr: "Je salue mes voisins.", en: "I greet my neighbors." },
+          tu: {
+            fr: "Salues-tu ton professeur ?",
+            en: "Do you greet your teacher?",
+          },
+          singular: { fr: "Elle salue poliment.", en: "She greets politely." },
+          nous: {
+            fr: "Nous saluons cette initiative.",
+            en: "We welcome this initiative.",
+          },
+          vous: {
+            fr: "Saluez-vous tout le monde ?",
+            en: "Do you greet everyone?",
+          },
+          plural: {
+            fr: "Ils saluent leurs amis.",
+            en: "They greet their friends.",
+          },
+        },
+        {
+          verb: "sauter",
+          je: { fr: "Je saute de joie.", en: "I jump for joy." },
+          tu: { fr: "Sautes-tu à la corde ?", en: "Do you jump rope?" },
+          singular: { fr: "Il saute en parachute.", en: "He skydives." },
+          nous: {
+            fr: "Nous sautons dans l'eau.",
+            en: "We jump into the water.",
+          },
+          vous: { fr: "Sautez-vous souvent ?", en: "Do you jump often?" },
+          plural: {
+            fr: "Elles sautent très haut.",
+            en: "They jump very high.",
+          },
+        },
+        {
+          verb: "tomber",
+          je: { fr: "Je tombe rarement.", en: "I rarely fall." },
+          tu: { fr: "Tombes-tu souvent ?", en: "Do you fall often?" },
+          singular: { fr: "La feuille tombe.", en: "The leaf falls." },
+          nous: { fr: "Nous tombons amoureux.", en: "We fall in love." },
+          vous: {
+            fr: "Tombez-vous malade souvent ?",
+            en: "Do you get sick often?",
+          },
+          plural: {
+            fr: "Ils tombent de fatigue.",
+            en: "They are dropping from exhaustion.",
+          },
+        },
+        {
+          verb: "travailler",
+          je: { fr: "Je travaille dur.", en: "I work hard." },
+          tu: { fr: "Travailles-tu demain ?", en: "Do you work tomorrow?" },
+          singular: { fr: "Elle travaille ici.", en: "She works here." },
+          nous: { fr: "Nous travaillons en équipe.", en: "We work as a team." },
+          vous: {
+            fr: "Travaillez-vous ce weekend ?",
+            en: "Do you work this weekend?",
+          },
+          plural: {
+            fr: "Ils travaillent pour réussir.",
+            en: "They work to succeed.",
+          },
+        },
+        {
+          verb: "visiter",
+          je: { fr: "Je visite un musée.", en: "I am visiting a museum." },
+          tu: { fr: "Visites-tu la ville ?", en: "Are you visiting the city?" },
+          singular: {
+            fr: "Il visite ses parents.",
+            en: "He is visiting his parents.",
+          },
+          nous: { fr: "Nous visitons Rome.", en: "We are visiting Rome." },
+          vous: {
+            fr: "Visitez-vous le château ?",
+            en: "Are you visiting the castle?",
+          },
+          plural: {
+            fr: "Elles visitent des monuments.",
+            en: "They are visiting monuments.",
+          },
+        },
+      ];
+
+      // 2. LOGIC
+      let index = 0;
+      let isStudying = false; // State: are we typing or looking at the table?
+
+      const wordEl = document.getElementById("word");
+      const inputEl = document.getElementById("input");
+      const meaningEl = document.getElementById("meaning");
+      const meaningBtn = document.getElementById("meaningBtn");
+      const tableContainer = document.getElementById("conjugation-container");
+      const tableBody = document.getElementById("table-body");
+      const nextBtn = document.getElementById("nextBtn");
+
+      function speakText(text, lang) {
+        // Cancel previous speech to avoid overlap
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang;
+        window.speechSynthesis.speak(u);
+      }
+
+      function showWord() {
+        isStudying = false;
+        // UI Reset
+        wordEl.textContent = verbs[index].fr;
+        meaningEl.textContent = verbs[index].en;
+        inputEl.value = "";
+        inputEl.disabled = false;
+        inputEl.focus();
+        inputEl.classList.remove("correct");
+
+        // Hide Learning UI
+        tableContainer.style.display = "none";
+        nextBtn.style.display = "none";
+      }
+
+      // Generate table rows based on current verb index
+      function renderTable() {
+        const data = sentences[index];
+        // Map pronouns for clean display
+        const keys = [
+          { key: "je", label: "Je/J'" },
+          { key: "tu", label: "Tu" },
+          { key: "singular", label: "Il/Elle/On" },
+          { key: "nous", label: "Nous" },
+          { key: "vous", label: "Vous" },
+          { key: "plural", label: "Ils/Elles" },
+        ];
+
+        let html = "";
+        keys.forEach((k, i) => {
+          html += `
+        <tr id="row-${i}" onclick="readRow(${i})">
+          <td><strong>${k.label}</strong></td>
+          <td>
+            ${data[k.key].fr}
+            <span class="translation">${data[k.key].en}</span>
+          </td>
+        </tr>
+      `;
+        });
+        tableBody.innerHTML = html;
+      }
+
+      // The "Auto Read" function with Pointer Logic
+      function readAllSentences() {
+        window.speechSynthesis.cancel(); // Stop anything running
+
+        const data = sentences[index];
+        const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+
+        // Create a chain of speech utterances
+        keys.forEach((key, i) => {
+          const text = data[key].fr;
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "fr-FR";
+          utterance.rate = 0.9; // Slightly slower for clarity
+
+          // Highlighting logic
+          utterance.onstart = () => {
+            // Remove active class from all
+            document
+              .querySelectorAll("tr")
+              .forEach((tr) => tr.classList.remove("active-row"));
+            // Add to current
+            document.getElementById(`row-${i}`).classList.add("active-row");
+          };
+
+          utterance.onend = () => {
+            document.getElementById(`row-${i}`).classList.remove("active-row");
+          };
+
+          window.speechSynthesis.speak(utterance);
+        });
+      }
+
+      // Allow clicking a row to hear it individually
+      window.readRow = function (rowIndex) {
+        window.speechSynthesis.cancel();
+        const data = sentences[index];
+        const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+        const text = data[keys[rowIndex]].fr;
+
+        // Visual Highlight
+        document
+          .querySelectorAll("tr")
+          .forEach((tr) => tr.classList.remove("active-row"));
+        const row = document.getElementById(`row-${rowIndex}`);
+        row.classList.add("active-row");
+
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "fr-FR";
+        u.onend = () => row.classList.remove("active-row");
+        window.speechSynthesis.speak(u);
+      };
+
+      // Handle Input
+      inputEl.addEventListener("input", () => {
+        if (isStudying) return; // Prevent input while studying
+
+        const val = inputEl.value.toLowerCase().trim();
+        if (val === verbs[index].fr.toLowerCase()) {
+          isStudying = true;
+          inputEl.classList.add("correct");
+          inputEl.disabled = true; // Lock input
+
+          // 1. Show Translation Pronunciation
+          meaningEl.textContent = verbs[index].pron;
+
+          // 2. Show Table
+          renderTable();
+          tableContainer.style.display = "block";
+          nextBtn.style.display = "block";
+          nextBtn.focus(); // Move focus to next button
+
+          // 3. Start Audio Sequence (Wait 500ms for visual transition)
+          setTimeout(() => {
+            readAllSentences();
+          }, 500);
+        }
+      });
+
+      // Buttons
+      meaningBtn.addEventListener("click", () => {
+        meaningEl.textContent = verbs[index].pron;
+      });
+
+      nextBtn.addEventListener("click", () => {
+        window.speechSynthesis.cancel(); // Stop reading
+        index++;
+        if (index < verbs.length) {
+          showWord();
+        } else {
+          // End of list
+          document.querySelector(".app").innerHTML = `
+        <h1>🎉 Félicitations !</h1>
+        <h2>You finished the list.</h2>
+        <button onclick="location.reload()">Restart</button>
+      `;
+        }
+      });
+
+      // Initialize
+      showWord();
+    </script>
+  </body>
+</html>

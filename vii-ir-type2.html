@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>French Conjugation Trainer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+      background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 650px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Header Section */
+    .header-section {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 5px 0;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #4da3ff;
+      margin: 0 0 15px 0;
+      font-weight: 500;
+    }
+
+    .guidance-box {
+      background: rgba(255, 255, 255, 0.08);
+      border-left: 4px solid #4da3ff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      text-align: left;
+      margin: 0 auto;
+      max-width: 95%;
+    }
+
+    .guidance-box p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #ddd;
+    }
+
+    .guidance-box strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Word & Input */
+    h2 {
+      font-size: 3rem;
+      margin: 10px 0;
+      letter-spacing: 1px;
+      color: #4da3ff;
+    }
+
+    input {
+      width: 100%;
+      font-size: 1.8rem;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      text-align: center;
+      background: #222;
+      color: #fff;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4da3ff;
+      background: #1e1e1e;
+    }
+
+    input.correct {
+      border-color: #4ade80;
+      background: #1a3320;
+      color: #4ade80;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    #meaningBtn {
+      background: #333;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+
+    #meaningBtn:hover {
+      background: #444;
+    }
+
+    #nextBtn {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #003311;
+      display: none;
+      margin-top: 20px;
+    }
+
+    #meaning {
+      min-height: 1.5em;
+      font-size: 1.1rem;
+      opacity: 0.85;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Table Styles */
+    .table-container {
+      width: 100%;
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    th {
+      background: #2a2a2a;
+      color: #aaa;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    /* The "Pointer" Effect */
+    tr.active-row {
+      background-color: #4da3ff33;
+      border-left: 4px solid #4da3ff;
+    }
+
+    tr.active-row td {
+      color: #fff;
+    }
+
+    .translation {
+      color: #888;
+      font-size: 0.85rem;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Highlight class */
+    .accent-change {
+      color: #ffeb3b; /* Bright Yellow */
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255, 235, 59, 0.5);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 400px) {
+      h2 { font-size: 2.2rem; }
+      td, th { padding: 8px 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    
+    <header class="header-section">
+      <h1>Irregular -ir Verbs (Type 2)</h1>
+      <p class="subtitle">No "-iss-" in plural forms</p>
+
+      <div class="guidance-box">
+        <p>
+          <strong>The Rule:</strong> These verbs are irregular. Unlike Type 1, they <strong>do not</strong> add <em>-iss-</em> in the plural. The endings (<em>-ons, -ez, -ent</em>) are attached directly to the stem, and the stem often changes between singular and plural.
+        </p>
+      </div>
+    </header>
+
+    <h2 id="word"></h2>
+    <div id="meaning"></div>
+
+    <input id="input" autocomplete="off" autofocus inputmode="text" spellcheck="false" placeholder="Type the verb..." />
+
+    <button id="meaningBtn">Show Pronunciation</button>
+
+    <div id="conjugation-container" class="table-container">
+      <table id="conjugation-table">
+        <thead>
+          <tr>
+            <th>Pronoun</th>
+            <th>Sentence</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <button id="nextBtn">Next Verb ➔</button>
+  </div>
+
+  <script>
+    // 1. DATA: Verbs
+    const verbs = [
+      { fr: "sortir", en: "to go out", pron: "sor-teer" },
+      { fr: "bouillir", en: "to boil", pron: "boo-yeer" },
+      { fr: "courir", en: "to run", pron: "koo-reer" },
+      { fr: "couvrir", en: "to cover", pron: "koo-vreer" },
+      { fr: "cueillir", en: "to pick", pron: "kuh-yeer" },
+      { fr: "dormir", en: "to sleep", pron: "dor-meer" },
+      { fr: "fuir", en: "to flee", pron: "fwee-r" },
+      { fr: "mentir", en: "to lie", pron: "mahn-teer" },
+      { fr: "mourir", en: "to die", pron: "moo-reer" },
+      { fr: "obtenir", en: "to get/obtain", pron: "ohb-tuh-neer" },
+      { fr: "offrir", en: "to offer", pron: "oh-freer" },
+      { fr: "ouvrir", en: "to open", pron: "oo-vreer" },
+      { fr: "partir", en: "to leave", pron: "par-teer" },
+      { fr: "sentir", en: "to feel/smell", pron: "sahn-teer" },
+      { fr: "servir", en: "to serve", pron: "sair-veer" },
+      { fr: "souffrir", en: "to suffer", pron: "soo-freer" }
+    ];
+
+    // 2. DATA: Sentences
+    const sentences = [
+      {
+        verb: "sortir",
+        je: { fr: "Je sors ce soir.", en: "I am going out tonight." },
+        tu: { fr: "Tu sors avec nous ?", en: "Are you going out with us?" },
+        singular: { fr: "Il sort de la maison.", en: "He goes out of the house." },
+        nous: { fr: "Nous sortons ensemble.", en: "We go out together." },
+        vous: { fr: "Vous sortez tard.", en: "You go out late." },
+        plural: { fr: "Ils sortent du cinéma.", en: "They come out of the cinema." }
+      },
+      {
+        verb: "bouillir",
+        je: { fr: "Je bous d'impatience.", en: "I am boiling with impatience." },
+        tu: { fr: "Tu bous de colère.", en: "You are boiling with anger." },
+        singular: { fr: "L'eau bout dans la casserole.", en: "The water is boiling in the pan." },
+        nous: { fr: "Nous bouillons les légumes.", en: "We are boiling the vegetables." },
+        vous: { fr: "Vous bouillez à gros bouillons.", en: "You are boiling heavily." },
+        plural: { fr: "Ils bouillent de rage.", en: "They are boiling with rage." }
+      },
+      {
+        verb: "courir",
+        je: { fr: "Je cours vite.", en: "I run fast." },
+        tu: { fr: "Tu cours le marathon.", en: "You are running the marathon." },
+        singular: { fr: "Il court après le bus.", en: "He is running after the bus." },
+        nous: { fr: "Nous courons dans le parc.", en: "We are running in the park." },
+        vous: { fr: "Vous courez tous les jours.", en: "You run every day." },
+        plural: { fr: "Ils courent vers la sortie.", en: "They run towards the exit." }
+      },
+      {
+        verb: "couvrir",
+        je: { fr: "Je couvre la casserole.", en: "I cover the saucepan." },
+        tu: { fr: "Tu couvres tes livres.", en: "You cover your books." },
+        singular: { fr: "Il couvre ses pistes.", en: "He covers his tracks." },
+        nous: { fr: "Nous couvrons les frais.", en: "We cover the costs." },
+        vous: { fr: "Vous couvrez l'événement.", en: "You are covering the event." },
+        plural: { fr: "Ils couvrent le sol.", en: "They cover the ground." }
+      },
+      {
+        verb: "cueillir",
+        je: { fr: "Je cueille des fleurs.", en: "I pick flowers." },
+        tu: { fr: "Tu cueilles des pommes.", en: "You pick apples." },
+        singular: { fr: "Elle cueille une rose.", en: "She picks a rose." },
+        nous: { fr: "Nous cueillons des fruits.", en: "We pick fruits." },
+        vous: { fr: "Vous cueillez à la main ?", en: "Do you pick by hand?" },
+        plural: { fr: "Ils cueillent la récolte.", en: "They pick the harvest." }
+      },
+      {
+        verb: "dormir",
+        je: { fr: "Je dors bien.", en: "I sleep well." },
+        tu: { fr: "Tu dors encore ?", en: "Are you still sleeping?" },
+        singular: { fr: "Il dort profondément.", en: "He sleeps deeply." },
+        nous: { fr: "Nous dormons à l'hôtel.", en: "We sleep at the hotel." },
+        vous: { fr: "Vous dormez combien d'heures ?", en: "How many hours do you sleep?" },
+        plural: { fr: "Ils dorment debout.", en: "They are sleeping on their feet." }
+      },
+      {
+        verb: "fuir",
+        je: { fr: "Je fuis le danger.", en: "I flee danger." },
+        tu: { fr: "Tu fuis tes responsabilités.", en: "You flee your responsibilities." },
+        singular: { fr: "Il fuit la police.", en: "He flees the police." },
+        nous: { fr: "Nous fuyons la ville.", en: "We flee the city." },
+        vous: { fr: "Vous fuyez devant l'obstacle.", en: "You flee before the obstacle." },
+        plural: { fr: "Ils fuient vers le sud.", en: "They flee towards the south." }
+      },
+      {
+        verb: "mentir",
+        je: { fr: "Je mens rarement.", en: "I rarely lie." },
+        tu: { fr: "Tu mens à tes parents.", en: "You lie to your parents." },
+        singular: { fr: "Il ment pour se protéger.", en: "He lies to protect himself." },
+        nous: { fr: "Nous mentons par omission.", en: "We lie by omission." },
+        vous: { fr: "Vous mentez mal.", en: "You lie badly." },
+        plural: { fr: "Ils mentent effrontément.", en: "They lie shamelessly." }
+      },
+      {
+        verb: "mourir",
+        je: { fr: "Je meurs de faim.", en: "I am dying of hunger." },
+        tu: { fr: "Tu meurs d'envie de le dire.", en: "You are dying to say it." },
+        singular: { fr: "La plante meurt sans eau.", en: "The plant dies without water." },
+        nous: { fr: "Nous mourons de chaud ici.", en: "We are dying of heat here." },
+        vous: { fr: "Vous mourez d'ennui ?", en: "Are you dying of boredom?" },
+        plural: { fr: "Les héros meurent jeunes.", en: "Heroes die young." }
+      },
+      {
+        verb: "obtenir",
+        je: { fr: "J'obtiens des résultats.", en: "I obtain results." },
+        tu: { fr: "Tu obtiens ton diplôme.", en: "You get your diploma." },
+        singular: { fr: "Il obtient la permission.", en: "He obtains permission." },
+        nous: { fr: "Nous obtenons satisfaction.", en: "We obtain satisfaction." },
+        vous: { fr: "Vous obtenez une réponse ?", en: "Do you get an answer?" },
+        plural: { fr: "Ils obtiennent des bourses.", en: "They obtain scholarships." }
+      },
+      {
+        verb: "offrir",
+        je: { fr: "J'offre un cadeau.", en: "I offer a gift." },
+        tu: { fr: "Tu offres le café ?", en: "Are you offering coffee?" },
+        singular: { fr: "Il offre son aide.", en: "He offers his help." },
+        nous: { fr: "Nous offrons l'hospitalité.", en: "We offer hospitality." },
+        vous: { fr: "Vous offrez des réductions ?", en: "Do you offer discounts?" },
+        plural: { fr: "Ils offrent des fleurs.", en: "They offer flowers." }
+      },
+      {
+        verb: "ouvrir",
+        je: { fr: "J'ouvre la porte.", en: "I open the door." },
+        tu: { fr: "Tu ouvres la fenêtre.", en: "You open the window." },
+        singular: { fr: "Il ouvre le magasin.", en: "He opens the store." },
+        nous: { fr: "Nous ouvrons les yeux.", en: "We open our eyes." },
+        vous: { fr: "Vous ouvrez à quelle heure ?", en: "What time do you open?" },
+        plural: { fr: "Ils ouvrent les cadeaux.", en: "They open the gifts." }
+      },
+      {
+        verb: "partir",
+        je: { fr: "Je pars demain.", en: "I leave tomorrow." },
+        tu: { fr: "Tu pars en vacances.", en: "You go on vacation." },
+        singular: { fr: "Il part au travail.", en: "He leaves for work." },
+        nous: { fr: "Nous partons bientôt.", en: "We are leaving soon." },
+        vous: { fr: "Vous partez déjà ?", en: "Are you leaving already?" },
+        plural: { fr: "Ils partent en voyage.", en: "They leave on a trip." }
+      },
+      {
+        verb: "sentir",
+        je: { fr: "Je sens le parfum.", en: "I smell the perfume." },
+        tu: { fr: "Tu sens la rose.", en: "You smell like a rose." },
+        singular: { fr: "Il sent le danger.", en: "He senses danger." },
+        nous: { fr: "Nous sentons la pluie arriver.", en: "We smell the rain coming." },
+        vous: { fr: "Vous sentez une douleur ?", en: "Do you feel pain?" },
+        plural: { fr: "Ils sentent bon.", en: "They smell good." }
+      },
+      {
+        verb: "servir",
+        je: { fr: "Je sers le dîner.", en: "I serve dinner." },
+        tu: { fr: "Tu sers à boire.", en: "You serve drinks." },
+        singular: { fr: "Il sert la patrie.", en: "He serves the country." },
+        nous: { fr: "Nous servons les clients.", en: "We serve the customers." },
+        vous: { fr: "Vous servez chaud ?", en: "Do you serve hot?" },
+        plural: { fr: "Ils servent de témoins.", en: "They serve as witnesses." }
+      },
+      {
+        verb: "souffrir",
+        je: { fr: "Je souffre du dos.", en: "I suffer from back pain." },
+        tu: { fr: "Tu souffres en silence.", en: "You suffer in silence." },
+        singular: { fr: "Il souffre beaucoup.", en: "He suffers a lot." },
+        nous: { fr: "Nous souffrons de la chaleur.", en: "We suffer from the heat." },
+        vous: { fr: "Vous souffrez d'allergies ?", en: "Do you suffer from allergies?" },
+        plural: { fr: "Ils souffrent pour gagner.", en: "They suffer to win." }
+      }
+    ];
+
+    // 3. LOGIC
+    let index = 0;
+    let isStudying = false; 
+
+    const wordEl = document.getElementById("word");
+    const inputEl = document.getElementById("input");
+    const meaningEl = document.getElementById("meaning");
+    const meaningBtn = document.getElementById("meaningBtn");
+    const tableContainer = document.getElementById("conjugation-container");
+    const tableBody = document.getElementById("table-body");
+    const nextBtn = document.getElementById("nextBtn");
+
+    // HIGHLIGHT LOGIC FOR IRREGULARS
+    // Since these verbs don't have a single "irregular marker" like "-iss-",
+    // We highlight the ENDING to show it attaches directly to the stem.
+    function highlightEnding(sentence) {
+      let words = sentence.split(" ");
+      
+      // We look for the word that matches the verb context (not perfect, but works for trainer)
+      // For this list, looking for the conjugated endings is effective.
+      
+      // Regex to find the verb word in the sentence (simplified heuristic)
+      // Matches words ending in s, t, e, es, ons, ez, ent, nent, etc.
+      
+      // Since detecting irregular stems is hard without a dictionary, 
+      // we will rely on the fact that the correct verb is usually the 2nd word (after Je, Tu...)
+      // or we just highlight the specific ending characters if found at the end of a word.
+      
+      // Better strategy for this specific visual:
+      // Highlight the last few letters to emphasize the "Direct Attachment"
+      
+      const endings = ["s", "t", "e", "es", "ons", "ez", "ent", "nent"];
+      
+      // Find the index of the verb (usually index 1, or 0 if imperative, or 1 after pronoun)
+      let verbIndex = 1; 
+      if (words[0].toLowerCase().includes("'")) verbIndex = 0; // J'ouvre -> index 0 is J'ouvre
+      
+      // Handle "Je sors" -> words[1] is sors. "J'ouvre" -> words[0] is J'ouvre
+      
+      let targetWord = words[verbIndex];
+      // Note: This is a visual aid only. 
+      
+      // Let's perform a simple suffix highlight for visual clarity
+      // We highlight the ending to show "Look! No -iss-!"
+      
+      if (targetWord) {
+        // Remove punctuation
+        let cleanWord = targetWord.replace(/[.,?!]/g, "");
+        let suffix = "";
+        
+        // Check common irregular endings
+        if (cleanWord.endsWith("ons")) suffix = "ons";
+        else if (cleanWord.endsWith("ez")) suffix = "ez";
+        else if (cleanWord.endsWith("ent")) suffix = "ent";
+        else if (cleanWord.endsWith("es")) suffix = "es";
+        else if (cleanWord.endsWith("e")) suffix = "e"; // couv-re
+        else if (cleanWord.endsWith("s")) suffix = "s";
+        else if (cleanWord.endsWith("t")) suffix = "t";
+        
+        if (suffix) {
+            const stem = cleanWord.substring(0, cleanWord.length - suffix.length);
+            const punctuation = targetWord.substring(cleanWord.length);
+            words[verbIndex] = `${stem}<span class="accent-change">${suffix}</span>${punctuation}`;
+        }
+      }
+
+      return words.join(" ");
+    }
+
+    function speakText(text, lang) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      window.speechSynthesis.speak(u);
+    }
+
+    function showWord() {
+      isStudying = false;
+      wordEl.textContent = verbs[index].fr;
+      meaningEl.textContent = verbs[index].en;
+      inputEl.value = "";
+      inputEl.disabled = false;
+      inputEl.focus();
+      inputEl.classList.remove("correct");
+
+      tableContainer.style.display = "none";
+      nextBtn.style.display = "none";
+    }
+
+    function renderTable() {
+      const data = sentences[index];
+      const keys = [
+        { key: "je", label: "Je/J'" },
+        { key: "tu", label: "Tu" },
+        { key: "singular", label: "Il/Elle/On" },
+        { key: "nous", label: "Nous" },
+        { key: "vous", label: "Vous" },
+        { key: "plural", label: "Ils/Elles" },
+      ];
+
+      let html = "";
+      keys.forEach((k, i) => {
+        // Apply the highlight
+        const formattedSentence = highlightEnding(data[k.key].fr);
+
+        html += `
+      <tr id="row-${i}" onclick="readRow(${i})">
+        <td><strong>${k.label}</strong></td>
+        <td>
+          ${formattedSentence} <span class="translation">${data[k.key].en}</span>
+        </td>
+      </tr>
+    `;
+      });
+      tableBody.innerHTML = html;
+    }
+
+    function readAllSentences() {
+      window.speechSynthesis.cancel(); 
+
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+
+      keys.forEach((key, i) => {
+        const text = data[key].fr;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "fr-FR";
+        utterance.rate = 0.9; 
+
+        utterance.onstart = () => {
+          document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+          document.getElementById(`row-${i}`).classList.add("active-row");
+        };
+
+        utterance.onend = () => {
+          document.getElementById(`row-${i}`).classList.remove("active-row");
+        };
+
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    window.readRow = function (rowIndex) {
+      window.speechSynthesis.cancel();
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+      const text = data[keys[rowIndex]].fr;
+
+      document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+      const row = document.getElementById(`row-${rowIndex}`);
+      row.classList.add("active-row");
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      u.onend = () => row.classList.remove("active-row");
+      window.speechSynthesis.speak(u);
+    };
+
+    inputEl.addEventListener("input", () => {
+      if (isStudying) return; 
+
+      const val = inputEl.value.toLowerCase().trim();
+      if (val === verbs[index].fr.toLowerCase()) {
+        isStudying = true;
+        inputEl.classList.add("correct");
+        inputEl.disabled = true; 
+
+        meaningEl.textContent = verbs[index].pron;
+        renderTable();
+        tableContainer.style.display = "block";
+        nextBtn.style.display = "block";
+        nextBtn.focus(); 
+
+        setTimeout(() => {
+          readAllSentences();
+        }, 500);
+      }
+    });
+
+    meaningBtn.addEventListener("click", () => {
+      meaningEl.textContent = verbs[index].pron;
+    });
+
+    nextBtn.addEventListener("click", () => {
+      window.speechSynthesis.cancel(); 
+      index++;
+      if (index < verbs.length) {
+        showWord();
+      } else {
+        document.querySelector(".app").innerHTML = `
+        <h1>🎉 Félicitations !</h1>
+        <h2>You finished the list.</h2>
+        <button onclick="location.reload()">Restart</button>
+      `;
+      }
+    });
+
+    showWord();
+  </script>
+</body>
+
+</html>

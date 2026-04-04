@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>French Conjugation Trainer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+      background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 650px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Header Section */
+    .header-section {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 5px 0;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #4da3ff;
+      margin: 0 0 15px 0;
+      font-weight: 500;
+    }
+
+    .guidance-box {
+      background: rgba(255, 255, 255, 0.08);
+      border-left: 4px solid #4da3ff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      text-align: left;
+      margin: 0 auto;
+      max-width: 95%;
+    }
+
+    .guidance-box p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #ddd;
+    }
+
+    .guidance-box strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Word & Input */
+    h2 {
+      font-size: 3rem;
+      margin: 10px 0;
+      letter-spacing: 1px;
+      color: #4da3ff;
+    }
+
+    input {
+      width: 100%;
+      font-size: 1.8rem;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      text-align: center;
+      background: #222;
+      color: #fff;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4da3ff;
+      background: #1e1e1e;
+    }
+
+    input.correct {
+      border-color: #4ade80;
+      background: #1a3320;
+      color: #4ade80;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    #meaningBtn {
+      background: #333;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+
+    #meaningBtn:hover {
+      background: #444;
+    }
+
+    #nextBtn {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #003311;
+      display: none;
+      margin-top: 20px;
+    }
+
+    #meaning {
+      min-height: 1.5em;
+      font-size: 1.1rem;
+      opacity: 0.85;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Table Styles */
+    .table-container {
+      width: 100%;
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    th {
+      background: #2a2a2a;
+      color: #aaa;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    /* The "Pointer" Effect */
+    tr.active-row {
+      background-color: #4da3ff33;
+      border-left: 4px solid #4da3ff;
+    }
+
+    tr.active-row td {
+      color: #fff;
+    }
+
+    .translation {
+      color: #888;
+      font-size: 0.85rem;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Highlight class for the inserted 'e' */
+    .accent-change {
+      color: #ffeb3b; /* Bright Yellow */
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255, 235, 59, 0.5);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 400px) {
+      h2 { font-size: 2.2rem; }
+      td, th { padding: 8px 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    
+    <header class="header-section">
+      <h1>Verbs Ending in -ger</h1>
+      <p class="subtitle">(g → ge)</p>
+
+      <div class="guidance-box">
+        <p>
+          <strong>The "Soft G" Rule:</strong> To preserve the soft "g" sound (as in <em>mange</em>), an extra <strong>e</strong> is added after the <strong>g</strong> before vowels like "o". This specifically happens in the <strong>Nous</strong> form (<em>e.g., nous mang<strong>e</strong>ons</em>).
+        </p>
+      </div>
+    </header>
+
+    <h2 id="word"></h2>
+    <div id="meaning"></div>
+
+    <input id="input" autocomplete="off" autofocus inputmode="text" spellcheck="false" placeholder="Type the verb..." />
+
+    <button id="meaningBtn">Show Pronunciation</button>
+
+    <div id="conjugation-container" class="table-container">
+      <table id="conjugation-table">
+        <thead>
+          <tr>
+            <th>Pronoun</th>
+            <th>Sentence</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <button id="nextBtn">Next Verb ➔</button>
+  </div>
+
+  <script>
+    // 1. DATA: Verbs + Sentences (-ger)
+    const verbs = [
+      { fr: "voyager", en: "to travel", pron: "vwah-yah-zhay" },
+      { fr: "bouger", en: "to move", pron: "boo-zhay" },
+      { fr: "changer", en: "to change", pron: "shahn-zhay" },
+      { fr: "corriger", en: "to correct", pron: "koh-ree-zhay" },
+      { fr: "dégager", en: "to release, to free", pron: "day-gah-zhay" },
+      { fr: "déménager", en: "to move (house)", pron: "day-may-nah-zhay" },
+      { fr: "encourager", en: "to encourage", pron: "ahn-koo-rah-zhay" },
+      { fr: "exiger", en: "to demand", pron: "eg-zee-zhay" },
+      { fr: "héberger", en: "to host", pron: "ay-bair-zhay" },
+      { fr: "manger", en: "to eat", pron: "mahn-zhay" },
+      { fr: "mélanger", en: "to mix", pron: "may-lahn-zhay" },
+      { fr: "nager", en: "to swim", pron: "nah-zhay" },
+      { fr: "négliger", en: "to neglect", pron: "nay-glee-zhay" },
+      { fr: "partager", en: "to share", pron: "par-tah-zhay" },
+      { fr: "plonger", en: "to dive", pron: "plohn-zhay" },
+      { fr: "protéger", en: "to protect", pron: "proh-tay-zhay" },
+      { fr: "ranger", en: "to put away", pron: "rahn-zhay" },
+      { fr: "venger", en: "to avenge", pron: "vahn-zhay" }
+    ];
+
+    const sentences = [
+      {
+        verb: "voyager",
+        je: { fr: "Je voyage souvent.", en: "I travel often." },
+        tu: { fr: "Tu voyages pour ton travail.", en: "You travel for your work." },
+        singular: { fr: "Elle voyage en train.", en: "She travels by train." },
+        nous: { fr: "Nous voyageons léger.", en: "We travel light." },
+        vous: { fr: "Vous voyagez en été ?", en: "Do you travel in summer?" },
+        plural: { fr: "Ils voyagent autour du monde.", en: "They travel around the world." }
+      },
+      {
+        verb: "bouger",
+        je: { fr: "Je bouge beaucoup.", en: "I move a lot." },
+        tu: { fr: "Tu bouges la table ?", en: "Are you moving the table?" },
+        singular: { fr: "Il ne bouge pas d'un centimètre.", en: "He doesn't move an inch." },
+        nous: { fr: "Nous bougeons les meubles.", en: "We are moving the furniture." },
+        vous: { fr: "Vous bougez de place ?", en: "Are you changing seats?" },
+        plural: { fr: "Les feuilles bougent avec le vent.", en: "The leaves move with the wind." }
+      },
+      {
+        verb: "changer",
+        je: { fr: "Je change d'avis.", en: "I change my mind." },
+        tu: { fr: "Tu changes de vêtements.", en: "You change clothes." },
+        singular: { fr: "On change la décoration.", en: "We are changing the decoration." },
+        nous: { fr: "Nous changeons l'heure.", en: "We are changing the time." },
+        vous: { fr: "Vous changez de train ici.", en: "You change trains here." },
+        plural: { fr: "Ils changent de stratégie.", en: "They are changing strategy." }
+      },
+      {
+        verb: "corriger",
+        je: { fr: "Je corrige les fautes.", en: "I correct the mistakes." },
+        tu: { fr: "Tu corriges ton devoir.", en: "You correct your homework." },
+        singular: { fr: "Le professeur corrige les copies.", en: "The teacher corrects the papers." },
+        nous: { fr: "Nous corrigeons nos erreurs.", en: "We correct our mistakes." },
+        vous: { fr: "Vous corrigez le tir.", en: "You correct the aim." },
+        plural: { fr: "Ils corrigent le texte.", en: "They correct the text." }
+      },
+      {
+        verb: "dégager",
+        je: { fr: "Je dégage la voie.", en: "I clear the way." },
+        tu: { fr: "Tu dégages la sortie.", en: "You clear the exit." },
+        singular: { fr: "Il dégage une bonne impression.", en: "He gives off a good impression." },
+        nous: { fr: "Nous dégageons un bénéfice.", en: "We generate a profit." },
+        vous: { fr: "Vous dégagez un parfum délicat.", en: "You give off a delicate perfume." },
+        plural: { fr: "Ils dégagent la route.", en: "They clear the road." }
+      },
+      {
+        verb: "déménager",
+        je: { fr: "Je déménage demain.", en: "I am moving tomorrow." },
+        tu: { fr: "Tu déménages à Lyon ?", en: "Are you moving to Lyon?" },
+        singular: { fr: "Elle déménage en octobre.", en: "She moves in October." },
+        nous: { fr: "Nous déménageons ce weekend.", en: "We are moving this weekend." },
+        vous: { fr: "Vous déménagez loin ?", en: "Are you moving far?" },
+        plural: { fr: "Ils déménagent chaque année.", en: "They move every year." }
+      },
+      {
+        verb: "encourager",
+        je: { fr: "J'encourage mon frère.", en: "I encourage my brother." },
+        tu: { fr: "Tu encourages l'équipe.", en: "You encourage the team." },
+        singular: { fr: "Il encourage toujours ses amis.", en: "He always encourages his friends." },
+        nous: { fr: "Nous encourageons les initiatives.", en: "We encourage initiatives." },
+        vous: { fr: "Vous encouragez les enfants.", en: "You encourage the children." },
+        plural: { fr: "Elles encouragent les débutants.", en: "They encourage the beginners." }
+      },
+      {
+        verb: "exiger",
+        je: { fr: "J'exige une explication.", en: "I demand an explanation." },
+        tu: { fr: "Tu exiges le silence.", en: "You demand silence." },
+        singular: { fr: "Le contrat exige une signature.", en: "The contract requires a signature." },
+        nous: { fr: "Nous exigeons des comptes.", en: "We demand accountability." },
+        vous: { fr: "Vous exigez trop de vous.", en: "You demand too much of yourself." },
+        plural: { fr: "Ils exigent un remboursement.", en: "They demand a refund." }
+      },
+      {
+        verb: "héberger",
+        je: { fr: "J'héberge un ami.", en: "I am hosting a friend." },
+        tu: { fr: "Tu héberges le site web.", en: "You host the website." },
+        singular: { fr: "Il héberge des réfugiés.", en: "He hosts refugees." },
+        nous: { fr: "Nous hébergeons les invités.", en: "We host the guests." },
+        vous: { fr: "Vous hébergez sur quel serveur ?", en: "Which server do you host on?" },
+        plural: { fr: "Ils hébergent l'événement.", en: "They are hosting the event." }
+      },
+      {
+        verb: "manger",
+        je: { fr: "Je mange une pomme.", en: "I eat an apple." },
+        tu: { fr: "Tu manges trop vite.", en: "You eat too fast." },
+        singular: { fr: "Il mange à la cantine.", en: "He eats at the cafeteria." },
+        nous: { fr: "Nous mangeons ensemble.", en: "We eat together." },
+        vous: { fr: "Vous mangez de la viande ?", en: "Do you eat meat?" },
+        plural: { fr: "Elles mangent des pâtes.", en: "They eat pasta." }
+      },
+      {
+        verb: "mélanger",
+        je: { fr: "Je mélange les couleurs.", en: "I mix the colors." },
+        tu: { fr: "Tu mélanges la pâte.", en: "You mix the dough." },
+        singular: { fr: "Elle mélange les genres.", en: "She mixes genres." },
+        nous: { fr: "Nous mélangeons les ingrédients.", en: "We mix the ingredients." },
+        vous: { fr: "Vous mélangez les cartes.", en: "You shuffle the cards." },
+        plural: { fr: "Ils mélangent tout !", en: "They mix everything up!" }
+      },
+      {
+        verb: "nager",
+        je: { fr: "Je nage chaque matin.", en: "I swim every morning." },
+        tu: { fr: "Tu nages très bien.", en: "You swim very well." },
+        singular: { fr: "Elle nage dans la mer.", en: "She swims in the sea." },
+        nous: { fr: "Nous nageons dans la piscine.", en: "We swim in the pool." },
+        vous: { fr: "Vous nagez avec des palmes ?", en: "Do you swim with flippers?" },
+        plural: { fr: "Ils nagent comme des poissons.", en: "They swim like fish." }
+      },
+      {
+        verb: "négliger",
+        je: { fr: "Je néglige mon jardin.", en: "I neglect my garden." },
+        tu: { fr: "Tu négliges ta santé.", en: "You neglect your health." },
+        singular: { fr: "Il néglige son apparence.", en: "He neglects his appearance." },
+        nous: { fr: "Nous négligeons nos devoirs.", en: "We neglect our duties." },
+        vous: { fr: "Vous négligez les détails.", en: "You neglect the details." },
+        plural: { fr: "Elles négligent leurs amis.", en: "They neglect their friends." }
+      },
+      {
+        verb: "partager",
+        je: { fr: "Je partage mon repas.", en: "I share my meal." },
+        tu: { fr: "Tu partages tes idées.", en: "You share your ideas." },
+        singular: { fr: "Il partage sa chambre.", en: "He shares his room." },
+        nous: { fr: "Nous partageons un bureau.", en: "We share an office." },
+        vous: { fr: "Vous partagez la note ?", en: "Do you share the bill?" },
+        plural: { fr: "Ils partagent leurs soucis.", en: "They share their worries." }
+      },
+      {
+        verb: "plonger",
+        je: { fr: "Je plonge dans la piscine.", en: "I dive into the pool." },
+        tu: { fr: "Tu plonges en apnée.", en: "You freedive." },
+        singular: { fr: "Il plonge tête la première.", en: "He dives headfirst." },
+        nous: { fr: "Nous plongeons dans le travail.", en: "We dive into work." },
+        vous: { fr: "Vous plongez vers les fonds marins.", en: "You dive towards the seabed." },
+        plural: { fr: "Ils plongent pour des perles.", en: "They dive for pearls." }
+      },
+      {
+        verb: "protéger",
+        je: { fr: "Je protège ma famille.", en: "I protect my family." },
+        tu: { fr: "Tu protèges ton ordinateur.", en: "You protect your computer." },
+        singular: { fr: "La loi protège les citoyens.", en: "The law protects citizens." },
+        nous: { fr: "Nous protégeons l'environnement.", en: "We protect the environment." },
+        vous: { fr: "Vous protégez vos données.", en: "You protect your data." },
+        plural: { fr: "Ils protègent le secret.", en: "They protect the secret." }
+      },
+      {
+        verb: "ranger",
+        je: { fr: "Je range ma chambre.", en: "I tidy my room." },
+        tu: { fr: "Tu ranges tes affaires.", en: "You tidy your things." },
+        singular: { fr: "Il range le garage.", en: "He tidies the garage." },
+        nous: { fr: "Nous rangeons la maison.", en: "We tidy the house." },
+        vous: { fr: "Vous rangez les documents ?", en: "Are you filing the documents?" },
+        plural: { fr: "Elles rangent la cuisine.", en: "They are tidying the kitchen." }
+      },
+      {
+        verb: "venger",
+        je: { fr: "Je venge mon honneur.", en: "I avenge my honor." },
+        tu: { fr: "Tu venges ton frère.", en: "You avenge your brother." },
+        singular: { fr: "Il venge son père.", en: "He avenges his father." },
+        nous: { fr: "Nous vengeons cet affront.", en: "We avenge this affront." },
+        vous: { fr: "Vous vengez votre famille.", en: "You avenge your family." },
+        plural: { fr: "Elles vengent leur peuple.", en: "They avenge their people." }
+      }
+    ];
+
+    // 2. LOGIC
+    let index = 0;
+    let isStudying = false; 
+
+    const wordEl = document.getElementById("word");
+    const inputEl = document.getElementById("input");
+    const meaningEl = document.getElementById("meaning");
+    const meaningBtn = document.getElementById("meaningBtn");
+    const tableContainer = document.getElementById("conjugation-container");
+    const tableBody = document.getElementById("table-body");
+    const nextBtn = document.getElementById("nextBtn");
+
+    // NEW LOGIC: Highlights the 'e' inside 'geons'
+    function highlightStemChange(sentence, verbInfinitive) {
+      let words = sentence.split(" ");
+      
+      const stemStart = verbInfinitive.substring(0, 3).toLowerCase();
+
+      const verbIndex = words.findIndex(w => {
+        const cleanWord = w.toLowerCase().replace("j'", "").replace("l'", "");
+        return cleanWord.startsWith(stemStart);
+      });
+
+      if (verbIndex !== -1) {
+        let targetWord = words[verbIndex];
+        
+        // Check for 'geons' (The Nous form rule)
+        // We replace 'geons' with 'g' + highlighted 'e' + 'ons'
+        if (targetWord.includes("geons")) {
+           words[verbIndex] = targetWord.replace("geons", 'g<span class="accent-change">e</span>ons');
+        }
+      }
+
+      return words.join(" ");
+    }
+
+    function speakText(text, lang) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      window.speechSynthesis.speak(u);
+    }
+
+    function showWord() {
+      isStudying = false;
+      wordEl.textContent = verbs[index].fr;
+      meaningEl.textContent = verbs[index].en;
+      inputEl.value = "";
+      inputEl.disabled = false;
+      inputEl.focus();
+      inputEl.classList.remove("correct");
+
+      tableContainer.style.display = "none";
+      nextBtn.style.display = "none";
+    }
+
+    function renderTable() {
+      const data = sentences[index];
+      const keys = [
+        { key: "je", label: "Je/J'" },
+        { key: "tu", label: "Tu" },
+        { key: "singular", label: "Il/Elle/On" },
+        { key: "nous", label: "Nous" },
+        { key: "vous", label: "Vous" },
+        { key: "plural", label: "Ils/Elles" },
+      ];
+
+      let html = "";
+      keys.forEach((k, i) => {
+        // Apply the highlight
+        const formattedSentence = highlightStemChange(data[k.key].fr, data.verb);
+
+        html += `
+      <tr id="row-${i}" onclick="readRow(${i})">
+        <td><strong>${k.label}</strong></td>
+        <td>
+          ${formattedSentence} <span class="translation">${data[k.key].en}</span>
+        </td>
+      </tr>
+    `;
+      });
+      tableBody.innerHTML = html;
+    }
+
+    function readAllSentences() {
+      window.speechSynthesis.cancel(); 
+
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+
+      keys.forEach((key, i) => {
+        const text = data[key].fr;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "fr-FR";
+        utterance.rate = 0.9; 
+
+        utterance.onstart = () => {
+          document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+          document.getElementById(`row-${i}`).classList.add("active-row");
+        };
+
+        utterance.onend = () => {
+          document.getElementById(`row-${i}`).classList.remove("active-row");
+        };
+
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    window.readRow = function (rowIndex) {
+      window.speechSynthesis.cancel();
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+      const text = data[keys[rowIndex]].fr;
+
+      document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+      const row = document.getElementById(`row-${rowIndex}`);
+      row.classList.add("active-row");
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      u.onend = () => row.classList.remove("active-row");
+      window.speechSynthesis.speak(u);
+    };
+
+    inputEl.addEventListener("input", () => {
+      if (isStudying) return; 
+
+      const val = inputEl.value.toLowerCase().trim();
+      if (val === verbs[index].fr.toLowerCase()) {
+        isStudying = true;
+        inputEl.classList.add("correct");
+        inputEl.disabled = true; 
+
+        meaningEl.textContent = verbs[index].pron;
+        renderTable();
+        tableContainer.style.display = "block";
+        nextBtn.style.display = "block";
+        nextBtn.focus(); 
+
+        setTimeout(() => {
+          readAllSentences();
+        }, 500);
+      }
+    });
+
+    meaningBtn.addEventListener("click", () => {
+      meaningEl.textContent = verbs[index].pron;
+    });
+
+    nextBtn.addEventListener("click", () => {
+      window.speechSynthesis.cancel(); 
+      index++;
+      if (index < verbs.length) {
+        showWord();
+      } else {
+        document.querySelector(".app").innerHTML = `
+        <h1>🎉 Félicitations !</h1>
+        <h2>You finished the list.</h2>
+        <button onclick="location.reload()">Restart</button>
+      `;
+      }
+    });
+
+    showWord();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>French Conjugation Trainer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+      background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 650px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Header Section */
+    .header-section {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 5px 0;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #4da3ff;
+      margin: 0 0 15px 0;
+      font-weight: 500;
+    }
+
+    .guidance-box {
+      background: rgba(255, 255, 255, 0.08);
+      border-left: 4px solid #4da3ff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      text-align: left;
+      margin: 0 auto;
+      max-width: 95%;
+    }
+
+    .guidance-box p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #ddd;
+    }
+
+    .guidance-box strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Word & Input */
+    h2 {
+      font-size: 3rem;
+      margin: 10px 0;
+      letter-spacing: 1px;
+      color: #4da3ff;
+    }
+
+    input {
+      width: 100%;
+      font-size: 1.8rem;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      text-align: center;
+      background: #222;
+      color: #fff;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4da3ff;
+      background: #1e1e1e;
+    }
+
+    input.correct {
+      border-color: #4ade80;
+      background: #1a3320;
+      color: #4ade80;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    #meaningBtn {
+      background: #333;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+
+    #meaningBtn:hover {
+      background: #444;
+    }
+
+    #nextBtn {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #003311;
+      display: none;
+      margin-top: 20px;
+    }
+
+    #meaning {
+      min-height: 1.5em;
+      font-size: 1.1rem;
+      opacity: 0.85;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Table Styles */
+    .table-container {
+      width: 100%;
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    th {
+      background: #2a2a2a;
+      color: #aaa;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    /* The "Pointer" Effect */
+    tr.active-row {
+      background-color: #4da3ff33;
+      border-left: 4px solid #4da3ff;
+    }
+
+    tr.active-row td {
+      color: #fff;
+    }
+
+    .translation {
+      color: #888;
+      font-size: 0.85rem;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Highlight class for the ç */
+    .accent-change {
+      color: #ffeb3b; /* Bright Yellow */
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255, 235, 59, 0.5);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 400px) {
+      h2 { font-size: 2.2rem; }
+      td, th { padding: 8px 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    
+    <header class="header-section">
+      <h1>Verbs Ending in -cer</h1>
+      <p class="subtitle">(c → ç)</p>
+
+      <div class="guidance-box">
+        <p>
+          <strong>The Cedilla Rule:</strong> To preserve the soft "s" sound, the letter <strong>c</strong> changes to <strong>ç</strong> (c-cedilla) when followed by an "o". This specifically happens in the <strong>Nous</strong> form (<em>e.g., nous commençons</em>).
+        </p>
+      </div>
+    </header>
+
+    <h2 id="word"></h2>
+    <div id="meaning"></div>
+
+    <input id="input" autocomplete="off" autofocus inputmode="text" spellcheck="false" placeholder="Type the verb..." />
+
+    <button id="meaningBtn">Show Pronunciation</button>
+
+    <div id="conjugation-container" class="table-container">
+      <table id="conjugation-table">
+        <thead>
+          <tr>
+            <th>Pronoun</th>
+            <th>Sentence</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <button id="nextBtn">Next Verb ➔</button>
+  </div>
+
+  <script>
+    // 1. DATA: Verbs + Sentences (-cer)
+    const verbs = [
+      { fr: "annoncer", en: "to announce", pron: "ah-nohn-say" },
+      { fr: "avancer", en: "to move forward", pron: "ah-vahn-say" },
+      { fr: "balancer", en: "to swing", pron: "bah-lahn-say" },
+      { fr: "commencer", en: "to start, to begin", pron: "koh-mahn-say" },
+      { fr: "défoncer", en: "to smash in", pron: "day-fohn-say" },
+      { fr: "déplacer", en: "to move", pron: "day-plah-say" },
+      { fr: "devancer", en: "to get ahead of", pron: "duh-vahn-say" },
+      { fr: "effacer", en: "to erase", pron: "eh-fah-say" },
+      { fr: "épicer", en: "to spice", pron: "ay-pee-say" },
+      { fr: "financer", en: "to finance", pron: "fee-nahn-say" },
+      { fr: "grimacer", en: "to make faces", pron: "gree-mah-say" },
+      { fr: "influencer", en: "to influence", pron: "an-flew-ahn-say" },
+      { fr: "lacer", en: "to lace up, to tie", pron: "lah-say" },
+      { fr: "menacer", en: "to threaten", pron: "muh-nah-say" },
+      { fr: "percer", en: "to pierce", pron: "pair-say" },
+      { fr: "placer", en: "to place", pron: "plah-say" },
+      { fr: "poncer", en: "to sand", pron: "pohn-say" },
+      { fr: "remplacer", en: "to replace", pron: "rahn-plah-say" },
+      { fr: "renoncer", en: "to give up", pron: "ruh-nohn-say" }
+    ];
+
+    const sentences = [
+      {
+        verb: "annoncer",
+        je: { fr: "J'annonce une bonne nouvelle.", en: "I announce good news." },
+        tu: { fr: "Tu annonces ton départ.", en: "You announce your departure." },
+        singular: { fr: "Il annonce les résultats.", en: "He announces the results." },
+        nous: { fr: "Nous annonçons notre mariage.", en: "We announce our wedding." },
+        vous: { fr: "Vous annoncez le programme.", en: "You announce the program." },
+        plural: { fr: "Ils annoncent leur visite.", en: "They announce their visit." }
+      },
+      {
+        verb: "avancer",
+        je: { fr: "J'avance dans mon livre.", en: "I am progressing in my book." },
+        tu: { fr: "Tu avances l'heure ?", en: "Are you moving the time forward?" },
+        singular: { fr: "L'équipe avance rapidement.", en: "The team is moving forward quickly." },
+        nous: { fr: "Nous avançons la réunion.", en: "We are moving the meeting forward." },
+        vous: { fr: "Vous avancez la voiture ?", en: "Are you moving the car?" },
+        plural: { fr: "Ils avancent vers leur but.", en: "They are advancing towards their goal." }
+      },
+      {
+        verb: "balancer",
+        je: { fr: "Je balance le bébé.", en: "I swing the baby." },
+        tu: { fr: "Tu balances les bagages.", en: "You toss the luggage." },
+        singular: { fr: "Il balance son associé.", en: "He betrays his partner." },
+        nous: { fr: "Nous balançons sur une chaise.", en: "We are swinging on a chair." },
+        vous: { fr: "Vous balancez les bras en marchant.", en: "You swing your arms while walking." },
+        plural: { fr: "Ils balancent le coupable.", en: "They turn in the culprit." }
+      },
+      {
+        verb: "commencer",
+        je: { fr: "Je commence à comprendre.", en: "I am beginning to understand." },
+        tu: { fr: "Tu commences le travail.", en: "You start work." },
+        singular: { fr: "Le film commence à 20h.", en: "The movie starts at 8pm." },
+        nous: { fr: "Nous commençons les cours.", en: "We are starting classes." },
+        vous: { fr: "Vous commencez quand ?", en: "When do you start?" },
+        plural: { fr: "Elles commencent un nouveau projet.", en: "They are starting a new project." }
+      },
+      {
+        verb: "défoncer",
+        je: { fr: "Je défonce la porte.", en: "I smash the door in." },
+        tu: { fr: "Tu défonces un mur.", en: "You smash a wall." },
+        singular: { fr: "Il défonce un champ.", en: "He plows a field." },
+        nous: { fr: "Nous défonçons les cloisons.", en: "We are smashing the partitions." },
+        vous: { fr: "Vous défoncez la vieille armoire.", en: "You are smashing the old wardrobe." },
+        plural: { fr: "Ils défoncent tout sur leur passage.", en: "They smash everything in their path." }
+      },
+      {
+        verb: "déplacer",
+        je: { fr: "Je déplace le meuble.", en: "I move the furniture." },
+        tu: { fr: "Tu déplaces le problème.", en: "You shift the problem." },
+        singular: { fr: "On déplace la réunion.", en: "We are moving the meeting." },
+        nous: { fr: "Nous déplaçons des montagnes.", en: "We move mountains." },
+        vous: { fr: "Vous déplacez en voiture ?", en: "Do you travel by car?" },
+        plural: { fr: "Ils déplacent la frontière.", en: "They are moving the border." }
+      },
+      {
+        verb: "devancer",
+        je: { fr: "Je devance mes concurrents.", en: "I get ahead of my competitors." },
+        tu: { fr: "Tu devances l'horaire.", en: "You are ahead of schedule." },
+        singular: { fr: "Il devance le leader.", en: "He gets ahead of the leader." },
+        nous: { fr: "Nous devançons l'appel.", en: "We anticipate the call." },
+        vous: { fr: "Vous devancez toujours les autres.", en: "You always get ahead of others." },
+        plural: { fr: "Ils devancent toutes les prévisions.", en: "They exceed all forecasts." }
+      },
+      {
+        verb: "effacer",
+        je: { fr: "J'efface le tableau.", en: "I erase the board." },
+        tu: { fr: "Tu effaces tes messages.", en: "You erase your messages." },
+        singular: { fr: "Elle efface ses traces.", en: "She covers her tracks." },
+        nous: { fr: "Nous effaçons nos dettes.", en: "We are wiping out our debts." },
+        vous: { fr: "Vous effacez les fichiers.", en: "You are deleting the files." },
+        plural: { fr: "Ils effacent les mauvais souvenirs.", en: "They erase bad memories." }
+      },
+      {
+        verb: "épicer",
+        je: { fr: "J'épice le plat.", en: "I spice the dish." },
+        tu: { fr: "Tu épices ta vie.", en: "You spice up your life." },
+        singular: { fr: "Elle épice la sauce.", en: "She spices the sauce." },
+        nous: { fr: "Nous épiçons le ragoût.", en: "We are spicing the stew." },
+        vous: { fr: "Vous épicez avec du piment ?", en: "Do you spice with chili?" },
+        plural: { fr: "Ils épicent trop leurs histoires.", en: "They spice up their stories too much." }
+      },
+      {
+        verb: "financer",
+        je: { fr: "Je finance mes études.", en: "I finance my studies." },
+        tu: { fr: "Tu finances le projet.", en: "You finance the project." },
+        singular: { fr: "L'état finance la recherche.", en: "The state finances research." },
+        nous: { fr: "Nous finançons une association.", en: "We finance an association." },
+        vous: { fr: "Vous financez par une banque ?", en: "Do you finance through a bank?" },
+        plural: { fr: "Ils financent la construction.", en: "They finance the construction." }
+      },
+      {
+        verb: "grimacer",
+        je: { fr: "Je grimace de douleur.", en: "I wince in pain." },
+        tu: { fr: "Tu grimaces en mangeant.", en: "You make a face while eating." },
+        singular: { fr: "L'enfant grimace pour faire rire.", en: "The child makes faces to make people laugh." },
+        nous: { fr: "Nous grimaçons dans le miroir.", en: "We make faces in the mirror." },
+        vous: { fr: "Vous grimacez devant la caméra.", en: "You make faces at the camera." },
+        plural: { fr: "Ils grimacent en voyant la photo.", en: "They make a face seeing the photo." }
+      },
+      {
+        verb: "influencer",
+        je: { fr: "J'influence sa décision.", en: "I influence his decision." },
+        tu: { fr: "Tu influences tes amis.", en: "You influence your friends." },
+        singular: { fr: "Cela influence le résultat.", en: "That influences the result." },
+        nous: { fr: "Nous influençons l'opinion.", en: "We influence opinion." },
+        vous: { fr: "Vous influencez la discussion.", en: "You influence the discussion." },
+        plural: { fr: "Les médias influencent le public.", en: "The media influence the public." }
+      },
+      {
+        verb: "lacer",
+        je: { fr: "Je lace mes chaussures.", en: "I lace my shoes." },
+        tu: { fr: "Tu laces tes bottes.", en: "You lace your boots." },
+        singular: { fr: "Elle lace son corset.", en: "She laces her corset." },
+        nous: { fr: "Nous laçons les patins.", en: "We lace the skates." },
+        vous: { fr: "Vous lacez le sac ?", en: "Do you lace the bag?" },
+        plural: { fr: "Ils lacent leurs gilets.", en: "They lace their vests." }
+      },
+      {
+        verb: "menacer",
+        je: { fr: "Je menace de partir.", en: "I threaten to leave." },
+        tu: { fr: "Tu menaces ton frère ?", en: "Are you threatening your brother?" },
+        singular: { fr: "L'orage menace.", en: "The storm is threatening." },
+        nous: { fr: "Nous menaçons de porter plainte.", en: "We threaten to file a complaint." },
+        vous: { fr: "Vous menacez personne.", en: "You threaten no one." },
+        plural: { fr: "Ils menacent la sécurité.", en: "They threaten security." }
+      },
+      {
+        verb: "percer",
+        je: { fr: "Je perce un trou.", en: "I drill a hole." },
+        tu: { fr: "Tu perces un abcès.", en: "You lance an abscess." },
+        singular: { fr: "Le dentiste perce la dent.", en: "The dentist drills the tooth." },
+        nous: { fr: "Nous perçons le mur.", en: "We drill into the wall." },
+        vous: { fr: "Vous percez une coquille.", en: "You pierce a shell." },
+        plural: { fr: "Ils percent les défenses.", en: "They breach the defenses." }
+      },
+      {
+        verb: "placer",
+        je: { fr: "Je place mon argent.", en: "I invest my money." },
+        tu: { fr: "Tu places tes espoirs en lui.", en: "You place your hopes in him." },
+        singular: { fr: "Il place ses affaires sur la table.", en: "He puts his things on the table." },
+        nous: { fr: "Nous plaçons la confiance en vous.", en: "We place our trust in you." },
+        vous: { fr: "Vous placez vos paris.", en: "You place your bets." },
+        plural: { fr: "Ils placent l'enfant en sécurité.", en: "They place the child in safety." }
+      },
+      {
+        verb: "poncer",
+        je: { fr: "Je ponce le parquet.", en: "I sand the floor." },
+        tu: { fr: "Tu ponces la table.", en: "You sand the table." },
+        singular: { fr: "Il ponce les angles.", en: "He sands the corners." },
+        nous: { fr: "Nous ponçons les murs.", en: "We sand the walls." },
+        vous: { fr: "Vous poncez avant de peindre.", en: "You sand before painting." },
+        plural: { fr: "Ils poncent le bois brut.", en: "They sand the raw wood." }
+      },
+      {
+        verb: "remplacer",
+        je: { fr: "Je remplace mon collègue.", en: "I replace my colleague." },
+        tu: { fr: "Tu remplaces le sucre par du miel.", en: "You replace sugar with honey." },
+        singular: { fr: "Elle remplace la pièce cassée.", en: "She replaces the broken part." },
+        nous: { fr: "Nous remplaçons le manager.", en: "We are replacing the manager." },
+        vous: { fr: "Vous remplacez l'ancien système ?", en: "Are you replacing the old system?" },
+        plural: { fr: "Ils remplacent les travailleurs.", en: "They replace the workers." }
+      },
+      {
+        verb: "renoncer",
+        je: { fr: "Je renonce à mes droits.", en: "I waive my rights." },
+        tu: { fr: "Tu renonces trop vite.", en: "You give up too fast." },
+        singular: { fr: "Il renonce à son tour.", en: "He skips his turn." },
+        nous: { fr: "Nous renonçons au projet.", en: "We are giving up on the project." },
+        vous: { fr: "Vous renoncez au sucre ?", en: "Are you giving up sugar?" },
+        plural: { fr: "Elles renoncent à comprendre.", en: "They give up trying to understand." }
+      }
+    ];
+
+    // 2. LOGIC
+    let index = 0;
+    let isStudying = false; 
+
+    const wordEl = document.getElementById("word");
+    const inputEl = document.getElementById("input");
+    const meaningEl = document.getElementById("meaning");
+    const meaningBtn = document.getElementById("meaningBtn");
+    const tableContainer = document.getElementById("conjugation-container");
+    const tableBody = document.getElementById("table-body");
+    const nextBtn = document.getElementById("nextBtn");
+
+    // NEW LOGIC: Highlights "ç" specifically
+    function highlightStemChange(sentence, verbInfinitive) {
+      let words = sentence.split(" ");
+      
+      const stemStart = verbInfinitive.substring(0, 3).toLowerCase();
+
+      const verbIndex = words.findIndex(w => {
+        const cleanWord = w.toLowerCase().replace("j'", "").replace("l'", "");
+        return cleanWord.startsWith(stemStart);
+      });
+
+      if (verbIndex !== -1) {
+        let targetWord = words[verbIndex];
+        
+        // Check if the word contains 'ç'
+        if (targetWord.includes("ç")) {
+           words[verbIndex] = targetWord.replace("ç", '<span class="accent-change">ç</span>');
+        }
+      }
+
+      return words.join(" ");
+    }
+
+    function speakText(text, lang) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      window.speechSynthesis.speak(u);
+    }
+
+    function showWord() {
+      isStudying = false;
+      wordEl.textContent = verbs[index].fr;
+      meaningEl.textContent = verbs[index].en;
+      inputEl.value = "";
+      inputEl.disabled = false;
+      inputEl.focus();
+      inputEl.classList.remove("correct");
+
+      tableContainer.style.display = "none";
+      nextBtn.style.display = "none";
+    }
+
+    function renderTable() {
+      const data = sentences[index];
+      const keys = [
+        { key: "je", label: "Je/J'" },
+        { key: "tu", label: "Tu" },
+        { key: "singular", label: "Il/Elle/On" },
+        { key: "nous", label: "Nous" },
+        { key: "vous", label: "Vous" },
+        { key: "plural", label: "Ils/Elles" },
+      ];
+
+      let html = "";
+      keys.forEach((k, i) => {
+        // Apply the 'ç' highlight
+        const formattedSentence = highlightStemChange(data[k.key].fr, data.verb);
+
+        html += `
+      <tr id="row-${i}" onclick="readRow(${i})">
+        <td><strong>${k.label}</strong></td>
+        <td>
+          ${formattedSentence} <span class="translation">${data[k.key].en}</span>
+        </td>
+      </tr>
+    `;
+      });
+      tableBody.innerHTML = html;
+    }
+
+    function readAllSentences() {
+      window.speechSynthesis.cancel(); 
+
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+
+      keys.forEach((key, i) => {
+        const text = data[key].fr;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "fr-FR";
+        utterance.rate = 0.9; 
+
+        utterance.onstart = () => {
+          document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+          document.getElementById(`row-${i}`).classList.add("active-row");
+        };
+
+        utterance.onend = () => {
+          document.getElementById(`row-${i}`).classList.remove("active-row");
+        };
+
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    window.readRow = function (rowIndex) {
+      window.speechSynthesis.cancel();
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+      const text = data[keys[rowIndex]].fr;
+
+      document.querySelectorAll("tr").forEach((tr) => tr.classList.remove("active-row"));
+      const row = document.getElementById(`row-${rowIndex}`);
+      row.classList.add("active-row");
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      u.onend = () => row.classList.remove("active-row");
+      window.speechSynthesis.speak(u);
+    };
+
+    inputEl.addEventListener("input", () => {
+      if (isStudying) return; 
+
+      const val = inputEl.value.toLowerCase().trim();
+      if (val === verbs[index].fr.toLowerCase()) {
+        isStudying = true;
+        inputEl.classList.add("correct");
+        inputEl.disabled = true; 
+
+        meaningEl.textContent = verbs[index].pron;
+        renderTable();
+        tableContainer.style.display = "block";
+        nextBtn.style.display = "block";
+        nextBtn.focus(); 
+
+        setTimeout(() => {
+          readAllSentences();
+        }, 500);
+      }
+    });
+
+    meaningBtn.addEventListener("click", () => {
+      meaningEl.textContent = verbs[index].pron;
+    });
+
+    nextBtn.addEventListener("click", () => {
+      window.speechSynthesis.cancel(); 
+      index++;
+      if (index < verbs.length) {
+        showWord();
+      } else {
+        document.querySelector(".app").innerHTML = `
+        <h1>🎉 Félicitations !</h1>
+        <h2>You finished the list.</h2>
+        <button onclick="location.reload()">Restart</button>
+      `;
+      }
+    });
+
+    showWord();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>French Conjugation Trainer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+      background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 600px;
+      /* Made wider for the table */
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      opacity: 0.85;
+      margin: 0;
+    }
+
+    h2 {
+      font-size: 3rem;
+      margin: 10px 0;
+      letter-spacing: 1px;
+      color: #4da3ff;
+    }
+
+    input {
+      width: 100%;
+      font-size: 1.8rem;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      text-align: center;
+      background: #222;
+      color: #fff;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4da3ff;
+      background: #1e1e1e;
+    }
+
+    input.correct {
+      border-color: #4ade80;
+      background: #1a3320;
+      color: #4ade80;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    #meaningBtn {
+      background: #333;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+
+    #meaningBtn:hover {
+      background: #444;
+    }
+
+    #nextBtn {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #003311;
+      display: none;
+      /* Hidden initially */
+      margin-top: 20px;
+    }
+
+    #meaning {
+      min-height: 1.5em;
+      font-size: 1.1rem;
+      opacity: 0.85;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Table Styles */
+    .table-container {
+      width: 100%;
+      margin-top: 20px;
+      display: none;
+      /* Hidden until correct */
+      animation: fadeIn 0.5s ease;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    th {
+      background: #2a2a2a;
+      color: #aaa;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    /* The "Pointer" Effect */
+    tr.active-row {
+      background-color: #4da3ff33;
+      /* Blue highlight */
+      border-left: 4px solid #4da3ff;
+    }
+
+    tr.active-row td {
+      color: #fff;
+    }
+
+    .translation {
+      color: #888;
+      font-size: 0.85rem;
+      display: block;
+      margin-top: 4px;
+    }
+
+
+    .accent-change {
+      color: #ffeb3b;
+      /* Bright Yellow */
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255, 235, 59, 0.5);
+      /* Glow effect */
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Mobile tweak */
+    @media (max-width: 400px) {
+      h2 {
+        font-size: 2.2rem;
+      }
+
+      td,
+      th {
+        padding: 8px 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>Accent Changing Verbs</h1>
+    <p class="subtitle">(e → è) and (é → è)</p>
+
+    <div class="guidance-box">
+      <p>
+        <strong>The "Boot" Rule:</strong> For these verbs, the stem changes to maintain pronunciation.
+        The accent changes to <strong>è</strong> when the ending is silent (<em>Je, Tu, Il, Ils</em>).
+        The stem remains unchanged for <strong>Nous</strong> and <strong>Vous</strong>.
+      </p>
+    </div>
+    </header>
+
+    <h2 id="word"></h2>
+    <div id="meaning"></div>
+
+    <input id="input" autocomplete="off" autofocus inputmode="text" spellcheck="false" placeholder="Type the verb..." />
+
+    <button id="meaningBtn">Show Pronunciation</button>
+
+    <div id="conjugation-container" class="table-container">
+      <table id="conjugation-table">
+        <thead>
+          <tr>
+            <th>Pronoun</th>
+            <th>Sentence</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <button id="nextBtn">Next Verb ➔</button>
+  </div>
+
+  <script>
+    // 1. DATA: Verbs + Sentences
+    const verbs = [
+      { fr: "acheter", en: "to buy", pron: "ahsh-tay" },
+      { fr: "achever", en: "to complete", pron: "ahsh-vay" },
+      { fr: "emmener", en: "to take along", pron: "ahm-nay" },
+      { fr: "enlever", en: "to remove", pron: "ahnl-vay" },
+      { fr: "lever", en: "to raise", pron: "luh-vay" },
+      { fr: "mener", en: "to lead", pron: "muh-nay" },
+      { fr: "peser", en: "to weigh", pron: "puh-zay" },
+      { fr: "semer", en: "to sow", pron: "suh-may" },
+      { fr: "répéter", en: "to repeat", pron: "ray-pay-tay" },
+      { fr: "céder", en: "to yield", pron: "say-day" },
+      { fr: "célébrer", en: "to celebrate", pron: "say-lay-bray" },
+      { fr: "considérer", en: "to consider", pron: "kohn-see-day-ray" },
+      { fr: "déléguer", en: "to delegate", pron: "day-lay-gay" },
+      { fr: "espérer", en: "to hope", pron: "ess-pay-ray" },
+      { fr: "exagérer", en: "to exaggerate", pron: "eg-zah-zhay-ray" },
+      { fr: "gérer", en: "to manage", pron: "zhay-ray" },
+      { fr: "lécher", en: "to lick", pron: "lay-shay" },
+      { fr: "posséder", en: "to own", pron: "poh-say-day" },
+      { fr: "préférer", en: "to prefer", pron: "pray-fay-ray" },
+      { fr: "révéler", en: "to reveal", pron: "ray-vay-lay" }
+    ];
+
+    const sentences = [
+      {
+        verb: "acheter",
+        je: { fr: "J'achète du pain.", en: "I am buying bread." },
+        tu: { fr: "Tu achètes un cadeau.", en: "You are buying a gift." },
+        singular: { fr: "Il achète une maison.", en: "He is buying a house." },
+        nous: { fr: "Nous achetons des fruits.", en: "We are buying fruit." },
+        vous: { fr: "Vous achetez une voiture ?", en: "Are you buying a car?" },
+        plural: { fr: "Ils achètent des vêtements.", en: "They are buying clothes." }
+      },
+      {
+        verb: "achever",
+        je: { fr: "J'achève mon travail.", en: "I am finishing my work." },
+        tu: { fr: "Tu achèves la bouteille.", en: "You are finishing the bottle." },
+        singular: { fr: "Il achève le blessé.", en: "He finishes off the wounded." },
+        nous: { fr: "Nous achevons la construction.", en: "We are completing the construction." },
+        vous: { fr: "Vous achevez le gâteau.", en: "You are finishing the cake." },
+        plural: { fr: "Ils achèvent leur mission.", en: "They are completing their mission." }
+      },
+      {
+        verb: "emmener",
+        je: { fr: "J'emmène mon chien.", en: "I am taking my dog along." },
+        tu: { fr: "Tu emmènes tes amis ?", en: "Are you taking your friends?" },
+        singular: { fr: "On emmène les enfants.", en: "We are taking the children." },
+        nous: { fr: "Nous emmenons un collègue.", en: "We are taking a colleague along." },
+        vous: { fr: "Vous emmenez un invité.", en: "You are bringing a guest." },
+        plural: { fr: "Ils emmènent leur équipe.", en: "They are taking their team." }
+      },
+      {
+        verb: "enlever",
+        je: { fr: "J'enlève mon manteau.", en: "I take off my coat." },
+        tu: { fr: "Tu enlèves la poussière.", en: "You are removing the dust." },
+        singular: { fr: "Elle enlève ses chaussures.", en: "She takes off her shoes." },
+        nous: { fr: "Nous enlevons les décorations.", en: "We are removing the decorations." },
+        vous: { fr: "Vous enlevez les taches.", en: "You are removing the stains." },
+        plural: { fr: "Ils enlèvent les ordures.", en: "They take out the trash." }
+      },
+      {
+        verb: "lever",
+        je: { fr: "Je lève la main.", en: "I raise my hand." },
+        tu: { fr: "Tu lèves les yeux.", en: "You look up." },
+        singular: { fr: "Elle lève la tête.", en: "She lifts her head." },
+        nous: { fr: "Nous levons les verres.", en: "We raise our glasses." },
+        vous: { fr: "Vous levez les poids ?", en: "Do you lift weights?" },
+        plural: { fr: "Ils lèvent le drapeau.", en: "They raise the flag." }
+      },
+      {
+        verb: "mener",
+        je: { fr: "Je mène le projet.", en: "I lead the project." },
+        tu: { fr: "Tu mènes une enquête.", en: "You are conducting an investigation." },
+        singular: { fr: "Il mène la danse.", en: "He leads the dance." },
+        nous: { fr: "Nous menons une vie tranquille.", en: "We lead a quiet life." },
+        vous: { fr: "Vous menez l'équipe.", en: "You lead the team." },
+        plural: { fr: "Elles mènent la discussion.", en: "They lead the discussion." }
+      },
+      {
+        verb: "peser",
+        je: { fr: "Je pèse les légumes.", en: "I weigh the vegetables." },
+        tu: { fr: "Tu pèses le colis.", en: "You weigh the package." },
+        singular: { fr: "Il pèse 80 kilos.", en: "He weighs 80 kilos." },
+        nous: { fr: "Nous pesons les options.", en: "We are weighing the options." },
+        vous: { fr: "Vous pesez les conséquences.", en: "You weigh the consequences." },
+        plural: { fr: "Ils pèsent très lourd.", en: "They weigh a lot." }
+      },
+      {
+        verb: "semer",
+        je: { fr: "Je sème des graines.", en: "I sow seeds." },
+        tu: { fr: "Tu sèmes la confusion.", en: "You sow confusion." },
+        singular: { fr: "Le fermier sème le blé.", en: "The farmer sows the wheat." },
+        nous: { fr: "Nous semons dans le jardin.", en: "We sow in the garden." },
+        vous: { fr: "Vous semez des idées.", en: "You spread ideas." },
+        plural: { fr: "Ils sèment des rumeurs.", en: "They spread rumors." }
+      },
+      {
+        verb: "répéter",
+        je: { fr: "Je répète la phrase.", en: "I repeat the sentence." },
+        tu: { fr: "Tu répètes la question.", en: "You repeat the question." },
+        singular: { fr: "Elle répète la chanson.", en: "She rehearses the song." },
+        nous: { fr: "Nous répétons la pièce.", en: "We rehearse the play." },
+        vous: { fr: "Vous répétez l'opération.", en: "You repeat the operation." },
+        plural: { fr: "Ils répètent leurs erreurs.", en: "They repeat their mistakes." }
+      },
+      {
+        verb: "céder",
+        je: { fr: "Je cède ma place.", en: "I give up my seat." },
+        tu: { fr: "Tu cèdes trop facilement.", en: "You give in too easily." },
+        singular: { fr: "Il cède à la pression.", en: "He yields to pressure." },
+        nous: { fr: "Nous cédons nos droits.", en: "We yield our rights." },
+        vous: { fr: "Vous cédez la priorité.", en: "You yield the right of way." },
+        plural: { fr: "Elles cèdent devant les menaces.", en: "They give in to threats." }
+      },
+      {
+        verb: "célébrer",
+        je: { fr: "Je célèbre mon anniversaire.", en: "I celebrate my birthday." },
+        tu: { fr: "Tu célèbres la victoire.", en: "You celebrate the victory." },
+        singular: { fr: "On célèbre un mariage.", en: "We celebrate a wedding." },
+        nous: { fr: "Nous célébrons Noël.", en: "We celebrate Christmas." },
+        vous: { fr: "Vous célébrez la réussite.", en: "You celebrate success." },
+        plural: { fr: "Ils célèbrent la fin des travaux.", en: "They celebrate the end of the work." }
+      },
+      {
+        verb: "considérer",
+        je: { fr: "Je considère cette offre.", en: "I consider this offer." },
+        tu: { fr: "Tu considères partir ?", en: "Are you considering leaving?" },
+        singular: { fr: "Il considère sa réponse.", en: "He considers his answer." },
+        nous: { fr: "Nous considérons toutes les options.", en: "We consider all options." },
+        vous: { fr: "Vous considérez cela comme important ?", en: "Do you consider that important?" },
+        plural: { fr: "Ils considèrent le projet terminé.", en: "They consider the project finished." }
+      },
+      {
+        verb: "espérer",
+        je: { fr: "J'espère avoir une réponse.", en: "I hope to have an answer." },
+        tu: { fr: "Tu espères gagner.", en: "You hope to win." },
+        singular: { fr: "Elle espère te voir bientôt.", en: "She hopes to see you soon." },
+        nous: { fr: "Nous espérons que tout va bien.", en: "We hope everything is fine." },
+        vous: { fr: "Vous espérez une promotion.", en: "You hope for a promotion." },
+        plural: { fr: "Ils espèrent un avenir meilleur.", en: "They hope for a better future." }
+      },
+      {
+        verb: "préférer",
+        je: { fr: "Je préfère le café.", en: "I prefer coffee." },
+        tu: { fr: "Tu préfères rester à la maison ?", en: "Do you prefer to stay home?" },
+        singular: { fr: "Il préfère le train.", en: "He prefers the train." },
+        nous: { fr: "Nous préférons manger tôt.", en: "We prefer to eat early." },
+        vous: { fr: "Vous préférez quel film ?", en: "Which film do you prefer?" },
+        plural: { fr: "Elles préfèrent l'été.", en: "They prefer summer." }
+      },
+      {
+        verb: "gérer",
+        je: { fr: "Je gère mon temps.", en: "I manage my time." },
+        tu: { fr: "Tu gères le budget.", en: "You manage the budget." },
+        singular: { fr: "Elle gère une équipe.", en: "She manages a team." },
+        nous: { fr: "Nous gérons la situation.", en: "We are handling the situation." },
+        vous: { fr: "Vous gérez le compte client.", en: "You manage the client account." },
+        plural: { fr: "Ils gèrent leur entreprise.", en: "They manage their company." }
+      },
+      {
+        verb: "posséder",
+        je: { fr: "Je possède une voiture.", en: "I own a car." },
+        tu: { fr: "Tu possèdes un talent rare.", en: "You possess a rare talent." },
+        singular: { fr: "Il possède une grande maison.", en: "He owns a big house." },
+        nous: { fr: "Nous possédons peu de choses.", en: "We own few things." },
+        vous: { fr: "Vous possédez les compétences nécessaires.", en: "You possess the necessary skills." },
+        plural: { fr: "Ils possèdent plusieurs magasins.", en: "They own several stores." }
+      },
+      {
+        verb: "exagérer",
+        je: { fr: "J'exagère un peu.", en: "I am exaggerating a little." },
+        tu: { fr: "Tu exagères toujours !", en: "You always exaggerate!" },
+        singular: { fr: "Il exagère l'importance du problème.", en: "He exaggerates the importance of the problem." },
+        nous: { fr: "Nous exagérons à peine.", en: "We are barely exaggerating." },
+        vous: { fr: "Vous exagérez la difficulté.", en: "You exaggerate the difficulty." },
+        plural: { fr: "Ils exagèrent avec leurs demandes.", en: "They go too far with their demands." }
+      },
+      {
+        verb: "révéler",
+        je: { fr: "Je révèle un secret.", en: "I reveal a secret." },
+        tu: { fr: "Tu révèles tes sentiments.", en: "You reveal your feelings." },
+        singular: { fr: "L'enquête révèle la vérité.", en: "The investigation reveals the truth." },
+        nous: { fr: "Nous révélons nos plans.", en: "We reveal our plans." },
+        vous: { fr: "Vous révélez vos intentions.", en: "You reveal your intentions." },
+        plural: { fr: "Les tests révèlent une anomalie.", en: "The tests reveal an anomaly." }
+      },
+      {
+        verb: "lécher",
+        je: { fr: "Je lèche ma glace.", en: "I am licking my ice cream." },
+        tu: { fr: "Tu lèches l'enveloppe.", en: "You lick the envelope." },
+        singular: { fr: "Le chien lèche son maître.", en: "The dog licks its master." },
+        nous: { fr: "Nous léchons nos assiettes !", en: "We are licking our plates!" },
+        vous: { fr: "Vous léchez les pots de peinture ?", en: "Are you licking the paint pots?" },
+        plural: { fr: "Les chats lèchent leur pelage.", en: "Cats lick their fur." }
+      },
+      {
+        verb: "déléguer",
+        je: { fr: "Je délègue cette tâche.", en: "I delegate this task." },
+        tu: { fr: "Tu délègues tes responsabilités.", en: "You delegate your responsibilities." },
+        singular: { fr: "Elle délègue rarement.", en: "She rarely delegates." },
+        nous: { fr: "Nous déléguons le travail.", en: "We delegate the work." },
+        vous: { fr: "Vous déléguez efficacement.", en: "You delegate effectively." },
+        plural: { fr: "Ils délèguent trop de pouvoirs.", en: "They delegate too much power." }
+      }
+    ];
+
+    // 2. LOGIC
+    let index = 0;
+    let isStudying = false; // State: are we typing or looking at the table?
+
+    const wordEl = document.getElementById("word");
+    const inputEl = document.getElementById("input");
+    const meaningEl = document.getElementById("meaning");
+    const meaningBtn = document.getElementById("meaningBtn");
+    const tableContainer = document.getElementById("conjugation-container");
+    const tableBody = document.getElementById("table-body");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function highlightStemChange(sentence, verbInfinitive) {
+      // 1. Break sentence into words
+      let words = sentence.split(" ");
+
+      // 2. Identify the verb. 
+      // Heuristic: It usually starts with the same letters as the infinitive 
+      // (ignoring "J'" prefix).
+      const stemStart = verbInfinitive.substring(0, 3).toLowerCase(); // e.g. "ach" or "pref"
+
+      const verbIndex = words.findIndex(w => {
+        const cleanWord = w.toLowerCase().replace("j'", "");
+        return cleanWord.startsWith(stemStart);
+      });
+
+      // 3. If found, and if it contains the target 'è', highlight it
+      if (verbIndex !== -1) {
+        let targetWord = words[verbIndex];
+
+        // Only highlight if there is actually an è (skips Nous/Vous usually)
+        if (targetWord.includes("è")) {
+          // Find the LAST è in the word (handles préfère where first é is unchanged)
+          const lastIndex = targetWord.lastIndexOf("è");
+          const before = targetWord.substring(0, lastIndex);
+          const after = targetWord.substring(lastIndex + 1);
+
+          // Rebuild the word with the span
+          words[verbIndex] = `${before}<span class="accent-change">è</span>${after}`;
+        }
+      }
+
+      return words.join(" ");
+    }
+
+    function speakText(text, lang) {
+      // Cancel previous speech to avoid overlap
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      window.speechSynthesis.speak(u);
+    }
+
+    function showWord() {
+      isStudying = false;
+      // UI Reset
+      wordEl.textContent = verbs[index].fr;
+      meaningEl.textContent = verbs[index].en;
+      inputEl.value = "";
+      inputEl.disabled = false;
+      inputEl.focus();
+      inputEl.classList.remove("correct");
+
+      // Hide Learning UI
+      tableContainer.style.display = "none";
+      nextBtn.style.display = "none";
+    }
+
+    // Generate table rows based on current verb index
+    function renderTable() {
+      const data = sentences[index];
+      // Map pronouns for clean display
+      const keys = [
+        { key: "je", label: "Je/J'" },
+        { key: "tu", label: "Tu" },
+        { key: "singular", label: "Il/Elle/On" },
+        { key: "nous", label: "Nous" },
+        { key: "vous", label: "Vous" },
+        { key: "plural", label: "Ils/Elles" },
+      ];
+
+      let html = "";
+      keys.forEach((k, i) => {
+        const formattedSentence = highlightStemChange(data[k.key].fr, data.verb);
+
+        html += `
+      <tr id="row-${i}" onclick="readRow(${i})">
+        <td><strong>${k.label}</strong></td>
+        <td>
+          ${formattedSentence} <span class="translation">${data[k.key].en}</span>
+        </td>
+      </tr>
+    `;
+      });
+      tableBody.innerHTML = html;
+    }
+
+    // The "Auto Read" function with Pointer Logic
+    function readAllSentences() {
+      window.speechSynthesis.cancel(); // Stop anything running
+
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+
+      // Create a chain of speech utterances
+      keys.forEach((key, i) => {
+        const text = data[key].fr;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "fr-FR";
+        utterance.rate = 0.9; // Slightly slower for clarity
+
+        // Highlighting logic
+        utterance.onstart = () => {
+          // Remove active class from all
+          document
+            .querySelectorAll("tr")
+            .forEach((tr) => tr.classList.remove("active-row"));
+          // Add to current
+          document.getElementById(`row-${i}`).classList.add("active-row");
+        };
+
+        utterance.onend = () => {
+          document.getElementById(`row-${i}`).classList.remove("active-row");
+        };
+
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    // Allow clicking a row to hear it individually
+    window.readRow = function (rowIndex) {
+      window.speechSynthesis.cancel();
+      const data = sentences[index];
+      const keys = ["je", "tu", "singular", "nous", "vous", "plural"];
+      const text = data[keys[rowIndex]].fr;
+
+      // Visual Highlight
+      document
+        .querySelectorAll("tr")
+        .forEach((tr) => tr.classList.remove("active-row"));
+      const row = document.getElementById(`row-${rowIndex}`);
+      row.classList.add("active-row");
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "fr-FR";
+      u.onend = () => row.classList.remove("active-row");
+      window.speechSynthesis.speak(u);
+    };
+
+    // Handle Input
+    inputEl.addEventListener("input", () => {
+      if (isStudying) return; // Prevent input while studying
+
+      const val = inputEl.value.toLowerCase().trim();
+      if (val === verbs[index].fr.toLowerCase()) {
+        isStudying = true;
+        inputEl.classList.add("correct");
+        inputEl.disabled = true; // Lock input
+
+        // 1. Show Translation Pronunciation
+        meaningEl.textContent = verbs[index].pron;
+
+        // 2. Show Table
+        renderTable();
+        tableContainer.style.display = "block";
+        nextBtn.style.display = "block";
+        nextBtn.focus(); // Move focus to next button
+
+        // 3. Start Audio Sequence (Wait 500ms for visual transition)
+        setTimeout(() => {
+          readAllSentences();
+        }, 500);
+      }
+    });
+
+    // Buttons
+    meaningBtn.addEventListener("click", () => {
+      meaningEl.textContent = verbs[index].pron;
+    });
+
+    nextBtn.addEventListener("click", () => {
+      window.speechSynthesis.cancel(); // Stop reading
+      index++;
+      if (index < verbs.length) {
+        showWord();
+      } else {
+        // End of list
+        document.querySelector(".app").innerHTML = `
+        <h1>🎉 Félicitations !</h1>
+        <h2>You finished the list.</h2>
+        <button onclick="location.reload()">Restart</button>
+      `;
+      }
+    });
+
+    // Initialize
+    showWord();
+  </script>
+</body>
+
+</html>
