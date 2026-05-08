@@ -1,269 +1,311 @@
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>French Conjugation Master</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>French Learning Hub | Interactive Tools</title>
     <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        font-family:
-          system-ui,
-          -apple-system,
-          sans-serif;
-        background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
-        color: #eee;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 40px 20px;
-      }
-
-      h1 {
-        font-size: 2.5rem;
-        margin-bottom: 10px;
-        text-align: center;
-        background: linear-gradient(to right, #4da3ff, #a78bfa);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      p.subtitle {
-        color: #aaa;
-        margin-bottom: 40px;
-        font-size: 1.1rem;
-        text-align: center;
-        max-width: 600px;
-      }
-
-      .container {
-        width: 100%;
-        max-width: 900px;
-        display: flex;
-        flex-direction: column;
-        gap: 40px; /* Increased gap between major sections */
-      }
-
-      /* Section Headers */
-      .section-title {
-        font-size: 1.4rem;
-        color: #fff;
-        border-bottom: 2px solid #333;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .badge {
-        font-size: 0.75rem;
-        padding: 4px 8px;
-        border-radius: 4px;
-        background: #333;
-        color: #aaa;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .badge.irregular {
-        background: #4a1a1a;
-        color: #ff6b6b;
-      }
-
-      /* Card Grid */
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-      }
-
-      /* Cards */
-      .card {
-        background: #222;
-        border: 1px solid #333;
-        border-radius: 12px;
-        padding: 20px;
-        text-decoration: none;
-        color: inherit;
-        transition:
-          transform 0.2s,
-          border-color 0.2s,
-          background 0.2s;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 100%;
-      }
-
-      .card:hover {
-        transform: translateY(-5px);
-        border-color: #4da3ff;
-        background: #2a2a2a;
-      }
-
-      .card h3 {
-        margin: 0 0 8px 0;
-        color: #4da3ff;
-        font-size: 1.2rem;
-      }
-
-      .card p {
-        margin: 0;
-        font-size: 0.9rem;
-        color: #bbb;
-        line-height: 1.4;
-      }
-
-      .card .example {
-        margin-top: 15px;
-        font-size: 0.8rem;
-        color: #666;
-        font-style: italic;
-      }
-
-      /* Special styling for the Irregular card to make it stand out */
-      .card.irregular-card:hover {
-        border-color: #ff4d4d;
-        background: #2a1a1a;
-      }
-      .card.irregular-card h3 {
-        color: #ff4d4d;
-      }
-
-      /* Mobile tweak */
-      @media (max-width: 600px) {
-        h1 {
-          font-size: 2rem;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .grid {
-          grid-template-columns: 1fr;
+
+        body {
+            background: linear-gradient(135deg, #f6f9fc 0%, #eef2f8 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
         }
-      }
+
+        /* subtle background decoration */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 10% 20%, rgba(235, 245, 255, 0.6) 0%, rgba(245, 248, 250, 0.3) 80%);
+            pointer-events: none;
+        }
+
+        /* main card container */
+        .tools-container {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(2px);
+            border-radius: 3rem;
+            padding: 2rem 2rem 2.5rem 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        /* decorative french header */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1E3C72, #2A5298);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.4rem;
+        }
+
+        .hero .tagline {
+            color: #4a627a;
+            font-weight: 500;
+            font-size: 1rem;
+            border-top: 1px solid rgba(90, 120, 150, 0.25);
+            display: inline-block;
+            padding-top: 0.6rem;
+            margin-top: 0.25rem;
+        }
+
+        .french-accent {
+            font-family: 'Segoe UI', system-ui;
+            background: #ffffffcc;
+            display: inline-block;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2c3e66;
+        }
+
+        /* Button grid: flexible & responsive */
+        .button-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        /* beautifully styled button cards */
+        .tool-btn {
+            flex: 1;
+            min-width: 240px;
+            background: white;
+            border-radius: 2rem;
+            padding: 1.8rem 1.2rem;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(2px);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* micro gradient overlays for depth */
+        .tool-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.5) 0%, rgba(245, 248, 250, 0) 80%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .tool-btn:hover::before {
+            opacity: 1;
+        }
+
+        /* unique color accents per button */
+        .btn-1 {
+            border-bottom: 5px solid #3b82f6;
+        }
+        .btn-2 {
+            border-bottom: 5px solid #10b981;
+        }
+        .btn-3 {
+            border-bottom: 5px solid #f59e0b;
+        }
+
+        /* icon area (emojis + custom style) */
+        .btn-icon {
+            font-size: 3.2rem;
+            margin-bottom: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .tool-btn:hover .btn-icon {
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .btn-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            margin-bottom: 0.6rem;
+            background: linear-gradient(145deg, #1f2e4a, #2c3e5c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .btn-description {
+            font-size: 0.85rem;
+            color: #4b5e77;
+            line-height: 1.4;
+            max-width: 200px;
+            margin-top: 0.2rem;
+            font-weight: 450;
+        }
+
+        /* hover lift effect */
+        .tool-btn:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 36px -12px rgba(0, 0, 0, 0.25), 0 2px 5px rgba(0, 0, 0, 0.02);
+            background: #ffffff;
+            border-color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* focus accessibility */
+        .tool-btn:focus-visible {
+            outline: 3px solid #2a6fdb;
+            outline-offset: 4px;
+            transform: scale(0.99);
+        }
+
+        /* subtle shine effect on title hover */
+        .tool-btn:hover .btn-title {
+            background: linear-gradient(145deg, #0f2b47, #1f4a7a);
+            background-clip: text;
+            -webkit-background-clip: text;
+        }
+
+        /* french footer elegance */
+        .footer-note {
+            text-align: center;
+            margin-top: 2.8rem;
+            font-size: 0.8rem;
+            color: #5b6f8c;
+            border-top: 1px solid rgba(90, 110, 140, 0.2);
+            padding-top: 1.4rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-note span {
+            background: #eef3fc;
+            padding: 0.2rem 0.8rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: #2c5282;
+        }
+
+        /* responsive fine-tuning */
+        @media (max-width: 760px) {
+            body {
+                padding: 1rem;
+            }
+            .tools-container {
+                padding: 1.5rem;
+            }
+            .button-grid {
+                gap: 1.2rem;
+            }
+            .tool-btn {
+                min-width: 200px;
+                padding: 1.4rem 0.8rem;
+            }
+            .btn-title {
+                font-size: 1.3rem;
+            }
+            .btn-icon {
+                font-size: 2.6rem;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .button-grid {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .tool-btn {
+                width: 100%;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <h1>French Conjugation Master</h1>
-    <p class="subtitle">
-      A complete breakdown of the Present Tense. Select a module below to start
-      training.
-    </p>
-
-    <div class="container">
-      <div>
-        <div class="section-title">
-          1. -ER Verbs
-          <span class="badge">Group 1</span>
-        </div>
-        <div class="grid">
-          <a href="i-regular-er.html" class="card">
-            <div>
-              <h3>Regular -ER</h3>
-              <p>Standard conjugation for the largest group of French verbs.</p>
-            </div>
-            <div class="example">Ex: Parler, Aimer, Donner</div>
-          </a>
-
-          <a href="ii-accents.html" class="card">
-            <div>
-              <h3>Accent Changes</h3>
-              <p>Verbs that change accents (e → è) to maintain sound.</p>
-            </div>
-            <div class="example">Ex: Acheter, Préférer</div>
-          </a>
-
-          <a href="iii-cer-verbs.html" class="card">
-            <div>
-              <h3>-CER Verbs</h3>
-              <p>Spelling change (ç) required in the <em>Nous</em> form.</p>
-            </div>
-            <div class="example">Ex: Commencer, Lancer</div>
-          </a>
-
-          <a href="iv-ger-verbs.html" class="card">
-            <div>
-              <h3>-GER Verbs</h3>
-              <p>Spelling change (ge) required in the <em>Nous</em> form.</p>
-            </div>
-            <div class="example">Ex: Manger, Voyager</div>
-          </a>
-
-          <a href="v-eler-verbs.html" class="card">
-            <div>
-              <h3>-ELER Verbs</h3>
-              <p>Verbs that double the consonant (l → ll).</p>
-            </div>
-            <div class="example">Ex: Appeler, Epeler</div>
-          </a>
-        </div>
-      </div>
-
-      <div>
-        <div class="section-title">
-          2. -IR Verbs
-          <span class="badge">Group 2</span>
-        </div>
-        <div class="grid">
-          <a href="vi-ir-type1.html" class="card">
-            <div>
-              <h3>Type 1 (Regular)</h3>
-              <p>
-                The "ISS" pattern. Plural forms add <em>-iss-</em> before the
-                ending.
-              </p>
-            </div>
-            <div class="example">Ex: Finir, Choisir, Réussir</div>
-          </a>
-
-          <a href="vii-ir-type2.html" class="card">
-            <div>
-              <h3>Type 2 (Irregular Pattern)</h3>
-              <p>No "-iss-". Endings attach directly to the stem.</p>
-            </div>
-            <div class="example">Ex: Sortir, Dormir, Partir</div>
-          </a>
-        </div>
-      </div>
-
-      <div>
-        <div class="section-title">
-          3. -RE Verbs
-          <span class="badge">Group 3</span>
-        </div>
-        <div class="grid">
-          <a href="viii-regular-re.html" class="card">
-            <div>
-              <h3>Regular -RE</h3>
-              <p>Standard pattern for regular verbs ending in -RE.</p>
-            </div>
-            <div class="example">Ex: Vendre, Attendre, Perdre</div>
-          </a>
-        </div>
-      </div>
-
-      <div>
-        <div class="section-title">
-          4. Irregular Verbs
-          <span class="badge irregular">Exceptions</span>
-        </div>
-        <div class="grid">
-          <a href="ix-irregulars.html" class="card irregular-card">
-            <div style="border-left: 3px solid #ff4d4d; padding-left: 10px">
-              <h3>Essential Irregulars</h3>
-              <p>
-                The top 25 most used verbs. These do not follow standard
-                patterns and must be memorized.
-              </p>
-            </div>
-            <div class="example">Ex: Être, Avoir, Aller, Faire, Pouvoir</div>
-          </a>
-        </div>
-      </div>
+</head>
+<body>
+<div class="tools-container">
+    <div class="hero">
+        <h1>🇫🇷 Apprendre le français 🥐</h1>
+        <div class="tagline">Interactive tools to boost your French journey</div>
+        <div class="french-accent">✨ A2 · B1 · Pratique quotidienne ✨</div>
     </div>
-  </body>
+
+    <!-- three beautifully styled buttons with links -->
+    <div class="button-grid">
+        <!-- Button 1: Present Tense Conjugation Master -->
+        <a href="conjugationMaster.html" 
+           class="tool-btn btn-1" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           aria-label="Open Present Tense Conjugation Master">
+            <div class="btn-icon">📘⚡</div>
+            <div class="btn-title">Present Tense<br>Conjugation Master</div>
+            <div class="btn-description">Master -er, -ir, -re verbs · interactive drills & examples</div>
+        </a>
+
+        <!-- Button 2: French Family Typing -->
+        <a href="frenchVerbFamilyTyping.html" 
+           class="tool-btn btn-2" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           aria-label="Open French Family Typing Game">
+            <div class="btn-icon">👨‍👩‍👧‍👦⌨️</div>
+            <div class="btn-title">French Family<br>Typing</div>
+            <div class="btn-description">Learn family vocabulary · la mère, le père, la sœur — type & learn!</div>
+        </a>
+
+        <!-- Button 3: French Reader -->
+        <a href="frenchReader.html" 
+           class="tool-btn btn-3" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           aria-label="Open French Reader">
+            <div class="btn-icon">📖🎧</div>
+            <div class="btn-title">French Reader</div>
+            <div class="btn-description">Short stories, A2 dialogues & daily life paragraphs with audio support</div>
+        </a>
+    </div>
+
+    <div class="footer-note">
+        <span>📘 present tense · family · reading</span>
+        <span>🔗 click any card → new tab opens</span>
+        <span>🇫🇷 boost your fluency</span>
+    </div>
+</div>
+</body>
 </html>
