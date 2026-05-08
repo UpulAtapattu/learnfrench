@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>French Conjugation Master</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: radial-gradient(circle at top, #1c1c1c, #0f0f0f);
+        color: #eee;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-align: center;
+        background: linear-gradient(to right, #4da3ff, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      p.subtitle {
+        color: #aaa;
+        margin-bottom: 40px;
+        font-size: 1.1rem;
+        text-align: center;
+        max-width: 600px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        flex-direction: column;
+        gap: 40px; /* Increased gap between major sections */
+      }
+
+      /* Section Headers */
+      .section-title {
+        font-size: 1.4rem;
+        color: #fff;
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: #333;
+        color: #aaa;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge.irregular {
+        background: #4a1a1a;
+        color: #ff6b6b;
+      }
+
+      /* Card Grid */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      /* Cards */
+      .card {
+        background: #222;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 20px;
+        text-decoration: none;
+        color: inherit;
+        transition:
+          transform 0.2s,
+          border-color 0.2s,
+          background 0.2s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        border-color: #4da3ff;
+        background: #2a2a2a;
+      }
+
+      .card h3 {
+        margin: 0 0 8px 0;
+        color: #4da3ff;
+        font-size: 1.2rem;
+      }
+
+      .card p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #bbb;
+        line-height: 1.4;
+      }
+
+      .card .example {
+        margin-top: 15px;
+        font-size: 0.8rem;
+        color: #666;
+        font-style: italic;
+      }
+
+      /* Special styling for the Irregular card to make it stand out */
+      .card.irregular-card:hover {
+        border-color: #ff4d4d;
+        background: #2a1a1a;
+      }
+      .card.irregular-card h3 {
+        color: #ff4d4d;
+      }
+
+      /* Mobile tweak */
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 2rem;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>French Conjugation Master</h1>
+    <p class="subtitle">
+      A complete breakdown of the Present Tense. Select a module below to start
+      training.
+    </p>
+
+    <div class="container">
+      <div>
+        <div class="section-title">
+          1. -ER Verbs
+          <span class="badge">Group 1</span>
+        </div>
+        <div class="grid">
+          <a href="i-regular-er.html" class="card">
+            <div>
+              <h3>Regular -ER</h3>
+              <p>Standard conjugation for the largest group of French verbs.</p>
+            </div>
+            <div class="example">Ex: Parler, Aimer, Donner</div>
+          </a>
+
+          <a href="ii-accents.html" class="card">
+            <div>
+              <h3>Accent Changes</h3>
+              <p>Verbs that change accents (e → è) to maintain sound.</p>
+            </div>
+            <div class="example">Ex: Acheter, Préférer</div>
+          </a>
+
+          <a href="iii-cer-verbs.html" class="card">
+            <div>
+              <h3>-CER Verbs</h3>
+              <p>Spelling change (ç) required in the <em>Nous</em> form.</p>
+            </div>
+            <div class="example">Ex: Commencer, Lancer</div>
+          </a>
+
+          <a href="iv-ger-verbs.html" class="card">
+            <div>
+              <h3>-GER Verbs</h3>
+              <p>Spelling change (ge) required in the <em>Nous</em> form.</p>
+            </div>
+            <div class="example">Ex: Manger, Voyager</div>
+          </a>
+
+          <a href="v-eler-verbs.html" class="card">
+            <div>
+              <h3>-ELER Verbs</h3>
+              <p>Verbs that double the consonant (l → ll).</p>
+            </div>
+            <div class="example">Ex: Appeler, Epeler</div>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">
+          2. -IR Verbs
+          <span class="badge">Group 2</span>
+        </div>
+        <div class="grid">
+          <a href="vi-ir-type1.html" class="card">
+            <div>
+              <h3>Type 1 (Regular)</h3>
+              <p>
+                The "ISS" pattern. Plural forms add <em>-iss-</em> before the
+                ending.
+              </p>
+            </div>
+            <div class="example">Ex: Finir, Choisir, Réussir</div>
+          </a>
+
+          <a href="vii-ir-type2.html" class="card">
+            <div>
+              <h3>Type 2 (Irregular Pattern)</h3>
+              <p>No "-iss-". Endings attach directly to the stem.</p>
+            </div>
+            <div class="example">Ex: Sortir, Dormir, Partir</div>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">
+          3. -RE Verbs
+          <span class="badge">Group 3</span>
+        </div>
+        <div class="grid">
+          <a href="viii-regular-re.html" class="card">
+            <div>
+              <h3>Regular -RE</h3>
+              <p>Standard pattern for regular verbs ending in -RE.</p>
+            </div>
+            <div class="example">Ex: Vendre, Attendre, Perdre</div>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">
+          4. Irregular Verbs
+          <span class="badge irregular">Exceptions</span>
+        </div>
+        <div class="grid">
+          <a href="ix-irregulars.html" class="card irregular-card">
+            <div style="border-left: 3px solid #ff4d4d; padding-left: 10px">
+              <h3>Essential Irregulars</h3>
+              <p>
+                The top 25 most used verbs. These do not follow standard
+                patterns and must be memorized.
+              </p>
+            </div>
+            <div class="example">Ex: Être, Avoir, Aller, Faire, Pouvoir</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
