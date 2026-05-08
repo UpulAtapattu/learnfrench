@@ -41788,6 +41788,72 @@ const verbVariationSports3 = [
   { french: "première fois", pronunciation: "pruh-myehr fwah", category: "Time", english: "the first time" }, // [cite: 17]
   { french: "longtemps", pronunciation: "lohn-tahn", category: "Time", english: "a long time" } // [cite: 17]
 ];
+
+
+      const verbVariationEntrainer = [
+  // --- INFINITIVE & PARTICIPLES ---
+  { french: "s'entraîner", english: "to practice / to train", pronunciation: "sahn-treh-nay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "entraîné", english: "practiced / trained", pronunciation: "ahn-treh-nay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "s'entraînant", english: "practicing / training", pronunciation: "sahn-treh-nahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+
+  // --- PRESENT TENSE ---
+  { french: "je m'entraîne", english: "I practice", pronunciation: "zhuh mahn-trehn", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu t'entraînes", english: "you practice", pronunciation: "too tahn-trehn", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il s'entraîne", english: "he practices", pronunciation: "eel sahn-trehn", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous nous entraînons", english: "we practice", pronunciation: "noo noo zahn-treh-nohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous vous entraînez", english: "you practice", pronunciation: "voo voo zahn-treh-nay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils s'entraînent", english: "they practice", pronunciation: "eel sahn-trehn", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+
+  // --- IMPARFAIT (Ongoing Past Action) ---
+  { french: "je m'entraînais", english: "I was practicing", pronunciation: "zhuh mahn-treh-neh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu t'entraînais", english: "you were practicing", pronunciation: "too tahn-treh-neh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il s'entraînait", english: "he was practicing", pronunciation: "eel sahn-treh-neh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous nous entraînions", english: "we were practicing", pronunciation: "noo noo zahn-treh-nyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous vous entraîniez", english: "you were practicing", pronunciation: "voo voo zahn-treh-nyay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils s'entraînaient", english: "they were practicing", pronunciation: "eel sahn-treh-neh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+
+  // --- FUTURE TENSE ---
+  { french: "je m'entraînerai", english: "I will practice", pronunciation: "zhuh mahn-treh-nuh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il s'entraînera", english: "he will practice", pronunciation: "eel sahn-treh-nuh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils s'entraîneront", english: "they will practice", pronunciation: "eel sahn-treh-nuh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" }
+];
+const supportWordsSportsFlow = [
+  // --- CONNECTORS & LOGIC ---
+  { french: "quand", english: "when", pronunciation: "kahn", category: "Connector" },
+  { french: "et puis", english: "and then", pronunciation: "ay pwee", category: "Connector" },
+  { french: "pendant que", english: "while / during", pronunciation: "pahn-dahn kuh", category: "Connector" },
+  { french: "mais pourquoi", english: "but why", pronunciation: "meh poor-kwah", category: "Connector" },
+  { french: "est-ce que", english: "is it that / (question marker)", pronunciation: "ess-kuh", category: "Connector" },
+
+  // --- TIME & DURATION ---
+  { french: "depuis deux heures", english: "for two hours", pronunciation: "duh-pwee duh zuhr", category: "Time" },
+  { french: "une heure", english: "one hour", pronunciation: "oon uhr", category: "Time" },
+  { french: "tous les jours", english: "every day", pronunciation: "too lay zhoor", category: "Time" },
+  { french: "de 12h à 14h", english: "from 12pm to 2pm", pronunciation: "duh doo-zuhr ah kator-zuhr", category: "Time" },
+  { french: "tout de suite", english: "immediately / straight away", pronunciation: "too-duh-sweet", category: "Time" },
+  { french: "la première fois", english: "the first time", pronunciation: "lah pruh-myehr fwah", category: "Time" },
+  { french: "la veille", english: "the day before / previous night", pronunciation: "lah vay-yuh", category: "Time" },
+  { french: "dans longtemps", english: "in a long time", pronunciation: "dahn lohn-tahn", category: "Time" },
+
+  // --- DESCRIPTIONS & ADJECTIVES ---
+  { french: "beau", english: "beautiful / fine (weather)", pronunciation: "boh", category: "Adjective" },
+  { french: "tout neuf", english: "brand new", pronunciation: "too nuhf", category: "Adjective" },
+  { french: "nu", english: "naked", pronunciation: "noo", category: "Adjective" },
+  { french: "jaune", english: "yellow", pronunciation: "zhohn", category: "Adjective" },
+  { french: "chère", english: "dear (female)", pronunciation: "shehr", category: "Adjective" },
+  { french: "quelle", english: "what a... (female)", pronunciation: "kell", category: "Determiner" },
+  { french: "déception", english: "disappointment (female)", pronunciation: "day-sep-syohn", category: "Noun" },
+  { french: "dur", english: "hard / tough", pronunciation: "door", category: "Adverb" },
+  { french: "bien", english: "well", pronunciation: "byan", category: "Adverb" },
+  { french: "magnifique", english: "magnificent", pronunciation: "mah-nyee-feek", category: "Adjective" },
+  { french: "très injuste", english: "very unfair", pronunciation: "treh zan-zhoost", category: "Adjective" },
+  { french: "malheureusement", english: "unfortunately", pronunciation: "mah-luh-ruhz-mahn", category: "Adverb" },
+
+  // --- PLACES ---
+  { french: "sur le gazon", english: "on the grass", pronunciation: "soor luh gah-zohn", category: "Place" },
+  { french: "dans le stade", english: "in the stadium", pronunciation: "dahn luh stahd", category: "Place" }
+];
+
       
       const allParts = [
         vocabList0,
@@ -41868,7 +41934,9 @@ adjVariation25,
         verbVariationSports2,
         verbVariationSports3,
         verbVariationSports4,
-        supportWordsSports
+        supportWordsSports,
+        supportWordsSportsFlow,
+        verbVariationEntrainer
 
 
 
