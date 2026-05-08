@@ -5070,24 +5070,43 @@
         }
       }
 
+      const VOICE_STORAGE_KEY = 'preferredFrenchVoice';
+
+function getSelectedFrenchVoice() {
+  const voices = window.speechSynthesis.getVoices();
+
+  const selectedName =
+    voiceSelect.value || localStorage.getItem(VOICE_STORAGE_KEY);
+
+  let selectedVoice = voices.find((v) => v.name === selectedName);
+
+  if (!selectedVoice) {
+    selectedVoice = voices.find((v) =>
+      (v.lang || '').toLowerCase().startsWith('fr'),
+    );
+  }
+
+  return selectedVoice || null;
+}
+      
       function speakWord(text) {
-        window.speechSynthesis.cancel();
+  if (!text) return;
 
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'fr-FR';
-        u.rate = parseFloat(speedRange.value);
+  window.speechSynthesis.cancel();
 
-        const selectedVoiceName = voiceSelect.value;
-        const selectedVoice = frenchVoices.find(
-          (v) => v.name === selectedVoiceName,
-        );
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'fr-FR';
+  u.rate = parseFloat(speedRange.value);
 
-        if (selectedVoice) {
-          u.voice = selectedVoice;
-        }
+  const selectedVoice = getSelectedFrenchVoice();
 
-        window.speechSynthesis.speak(u);
-      }
+  if (selectedVoice) {
+    u.voice = selectedVoice;
+    u.lang = selectedVoice.lang || 'fr-FR';
+  }
+
+  window.speechSynthesis.speak(u);
+}
 
       function updateWPM() {
         if (!startTime) return;
@@ -5097,30 +5116,42 @@
       }
 
       function populateVoices() {
-        const voices = window.speechSynthesis.getVoices();
+  const voices = window.speechSynthesis.getVoices();
 
-        frenchVoices = voices
-          .filter((v) => v.lang && v.lang.toLowerCase().startsWith('fr'))
-          .sort((a, b) => a.name.localeCompare(b.name));
+  frenchVoices = voices
+    .filter((v) => v.lang && v.lang.toLowerCase().startsWith('fr'))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-        voiceSelect.innerHTML = '';
+  const previousSelection =
+    voiceSelect.value || localStorage.getItem(VOICE_STORAGE_KEY);
 
-        if (!frenchVoices.length) {
-          const opt = document.createElement('option');
-          opt.value = '';
-          opt.textContent = 'No French voices found';
-          voiceSelect.appendChild(opt);
-          return;
-        }
+  voiceSelect.innerHTML = '';
 
-        frenchVoices.forEach((voice, index) => {
-          const opt = document.createElement('option');
-          opt.value = voice.name;
-          opt.textContent = `${voice.name} (${voice.lang})`;
-          if (index === 0) opt.selected = true;
-          voiceSelect.appendChild(opt);
-        });
-      }
+  if (!frenchVoices.length) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'No French voices found';
+    voiceSelect.appendChild(opt);
+    return;
+  }
+
+  frenchVoices.forEach((voice) => {
+    const opt = document.createElement('option');
+    opt.value = voice.name;
+    opt.textContent = `${voice.name} (${voice.lang})`;
+    voiceSelect.appendChild(opt);
+  });
+
+  if (
+    previousSelection &&
+    frenchVoices.some((v) => v.name === previousSelection)
+  ) {
+    voiceSelect.value = previousSelection;
+  } else {
+    voiceSelect.value = frenchVoices[0].name;
+    localStorage.setItem(VOICE_STORAGE_KEY, voiceSelect.value);
+  }
+}
 
       const maxDictionaryIndex = Math.max(masterDictionary.length - 1, 0);
       startIndexInput.max = maxDictionaryIndex;
