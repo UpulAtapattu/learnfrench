@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>French Verb Family Typing Trainer</title>
-    <style>
+     <style>
     * {
       box-sizing: border-box;
       user-select: none; /* avoid accidental selection, but input still works */
@@ -33,15 +33,15 @@
       transition: all 0.2s;
     }
 
-    /* ========== NEW HERO SECTION STYLES ========== */
+    /* ========== HERO SECTION ========== */
     .hero-section {
       background: linear-gradient(112deg, #1e2f4b 0%, #14273e 100%);
-      padding: 1.8rem 2rem;
+      padding: 1.6rem 2rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .hero-section h1 {
-      margin: 0 0 0.75rem 0;
+      margin: 0 0 0.5rem 0;
       font-size: 1.8rem;
       font-weight: 700;
       color: white;
@@ -52,31 +52,110 @@
       color: #e0e8f2;
       font-size: 0.95rem;
       line-height: 1.45;
+      margin-bottom: 1rem;
     }
 
     .description p {
-      margin: 0 0 0.8rem 0;
+      margin: 0 0 0.6rem 0;
     }
 
-    .how-to {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
+    /* ========== COLLAPSIBLE GUIDE (replaces inline chips) ========== */
+    .guide-wrapper {
       margin-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 0.75rem;
     }
 
-    .how-to span {
-      background: rgba(255, 255, 255, 0.12);
-      padding: 0.25rem 0.9rem;
-      border-radius: 40px;
+    .guide-toggle {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: white;
       font-size: 0.8rem;
       font-weight: 500;
-      font-family: monospace;
-      letter-spacing: 0.3px;
+      padding: 0.4rem 1rem;
+      border-radius: 3rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      font-family: inherit;
     }
-    /* ========== END HERO SECTION STYLES ========== */
 
-    /* controls row (original) */
+    .guide-toggle:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    .guide-toggle .arrow {
+      font-size: 0.9rem;
+      transition: transform 0.2s ease;
+      display: inline-block;
+    }
+
+    .guide-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+
+    .collapsible-guide {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease-out, margin 0.2s ease;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 1.2rem;
+      margin-top: 0;
+      backdrop-filter: blur(4px);
+    }
+
+    .collapsible-guide.open {
+      max-height: 400px;   /* enough for content */
+      margin-top: 0.8rem;
+    }
+
+    .guide-content {
+      padding: 1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .guide-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.85rem;
+      color: #f0f3f8;
+      border-left: 3px solid #ffb347;
+      padding-left: 0.8rem;
+    }
+
+    .guide-item strong {
+      color: #ffd966;
+      font-weight: 600;
+      min-width: 100px;
+    }
+
+    .guide-item span:last-child {
+      color: #e6edf8;
+    }
+
+    @media (max-width: 550px) {
+      .guide-item {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+      }
+      .guide-item strong {
+        min-width: 80px;
+      }
+      .hero-section h1 {
+        font-size: 1.4rem;
+      }
+      .hero-section {
+        padding: 1.2rem 1.2rem;
+      }
+    }
+
+    /* controls row */
     #controls {
       display: flex;
       flex-wrap: wrap;
@@ -247,15 +326,6 @@
       }
       #game-container {
         padding: 1.2rem;
-      }
-      .hero-section h1 {
-        font-size: 1.4rem;
-      }
-      .hero-section {
-        padding: 1.2rem 1.2rem;
-      }
-      .how-to span {
-        font-size: 0.7rem;
       }
     }
   </style>
@@ -5160,6 +5230,28 @@
       setTimeout(populateVoices, 200);
       populateVoices();
       generateLine();
+      function unlockAndSpeakInitialWord() {
+  if (window.speechUnlocked) return;
+  window.speechUnlocked = true;
+  
+  // Small delay to ensure currentLineObjects is ready
+  setTimeout(() => {
+    if (currentLineObjects && currentLineObjects[0]) {
+      speakWord(currentLineObjects[0].fr);
+    }
+  }, 100);
+}
+
+// Unlock speech on first click or keypress
+document.addEventListener('click', function firstClick() {
+  unlockAndSpeakInitialWord();
+  document.removeEventListener('click', firstClick);
+}, { once: true });
+
+document.addEventListener('keydown', function firstKey() {
+  unlockAndSpeakInitialWord();
+  document.removeEventListener('keydown', firstKey);
+}, { once: true });
     </script>
   </body>
 </html>
