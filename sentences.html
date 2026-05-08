@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>French Sentence Table + Read Aloud</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --card: rgba(255, 255, 255, 0.06);
+        --card2: rgba(255, 255, 255, 0.09);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.7);
+        --line: rgba(255, 255, 255, 0.12);
+        --accent: #6aa6ff;
+        --accent2: #8bffb5;
+        --danger: #ff6a6a;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        --radius: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
+          'Noto Sans',
+          'Liberation Sans',
+          sans-serif;
+        background:
+          radial-gradient(
+            900px 500px at 20% 10%,
+            rgba(106, 166, 255, 0.18),
+            transparent 65%
+          ),
+          radial-gradient(
+            700px 500px at 90% 20%,
+            rgba(139, 255, 181, 0.12),
+            transparent 60%
+          ),
+          radial-gradient(
+            800px 600px at 40% 90%,
+            rgba(255, 106, 106, 0.1),
+            transparent 55%
+          ),
+          var(--bg);
+        color: var(--text);
+        padding: 28px;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      header {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        font-size: 22px;
+        margin: 0;
+        letter-spacing: 0.2px;
+      }
+      .subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.4;
+        max-width: 64ch;
+      }
+
+      .pillbar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .pill {
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .card {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.07),
+          rgba(255, 255, 255, 0.04)
+        );
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .inputGrid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 14px;
+        padding: 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      @media (max-width: 900px) {
+        .inputGrid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 190px;
+        resize: vertical;
+        padding: 12px 12px 12px 12px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: rgba(0, 0, 0, 0.25);
+        color: var(--text);
+        outline: none;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      textarea:focus {
+        border-color: rgba(106, 166, 255, 0.55);
+        box-shadow: 0 0 0 4px rgba(106, 166, 255, 0.12);
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        user-select: none;
+        transition:
+          transform 0.06s ease,
+          background 0.18s ease,
+          border-color 0.18s ease;
+        text-decoration: none;
+      }
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.18);
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn.primary {
+        background: linear-gradient(
+          180deg,
+          rgba(106, 166, 255, 0.35),
+          rgba(106, 166, 255, 0.18)
+        );
+        border-color: rgba(106, 166, 255, 0.45);
+      }
+      .btn.primary:hover {
+        background: linear-gradient(
+          180deg,
+          rgba(106, 166, 255, 0.45),
+          rgba(106, 166, 255, 0.22)
+        );
+      }
+
+      .btn.ghost {
+        background: transparent;
+      }
+
+      .btn.danger {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 106, 106, 0.28),
+          rgba(255, 106, 106, 0.14)
+        );
+        border-color: rgba(255, 106, 106, 0.42);
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 12.5px;
+        line-height: 1.35;
+        margin-top: 4px;
+      }
+
+      .status {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .status strong {
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      .tableWrap {
+        overflow: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 760px;
+      }
+      thead th {
+        position: sticky;
+        top: 0;
+        background: rgba(10, 15, 30, 0.92);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+        padding: 12px 12px;
+        text-align: left;
+        font-size: 13px;
+        letter-spacing: 0.2px;
+        color: rgba(255, 255, 255, 0.85);
+        z-index: 1;
+      }
+      tbody td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 12px 12px;
+        vertical-align: top;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .colButtons {
+        width: 220px;
+        white-space: nowrap;
+      }
+      .colFrench {
+        width: 44%;
+      }
+      .colEnglish {
+        width: 44%;
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .miniBtns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .mini {
+        padding: 7px 9px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.06);
+        cursor: pointer;
+        color: var(--text);
+        font-weight: 700;
+        font-size: 12.5px;
+        transition:
+          background 0.18s ease,
+          transform 0.06s ease;
+      }
+      .mini:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .mini:active {
+        transform: translateY(1px);
+      }
+
+      .mini.slow {
+        border-color: rgba(139, 255, 181, 0.35);
+        background: rgba(139, 255, 181, 0.1);
+      }
+      .mini.normal {
+        border-color: rgba(106, 166, 255, 0.35);
+        background: rgba(106, 166, 255, 0.1);
+      }
+      .mini.stop {
+        border-color: rgba(255, 106, 106, 0.35);
+        background: rgba(255, 106, 106, 0.1);
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.05);
+        font-size: 12.5px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(0, 0, 0, 0.25);
+        color: var(--text);
+        outline: none;
+        font-size: 14px;
+      }
+      .select:focus {
+        border-color: rgba(106, 166, 255, 0.55);
+        box-shadow: 0 0 0 4px rgba(106, 166, 255, 0.12);
+      }
+
+      .rowMeta {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+
+      .kbd {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
+          monospace;
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .error {
+        color: rgba(255, 255, 255, 0.92);
+        background: rgba(255, 106, 106, 0.12);
+        border: 1px solid rgba(255, 106, 106, 0.3);
+        padding: 10px 12px;
+        border-radius: 12px;
+        margin: 10px 14px 0;
+        display: none;
+        font-size: 13px;
+      }
+
+      .footer {
+        color: var(--muted);
+        font-size: 12.5px;
+        margin-top: 12px;
+        padding: 0 2px;
+      }
+      .linkish {
+        color: rgba(106, 166, 255, 0.95);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <div>
+          <h1>🇫🇷 French Sentences → Table + Read Aloud</h1>
+          <p class="subtitle">
+            Paste lines in the format
+            <span class="kbd">French;[tab]English</span>. Each line becomes a
+            row with <strong>Normal</strong> and <strong>Slow</strong> speech
+            buttons.
+          </p>
+        </div>
+        <div class="pillbar">
+          <div class="pill">Uses your browser SpeechSynthesis</div>
+          <div class="pill">Best in Chrome / Edge</div>
+        </div>
+      </header>
+
+      <div class="card">
+        <div class="inputGrid">
+          <div>
+            <textarea id="input" spellcheck="false">
+Le sommet de la montagne est très beau.;	The top of the mountain is very beautiful.
+Nous allons atteindre le sommet demain.;	We are going to reach the summit tomorrow.</textarea
+            >
+
+            <div class="rowMeta">
+              <span class="tag"
+                >Tip: use <span class="kbd">Tab</span> between French and
+                English</span
+              >
+              <span class="tag"
+                >Also works with <span class="kbd">;</span> then
+                <span class="kbd">Tab</span></span
+              >
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" id="buildBtn">✨ Build Table</button>
+            <button class="btn ghost" id="exampleBtn">📋 Load Example</button>
+
+            <label class="hint" for="voiceSelect" style="margin-top: 4px"
+              >French voice (if available):</label
+            >
+            <select class="select" id="voiceSelect"></select>
+
+            <button class="btn danger" id="stopAllBtn">⏹ Stop Speaking</button>
+
+            <div class="hint">
+              If you don’t hear French well: try a different voice in the
+              dropdown. Some computers don’t have French voices installed.
+            </div>
+          </div>
+        </div>
+
+        <div class="error" id="errorBox"></div>
+
+        <div class="status" id="statusBar">
+          <div>Rows: <strong id="rowCount">0</strong></div>
+          <div>Speech: <strong id="speechStatus">Ready</strong></div>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="colButtons">🔊 Read</th>
+                <th class="colFrench">French</th>
+                <th class="colEnglish">English</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">
+        Format reminder: <span class="kbd">French sentence.;</span
+        ><span class="kbd">TAB</span><span class="kbd">English meaning</span
+        ><br />
+        You can also paste many lines at once. Empty lines are ignored.
+      </div>
+    </div>
+
+    <script>
+      const inputEl = document.getElementById('input');
+      const tbodyEl = document.getElementById('tbody');
+      const buildBtn = document.getElementById('buildBtn');
+      const exampleBtn = document.getElementById('exampleBtn');
+      const stopAllBtn = document.getElementById('stopAllBtn');
+      const rowCountEl = document.getElementById('rowCount');
+      const speechStatusEl = document.getElementById('speechStatus');
+      const errorBox = document.getElementById('errorBox');
+      const voiceSelect = document.getElementById('voiceSelect');
+
+      const DEFAULT_LANG = 'fr-FR';
+
+      function setError(msg) {
+        if (!msg) {
+          errorBox.style.display = 'none';
+          errorBox.textContent = '';
+          return;
+        }
+        errorBox.style.display = 'block';
+        errorBox.textContent = msg;
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
+      }
+
+      function parseLines(text) {
+        const lines = text
+          .split(/\r?\n/)
+          .map((l) => l.trim())
+          .filter(Boolean);
+
+        const rows = [];
+        const errors = [];
+
+        for (let i = 0; i < lines.length; i++) {
+          const raw = lines[i];
+
+          // Expected: French; <TAB> English
+          // We'll be tolerant:
+          // - Split on tab first; if not present, split on multiple spaces after ';'
+          let french = '';
+          let english = '';
+
+          if (raw.includes('\t')) {
+            const parts = raw.split('\t');
+            french = parts[0] ?? '';
+            english = parts.slice(1).join('\t') ?? '';
+          } else {
+            // try: split on ';' and take remainder as english
+            const semiIdx = raw.indexOf(';');
+            if (semiIdx !== -1) {
+              french = raw.slice(0, semiIdx + 1);
+              english = raw.slice(semiIdx + 1);
+            } else {
+              errors.push(
+                `Line ${i + 1}: Missing a TAB or semicolon separator. Example: "Bonjour.;[TAB]Hello."`,
+              );
+              continue;
+            }
+          }
+
+          french = french.trim();
+          english = english.trim();
+
+          // Clean up common trailing "\n" text if pasted literally
+          french = french.replace(/\\n\s*$/i, '').trim();
+          english = english.replace(/\\n\s*$/i, '').trim();
+
+          if (!french || !english) {
+            errors.push(
+              `Line ${i + 1}: Could not read both French and English. Check your separators.`,
+            );
+            continue;
+          }
+
+          rows.push({ french, english });
+        }
+
+        return { rows, errors };
+      }
+
+      function buildTable() {
+        setError('');
+
+        if (
+          !('speechSynthesis' in window) ||
+          !('SpeechSynthesisUtterance' in window)
+        ) {
+          setError(
+            'Your browser does not support speech synthesis. Try Chrome or Edge.',
+          );
+          return;
+        }
+
+        const { rows, errors } = parseLines(inputEl.value);
+
+        if (errors.length) {
+          setError(
+            errors.slice(0, 5).join('  •  ') +
+              (errors.length > 5 ? '  •  (more...)' : ''),
+          );
+        }
+
+        tbodyEl.innerHTML = '';
+        rows.forEach((r, idx) => {
+          const tr = document.createElement('tr');
+
+          const tdBtns = document.createElement('td');
+          tdBtns.className = 'colButtons';
+          tdBtns.innerHTML = `
+        <div class="miniBtns">
+          <button class="mini normal" data-action="speak-normal" data-idx="${idx}">🔊 Normal</button>
+          <button class="mini slow" data-action="speak-slow" data-idx="${idx}">🐢 Slow</button>
+          <button class="mini stop" data-action="stop">⏹ Stop</button>
+        </div>
+      `;
+
+          const tdFr = document.createElement('td');
+          tdFr.className = 'colFrench';
+          tdFr.innerHTML = escapeHtml(r.french);
+
+          const tdEn = document.createElement('td');
+          tdEn.className = 'colEnglish';
+          tdEn.innerHTML = escapeHtml(r.english);
+
+          tr.appendChild(tdBtns);
+          tr.appendChild(tdFr);
+          tr.appendChild(tdEn);
+
+          tr.dataset.french = r.french;
+          tbodyEl.appendChild(tr);
+        });
+
+        rowCountEl.textContent = String(rows.length);
+      }
+
+      function getSelectedVoice() {
+        const voices = speechSynthesis.getVoices();
+        const selectedName = voiceSelect.value;
+        return voices.find((v) => v.name === selectedName) || null;
+      }
+
+      function speak(text, rate) {
+        if (!text) return;
+        speechSynthesis.cancel(); // stop any current speech
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = DEFAULT_LANG;
+        u.rate = rate;
+
+        const v = getSelectedVoice();
+        if (v) u.voice = v;
+
+        speechStatusEl.textContent =
+          rate < 1 ? 'Speaking (Slow)' : 'Speaking (Normal)';
+        u.onend = () => {
+          speechStatusEl.textContent = 'Ready';
+        };
+        u.onerror = () => {
+          speechStatusEl.textContent = 'Ready';
+        };
+
+        speechSynthesis.speak(u);
+      }
+
+      function stopSpeaking() {
+        speechSynthesis.cancel();
+        speechStatusEl.textContent = 'Ready';
+      }
+
+      function populateVoices() {
+        if (!('speechSynthesis' in window)) return;
+
+        const voices = speechSynthesis.getVoices();
+        voiceSelect.innerHTML = '';
+
+        // Prefer fr-* voices, but include all so user can choose
+        const frVoices = voices.filter((v) =>
+          (v.lang || '').toLowerCase().startsWith('fr'),
+        );
+        const otherVoices = voices.filter(
+          (v) => !(v.lang || '').toLowerCase().startsWith('fr'),
+        );
+
+        const addGroup = (label, list) => {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = label;
+          list.forEach((v) => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = `${v.name} (${v.lang})`;
+            optgroup.appendChild(opt);
+          });
+          voiceSelect.appendChild(optgroup);
+        };
+
+        if (frVoices.length) addGroup('French voices', frVoices);
+        addGroup('Other voices', otherVoices);
+
+        // auto-select a French voice if present
+        if (frVoices.length) voiceSelect.value = frVoices[0].name;
+        else if (voices.length) voiceSelect.value = voices[0].name;
+      }
+
+      // Events
+      buildBtn.addEventListener('click', buildTable);
+
+      exampleBtn.addEventListener('click', () => {
+        inputEl.value = `Le sommet de la montagne est très beau.;\tThe top of the mountain is very beautiful.
+Nous allons atteindre le sommet demain.;\tWe are going to reach the summit tomorrow.
+Je parle souvent avec eux.;\tI often speak with them.
+J’ai une chose importante à te dire.;\tI have something important to tell you.
+Ce film me plaît beaucoup.;\tI really like this movie.
+Cet après-midi, nous allons au parc.;\tThis afternoon, we are going to the park.`;
+        buildTable();
+      });
+
+      stopAllBtn.addEventListener('click', stopSpeaking);
+
+      tbodyEl.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+
+        const action = btn.dataset.action;
+        if (action === 'stop') {
+          stopSpeaking();
+          return;
+        }
+
+        const tr = btn.closest('tr');
+        const french = tr?.dataset?.french || '';
+
+        if (action === 'speak-normal') speak(french, 1.0);
+        if (action === 'speak-slow') speak(french, 0.6);
+      });
+
+      // Voice loading: browsers load voices async
+      populateVoices();
+      if ('speechSynthesis' in window) {
+        speechSynthesis.onvoiceschanged = populateVoices;
+      }
+
+      // Build once on load
+      buildTable();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,5048 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>French Verb Family Typing Trainer</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #1a1a1a;
+        color: #eee;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      #app {
+        width: 90%;
+        max-width: 1000px;
+      }
+
+      #controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 18px;
+        background: #242424;
+        padding: 14px;
+        border-radius: 14px;
+        border: 1px solid #333;
+      }
+
+      .control-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+        color: #bbb;
+      }
+
+      select,
+      input[type='range'],
+      input[type='number'] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #444;
+        background: #111;
+        color: #eee;
+        box-sizing: border-box;
+      }
+
+      #speed-value {
+        margin-top: 6px;
+        font-size: 0.9rem;
+        color: #8ab4ff;
+      }
+
+      #game-container {
+        width: 100%;
+        text-align: center;
+        background: #202020;
+        border: 1px solid #333;
+        border-radius: 18px;
+        padding: 28px 22px;
+        box-sizing: border-box;
+      }
+
+      #display {
+        font-size: 2.3rem;
+        margin-bottom: 18px;
+        min-height: 1.7em;
+        letter-spacing: 2px;
+        line-height: 1.7;
+        word-break: break-word;
+      }
+
+      #meaning {
+        font-size: 1.1rem;
+        color: #9aa0a6;
+        margin-bottom: 22px;
+        min-height: 1.6em;
+        line-height: 1.7;
+      }
+
+      .char {
+        border-bottom: 2px solid transparent;
+        transition: all 0.12s ease;
+      }
+
+      .char.current {
+        border-bottom: 2px solid #007bff;
+        background: #333;
+      }
+
+      .char.correct {
+        color: #4caf50;
+      }
+
+      .char.wrong {
+        color: #f44336;
+        background: rgba(244, 67, 54, 0.2);
+      }
+
+      .char.space {
+        color: #555;
+        margin: 0 10px;
+      }
+
+      .eng-word {
+        padding: 0 5px;
+        transition: all 0.3s;
+        display: inline-block;
+      }
+
+      .eng-word.pronounced {
+        color: #fff;
+        font-weight: bold;
+        transform: scale(1.15);
+        text-shadow: 0 0 10px #007bff;
+      }
+
+      .separator {
+        color: #444;
+        margin: 0 10px;
+      }
+
+      .stats {
+        margin-top: 12px;
+        font-size: 0.95rem;
+        opacity: 0.75;
+      }
+
+      #hidden-input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      @media (max-width: 700px) {
+        #controls {
+          grid-template-columns: 1fr;
+        }
+
+        #display {
+          font-size: 1.7rem;
+        }
+
+        #meaning {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="controls">
+        <div class="control-group">
+          <label for="voice-select">French voice</label>
+          <select id="voice-select"></select>
+        </div>
+
+        <div class="control-group">
+          <label for="start-index">Start index</label>
+          <input type="number" id="start-index" min="0" value="0" />
+        </div>
+
+        <div class="control-group">
+          <label for="end-index">End index</label>
+          <input type="number" id="end-index" min="0" value="99" />
+        </div>
+
+        <div class="control-group">
+          <label for="speed-range">Speech speed</label>
+          <input
+            type="range"
+            id="speed-range"
+            min="0.5"
+            max="1.2"
+            step="0.05"
+            value="0.9"
+          />
+          <div id="speed-value">0.90x</div>
+        </div>
+      </div>
+
+      <div id="game-container">
+        <div id="display"></div>
+        <div id="meaning"></div>
+
+        <div class="stats">
+          WPM: <span id="wpm">0</span> | Errors: <span id="errors">0</span>
+        </div>
+      </div>
+    </div>
+
+    <input type="text" id="hidden-input" autocomplete="off" autofocus />
+
+    <script>
+      // Sample data. Replace with your real arrays.
+      const dictionaryExpansionPart0 = [
+        {
+          fr: 'être',
+          en: 'to be',
+          past: 'été',
+          pastEn: 'been',
+          pres: 'étant',
+          presEn: 'being',
+        },
+        {
+          fr: 'avoir',
+          en: 'to have',
+          past: 'eu',
+          pastEn: 'had',
+          pres: 'ayant',
+          presEn: 'having',
+        },
+        {
+          fr: 'faire',
+          en: 'to do/make',
+          past: 'fait',
+          pastEn: 'done/made',
+          pres: 'faisant',
+          presEn: 'doing/making',
+        },
+        {
+          fr: 'dire',
+          en: 'to say',
+          past: 'dit',
+          pastEn: 'said',
+          pres: 'disant',
+          presEn: 'saying',
+        },
+        {
+          fr: 'aller',
+          en: 'to go',
+          past: 'allé',
+          pastEn: 'gone',
+          pres: 'allant',
+          presEn: 'going',
+        },
+        {
+          fr: 'voir',
+          en: 'to see',
+          past: 'vu',
+          pastEn: 'seen',
+          pres: 'voyant',
+          presEn: 'seeing',
+        },
+        {
+          fr: 'savoir',
+          en: 'to know (facts)',
+          past: 'su',
+          pastEn: 'known',
+          pres: 'sachant',
+          presEn: 'knowing',
+        },
+        {
+          fr: 'pouvoir',
+          en: 'can/may',
+          past: 'pu',
+          pastEn: 'been able',
+          pres: 'pouvant',
+          presEn: 'being able',
+        },
+        {
+          fr: 'vouloir',
+          en: 'to want',
+          past: 'voulu',
+          pastEn: 'wanted',
+          pres: 'voulant',
+          presEn: 'wanting',
+        },
+        {
+          fr: 'venir',
+          en: 'to come',
+          past: 'venu',
+          pastEn: 'come',
+          pres: 'venant',
+          presEn: 'coming',
+        },
+        {
+          fr: 'devoir',
+          en: 'must/have to',
+          past: 'dû',
+          pastEn: 'had to',
+          pres: 'devant',
+          presEn: 'having to',
+        },
+        {
+          fr: 'prendre',
+          en: 'to take',
+          past: 'pris',
+          pastEn: 'taken',
+          pres: 'prenant',
+          presEn: 'taking',
+        },
+        {
+          fr: 'trouver',
+          en: 'to find',
+          past: 'trouvé',
+          pastEn: 'found',
+          pres: 'trouvant',
+          presEn: 'finding',
+        },
+        {
+          fr: 'donner',
+          en: 'to give',
+          past: 'donné',
+          pastEn: 'given',
+          pres: 'donnant',
+          presEn: 'giving',
+        },
+        {
+          fr: 'parler',
+          en: 'to speak',
+          past: 'parlé',
+          pastEn: 'spoken',
+          pres: 'parlant',
+          presEn: 'speaking',
+        },
+        {
+          fr: 'mettre',
+          en: 'to put',
+          past: 'mis',
+          pastEn: 'put',
+          pres: 'mettant',
+          presEn: 'putting',
+        },
+        {
+          fr: 'tenir',
+          en: 'to hold',
+          past: 'tenu',
+          pastEn: 'held',
+          pres: 'tenant',
+          presEn: 'holding',
+        },
+        {
+          fr: 'croire',
+          en: 'to believe',
+          past: 'cru',
+          pastEn: 'believed',
+          pres: 'croyant',
+          presEn: 'believing',
+        },
+        {
+          fr: 'aimer',
+          en: 'to like/love',
+          past: 'aimé',
+          pastEn: 'liked',
+          pres: 'aimant',
+          presEn: 'liking',
+        },
+        {
+          fr: 'passer',
+          en: 'to pass/spend time',
+          past: 'passé',
+          pastEn: 'passed',
+          pres: 'passant',
+          presEn: 'passing',
+        },
+        {
+          fr: 'penser',
+          en: 'to think',
+          past: 'pensé',
+          pastEn: 'thought',
+          pres: 'pensant',
+          presEn: 'thinking',
+        },
+        {
+          fr: 'attendre',
+          en: 'to wait',
+          past: 'attendu',
+          pastEn: 'waited',
+          pres: 'attendant',
+          presEn: 'waiting',
+        },
+        {
+          fr: 'rester',
+          en: 'to stay',
+          past: 'resté',
+          pastEn: 'stayed',
+          pres: 'restant',
+          presEn: 'staying',
+        },
+        {
+          fr: 'entrer',
+          en: 'to enter',
+          past: 'entré',
+          pastEn: 'entered',
+          pres: 'entrant',
+          presEn: 'entering',
+        },
+        {
+          fr: 'sortir',
+          en: 'to go out',
+          past: 'sorti',
+          pastEn: 'gone out',
+          pres: 'sortant',
+          presEn: 'going out',
+        },
+        {
+          fr: 'arriver',
+          en: 'to arrive',
+          past: 'arrivé',
+          pastEn: 'arrived',
+          pres: 'arrivant',
+          presEn: 'arriving',
+        },
+        {
+          fr: 'partir',
+          en: 'to leave',
+          past: 'parti',
+          pastEn: 'left',
+          pres: 'partant',
+          presEn: 'leaving',
+        },
+        {
+          fr: 'comprendre',
+          en: 'to understand',
+          past: 'compris',
+          pastEn: 'understood',
+          pres: 'comprenant',
+          presEn: 'understanding',
+        },
+        {
+          fr: 'apprendre',
+          en: 'to learn',
+          past: 'appris',
+          pastEn: 'learned',
+          pres: 'apprenant',
+          presEn: 'learning',
+        },
+        {
+          fr: 'connaître',
+          en: 'to know (people)',
+          past: 'connu',
+          pastEn: 'known',
+          pres: 'connaissant',
+          presEn: 'knowing',
+        },
+        {
+          fr: 'vivre',
+          en: 'to live',
+          past: 'vécu',
+          pastEn: 'lived',
+          pres: 'vivant',
+          presEn: 'living',
+        },
+        {
+          fr: 'ouvrir',
+          en: 'to open',
+          past: 'ouvert',
+          pastEn: 'opened',
+          pres: 'ouvrant',
+          presEn: 'opening',
+        },
+        {
+          fr: 'fermer',
+          en: 'to close',
+          past: 'fermé',
+          pastEn: 'closed',
+          pres: 'fermant',
+          presEn: 'closing',
+        },
+        {
+          fr: 'lire',
+          en: 'to read',
+          past: 'lu',
+          pastEn: 'read',
+          pres: 'lisant',
+          presEn: 'reading',
+        },
+        {
+          fr: 'écrire',
+          en: 'to write',
+          past: 'écrit',
+          pastEn: 'written',
+          pres: 'écrivant',
+          presEn: 'writing',
+        },
+        {
+          fr: 'boire',
+          en: 'to drink',
+          past: 'bu',
+          pastEn: 'drunk',
+          pres: 'buvant',
+          presEn: 'drinking',
+        },
+        {
+          fr: 'manger',
+          en: 'to eat',
+          past: 'mangé',
+          pastEn: 'eaten',
+          pres: 'mangeant',
+          presEn: 'eating',
+        },
+        {
+          fr: 'courir',
+          en: 'to run',
+          past: 'couru',
+          pastEn: 'run',
+          pres: 'courant',
+          presEn: 'running',
+        },
+        {
+          fr: 'marcher',
+          en: 'to walk',
+          past: 'marché',
+          pastEn: 'walked',
+          pres: 'marchant',
+          presEn: 'walking',
+        },
+        {
+          fr: 'travailler',
+          en: 'to work',
+          past: 'travaillé',
+          pastEn: 'worked',
+          pres: 'travaillant',
+          presEn: 'working',
+        },
+        {
+          fr: 'jouer',
+          en: 'to play',
+          past: 'joué',
+          pastEn: 'played',
+          pres: 'jouant',
+          presEn: 'playing',
+        },
+        {
+          fr: 'utiliser',
+          en: 'to use',
+          past: 'utilisé',
+          pastEn: 'used',
+          pres: 'utilisant',
+          presEn: 'using',
+        },
+        {
+          fr: 'changer',
+          en: 'to change',
+          past: 'changé',
+          pastEn: 'changed',
+          pres: 'changeant',
+          presEn: 'changing',
+        },
+        {
+          fr: 'garder',
+          en: 'to keep',
+          past: 'gardé',
+          pastEn: 'kept',
+          pres: 'gardant',
+          presEn: 'keeping',
+        },
+        {
+          fr: 'laisser',
+          en: 'to let/leave',
+          past: 'laissé',
+          pastEn: 'let/left',
+          pres: 'laissant',
+          presEn: 'letting',
+        },
+        {
+          fr: 'sentir',
+          en: 'to feel/smell',
+          past: 'senti',
+          pastEn: 'felt',
+          pres: 'sentant',
+          presEn: 'feeling',
+        },
+        {
+          fr: 'entendre',
+          en: 'to hear',
+          past: 'entendu',
+          pastEn: 'heard',
+          pres: 'entendant',
+          presEn: 'hearing',
+        },
+        {
+          fr: 'regarder',
+          en: 'to watch',
+          past: 'regardé',
+          pastEn: 'watched',
+          pres: 'regardant',
+          presEn: 'watching',
+        },
+        {
+          fr: 'écouter',
+          en: 'to listen',
+          past: 'écouté',
+          pastEn: 'listened',
+          pres: 'écoutant',
+          presEn: 'listening',
+        },
+        {
+          fr: 'répondre',
+          en: 'to answer',
+          past: 'répondu',
+          pastEn: 'answered',
+          pres: 'répondant',
+          presEn: 'answering',
+        },
+        {
+          fr: 'demander',
+          en: 'to ask',
+          past: 'demandé',
+          pastEn: 'asked',
+          pres: 'demandant',
+          presEn: 'asking',
+        },
+        {
+          fr: 'expliquer',
+          en: 'to explain',
+          past: 'expliqué',
+          pastEn: 'explained',
+          pres: 'expliquant',
+          presEn: 'explaining',
+        },
+        {
+          fr: 'montrer',
+          en: 'to show',
+          past: 'montré',
+          pastEn: 'shown',
+          pres: 'montrant',
+          presEn: 'showing',
+        },
+        {
+          fr: 'essayer',
+          en: 'to try',
+          past: 'essayé',
+          pastEn: 'tried',
+          pres: 'essayant',
+          presEn: 'trying',
+        },
+        {
+          fr: 'continuer',
+          en: 'to continue',
+          past: 'continué',
+          pastEn: 'continued',
+          pres: 'continuant',
+          presEn: 'continuing',
+        },
+        {
+          fr: 'arrêter',
+          en: 'to stop',
+          past: 'arrêté',
+          pastEn: 'stopped',
+          pres: 'arrêtant',
+          presEn: 'stopping',
+        },
+        {
+          fr: 'décider',
+          en: 'to decide',
+          past: 'décidé',
+          pastEn: 'decided',
+          pres: 'décidant',
+          presEn: 'deciding',
+        },
+        {
+          fr: 'choisir',
+          en: 'to choose',
+          past: 'choisi',
+          pastEn: 'chosen',
+          pres: 'choisissant',
+          presEn: 'choosing',
+        },
+        {
+          fr: 'réussir',
+          en: 'to succeed',
+          past: 'réussi',
+          pastEn: 'succeeded',
+          pres: 'réussissant',
+          presEn: 'succeeding',
+        },
+        {
+          fr: 'échouer',
+          en: 'to fail',
+          past: 'échoué',
+          pastEn: 'failed',
+          pres: 'échouant',
+          presEn: 'failing',
+        },
+        {
+          fr: 'gagner',
+          en: 'to win/earn',
+          past: 'gagné',
+          pastEn: 'won',
+          pres: 'gagnant',
+          presEn: 'winning',
+        },
+        {
+          fr: 'perdre',
+          en: 'to lose',
+          past: 'perdu',
+          pastEn: 'lost',
+          pres: 'perdant',
+          presEn: 'losing',
+        },
+        {
+          fr: 'recevoir',
+          en: 'to receive',
+          past: 'reçu',
+          pastEn: 'received',
+          pres: 'recevant',
+          presEn: 'receiving',
+        },
+        {
+          fr: 'envoyer',
+          en: 'to send',
+          past: 'envoyé',
+          pastEn: 'sent',
+          pres: 'envoyant',
+          presEn: 'sending',
+        },
+        {
+          fr: 'payer',
+          en: 'to pay',
+          past: 'payé',
+          pastEn: 'paid',
+          pres: 'payant',
+          presEn: 'paying',
+        },
+        {
+          fr: 'acheter',
+          en: 'to buy',
+          past: 'acheté',
+          pastEn: 'bought',
+          pres: 'achetant',
+          presEn: 'buying',
+        },
+        {
+          fr: 'vendre',
+          en: 'to sell',
+          past: 'vendu',
+          pastEn: 'sold',
+          pres: 'vendant',
+          presEn: 'selling',
+        },
+
+        // Technical section loop starts here
+        {
+          fr: 'organiser',
+          en: 'to organize',
+          past: 'organisé',
+          pastEn: 'organized',
+          pres: 'organisant',
+          presEn: 'organizing',
+        },
+        {
+          fr: 'préparer',
+          en: 'to prepare',
+          past: 'préparé',
+          pastEn: 'prepared',
+          pres: 'préparant',
+          presEn: 'preparing',
+        },
+        {
+          fr: 'nettoyer',
+          en: 'to clean',
+          past: 'nettoyé',
+          pastEn: 'cleaned',
+          pres: 'nettoyant',
+          presEn: 'cleaning',
+        },
+        {
+          fr: 'lancer',
+          en: 'to launch',
+          past: 'lancé',
+          pastEn: 'launched',
+          pres: 'lançant',
+          presEn: 'launching',
+        },
+        {
+          fr: 'terminer',
+          en: 'to finish',
+          past: 'terminé',
+          pastEn: 'finished',
+          pres: 'terminant',
+          presEn: 'finishing',
+        },
+        {
+          fr: 'gérer',
+          en: 'to manage',
+          past: 'géré',
+          pastEn: 'managed',
+          pres: 'gérant',
+          presEn: 'managing',
+        },
+        {
+          fr: 'planifier',
+          en: 'to plan',
+          past: 'planifié',
+          pastEn: 'planned',
+          pres: 'planifiant',
+          presEn: 'planning',
+        },
+        {
+          fr: 'développer',
+          en: 'to develop',
+          past: 'développé',
+          pastEn: 'developed',
+          pres: 'développant',
+          presEn: 'developing',
+        },
+        {
+          fr: 'tester',
+          en: 'to test',
+          past: 'testé',
+          pastEn: 'tested',
+          pres: 'testant',
+          presEn: 'testing',
+        },
+        {
+          fr: 'corriger',
+          en: 'to correct',
+          past: 'corrigé',
+          pastEn: 'corrected',
+          pres: 'corrigeant',
+          presEn: 'correcting',
+        },
+        {
+          fr: 'valider',
+          en: 'to validate',
+          past: 'validé',
+          pastEn: 'validated',
+          pres: 'validant',
+          presEn: 'validating',
+        },
+        {
+          fr: 'améliorer',
+          en: 'to improve',
+          past: 'amélioré',
+          pastEn: 'improved',
+          pres: 'améliorant',
+          presEn: 'improving',
+        },
+        {
+          fr: 'ajouter',
+          en: 'to add',
+          past: 'ajouté',
+          pastEn: 'added',
+          pres: 'ajoutant',
+          presEn: 'adding',
+        },
+        {
+          fr: 'supprimer',
+          en: 'to delete',
+          past: 'supprimé',
+          pastEn: 'deleted',
+          pres: 'supprimant',
+          presEn: 'deleting',
+        },
+        {
+          fr: 'calculer',
+          en: 'to calculate',
+          past: 'calculé',
+          pastEn: 'calculated',
+          pres: 'calculant',
+          presEn: 'calculating',
+        },
+        {
+          fr: 'mesurer',
+          en: 'to measure',
+          past: 'mesuré',
+          pastEn: 'measured',
+          pres: 'mesurant',
+          presEn: 'measuring',
+        },
+        {
+          fr: 'analyser',
+          en: 'to analyze',
+          past: 'analysé',
+          pastEn: 'analyzed',
+          pres: 'analysant',
+          presEn: 'analyzing',
+        },
+        {
+          fr: 'contrôler',
+          en: 'to control',
+          past: 'contrôlé',
+          pastEn: 'controlled',
+          pres: 'contrôlant',
+          presEn: 'controlling',
+        },
+        {
+          fr: 'livrer',
+          en: 'to deliver',
+          past: 'livré',
+          pastEn: 'delivered',
+          pres: 'livrant',
+          presEn: 'delivering',
+        },
+        {
+          fr: 'installer',
+          en: 'to install',
+          past: 'installé',
+          pastEn: 'installed',
+          pres: 'installant',
+          presEn: 'installing',
+        },
+        {
+          fr: 'configurer',
+          en: 'to configure',
+          past: 'configuré',
+          pastEn: 'configured',
+          pres: 'configurant',
+          presEn: 'configuring',
+        },
+        {
+          fr: 'maintenir',
+          en: 'to maintain',
+          past: 'maintenu',
+          pastEn: 'maintained',
+          pres: 'maintenant',
+          presEn: 'maintaining',
+        },
+        {
+          fr: 'supporter',
+          en: 'to support',
+          past: 'supporté',
+          pastEn: 'supported',
+          pres: 'supportant',
+          presEn: 'supporting',
+        },
+        {
+          fr: 'former',
+          en: 'to train',
+          past: 'formé',
+          pastEn: 'trained',
+          pres: 'formant',
+          presEn: 'training',
+        },
+        {
+          fr: 'évaluer',
+          en: 'to evaluate',
+          past: 'évalué',
+          pastEn: 'evaluated',
+          pres: 'évaluant',
+          presEn: 'evaluating',
+        },
+        {
+          fr: 'observer',
+          en: 'to observe',
+          past: 'observé',
+          pastEn: 'observed',
+          pres: 'observant',
+          presEn: 'observing',
+        },
+        {
+          fr: 'décrire',
+          en: 'to describe',
+          past: 'décrit',
+          pastEn: 'described',
+          pres: 'décrivant',
+          presEn: 'describing',
+        },
+        {
+          fr: 'résumer',
+          en: 'to summarize',
+          past: 'résumé',
+          pastEn: 'summarized',
+          pres: 'résumant',
+          presEn: 'summarizing',
+        },
+        {
+          fr: 'traduire',
+          en: 'to translate',
+          past: 'traduit',
+          pastEn: 'translated',
+          pres: 'traduisant',
+          presEn: 'translating',
+        },
+        {
+          fr: 'comparer',
+          en: 'to compare',
+          past: 'comparé',
+          pastEn: 'compared',
+          pres: 'comparant',
+          presEn: 'comparing',
+        },
+        {
+          fr: 'connecter',
+          en: 'to connect',
+          past: 'connecté',
+          pastEn: 'connected',
+          pres: 'connectant',
+          presEn: 'connecting',
+        },
+        {
+          fr: 'déconnecter',
+          en: 'to disconnect',
+          past: 'déconnecté',
+          pastEn: 'disconnected',
+          pres: 'déconnectant',
+          presEn: 'disconnecting',
+        },
+        {
+          fr: 'charger',
+          en: 'to load',
+          past: 'chargé',
+          pastEn: 'loaded',
+          pres: 'chargeant',
+          presEn: 'loading',
+        },
+        {
+          fr: 'télécharger',
+          en: 'to download',
+          past: 'téléchargé',
+          pastEn: 'downloaded',
+          pres: 'téléchargeant',
+          presEn: 'downloading',
+        },
+        {
+          fr: 'imprimer',
+          en: 'to print',
+          past: 'imprimé',
+          pastEn: 'printed',
+          pres: 'imprimant',
+          presEn: 'printing',
+        },
+        {
+          fr: 'scanner',
+          en: 'to scan',
+          past: 'scanné',
+          pastEn: 'scanned',
+          pres: 'scannant',
+          presEn: 'scanning',
+        },
+        {
+          fr: 'enregistrer',
+          en: 'to record',
+          past: 'enregistré',
+          pastEn: 'recorded',
+          pres: 'enregistrant',
+          presEn: 'recording',
+        },
+        {
+          fr: 'partager',
+          en: 'to share',
+          past: 'partagé',
+          pastEn: 'shared',
+          pres: 'partageant',
+          presEn: 'sharing',
+        },
+        {
+          fr: 'créer',
+          en: 'to create',
+          past: 'créé',
+          pastEn: 'created',
+          pres: 'créant',
+          presEn: 'creating',
+        },
+        {
+          fr: 'modifier',
+          en: 'to modify',
+          past: 'modifié',
+          pastEn: 'modified',
+          pres: 'modifiant',
+          presEn: 'modifying',
+        },
+
+        // Duplicated Technical section as per original input
+        {
+          fr: 'organiser',
+          en: 'to organize',
+          past: 'organisé',
+          pastEn: 'organized',
+          pres: 'organisant',
+          presEn: 'organizing',
+        },
+        {
+          fr: 'préparer',
+          en: 'to prepare',
+          past: 'préparé',
+          pastEn: 'prepared',
+          pres: 'préparant',
+          presEn: 'preparing',
+        },
+        {
+          fr: 'nettoyer',
+          en: 'to clean',
+          past: 'nettoyé',
+          pastEn: 'cleaned',
+          pres: 'nettoyant',
+          presEn: 'cleaning',
+        },
+        {
+          fr: 'lancer',
+          en: 'to launch',
+          past: 'lancé',
+          pastEn: 'launched',
+          pres: 'lançant',
+          presEn: 'launching',
+        },
+        {
+          fr: 'terminer',
+          en: 'to finish',
+          past: 'terminé',
+          pastEn: 'finished',
+          pres: 'terminant',
+          presEn: 'finishing',
+        },
+        {
+          fr: 'gérer',
+          en: 'to manage',
+          past: 'géré',
+          pastEn: 'managed',
+          pres: 'gérant',
+          presEn: 'managing',
+        },
+        {
+          fr: 'planifier',
+          en: 'to plan',
+          past: 'planifié',
+          pastEn: 'planned',
+          pres: 'planifiant',
+          presEn: 'planning',
+        },
+        {
+          fr: 'développer',
+          en: 'to develop',
+          past: 'développé',
+          pastEn: 'developed',
+          pres: 'développant',
+          presEn: 'developing',
+        },
+        {
+          fr: 'tester',
+          en: 'to test',
+          past: 'testé',
+          pastEn: 'tested',
+          pres: 'testant',
+          presEn: 'testing',
+        },
+        {
+          fr: 'corriger',
+          en: 'to correct',
+          past: 'corrigé',
+          pastEn: 'corrected',
+          pres: 'corrigeant',
+          presEn: 'correcting',
+        },
+        {
+          fr: 'valider',
+          en: 'to validate',
+          past: 'validé',
+          pastEn: 'validated',
+          pres: 'validant',
+          presEn: 'validating',
+        },
+        {
+          fr: 'améliorer',
+          en: 'to improve',
+          past: 'amélioré',
+          pastEn: 'improved',
+          pres: 'améliorant',
+          presEn: 'improving',
+        },
+        {
+          fr: 'ajouter',
+          en: 'to add',
+          past: 'ajouté',
+          pastEn: 'added',
+          pres: 'ajoutant',
+          presEn: 'adding',
+        },
+        {
+          fr: 'supprimer',
+          en: 'to delete',
+          past: 'supprimé',
+          pastEn: 'deleted',
+          pres: 'supprimant',
+          presEn: 'deleting',
+        },
+        {
+          fr: 'calculer',
+          en: 'to calculate',
+          past: 'calculé',
+          pastEn: 'calculated',
+          pres: 'calculant',
+          presEn: 'calculating',
+        },
+        {
+          fr: 'mesurer',
+          en: 'to measure',
+          past: 'mesuré',
+          pastEn: 'measured',
+          pres: 'mesurant',
+          presEn: 'measuring',
+        },
+        {
+          fr: 'analyser',
+          en: 'to analyze',
+          past: 'analysé',
+          pastEn: 'analyzed',
+          pres: 'analysant',
+          presEn: 'analyzing',
+        },
+        {
+          fr: 'contrôler',
+          en: 'to control',
+          past: 'contrôlé',
+          pastEn: 'controlled',
+          pres: 'contrôlant',
+          presEn: 'controlling',
+        },
+        {
+          fr: 'livrer',
+          en: 'to deliver',
+          past: 'livré',
+          pastEn: 'delivered',
+          pres: 'livrant',
+          presEn: 'delivering',
+        },
+        {
+          fr: 'installer',
+          en: 'to install',
+          past: 'installé',
+          pastEn: 'installed',
+          pres: 'installant',
+          presEn: 'installing',
+        },
+        {
+          fr: 'configurer',
+          en: 'to configure',
+          past: 'configuré',
+          pastEn: 'configured',
+          pres: 'configurant',
+          presEn: 'configuring',
+        },
+        {
+          fr: 'maintenir',
+          en: 'to maintain',
+          past: 'maintenu',
+          pastEn: 'maintained',
+          pres: 'maintenant',
+          presEn: 'maintaining',
+        },
+        {
+          fr: 'supporter',
+          en: 'to support',
+          past: 'supporté',
+          pastEn: 'supported',
+          pres: 'supportant',
+          presEn: 'supporting',
+        },
+        {
+          fr: 'former',
+          en: 'to train',
+          past: 'formé',
+          pastEn: 'trained',
+          pres: 'formant',
+          presEn: 'training',
+        },
+        {
+          fr: 'évaluer',
+          en: 'to evaluate',
+          past: 'évalué',
+          pastEn: 'evaluated',
+          pres: 'évaluant',
+          presEn: 'evaluating',
+        },
+        {
+          fr: 'observer',
+          en: 'to observe',
+          past: 'observé',
+          pastEn: 'observed',
+          pres: 'observant',
+          presEn: 'observing',
+        },
+        {
+          fr: 'décrire',
+          en: 'to describe',
+          past: 'décrit',
+          pastEn: 'described',
+          pres: 'décrivant',
+          presEn: 'describing',
+        },
+        {
+          fr: 'résumer',
+          en: 'to summarize',
+          past: 'résumé',
+          pastEn: 'summarized',
+          pres: 'résumant',
+          presEn: 'summarizing',
+        },
+        {
+          fr: 'traduire',
+          en: 'to translate',
+          past: 'traduit',
+          pastEn: 'translated',
+          pres: 'traduisant',
+          presEn: 'translating',
+        },
+        {
+          fr: 'comparer',
+          en: 'to compare',
+          past: 'comparé',
+          pastEn: 'compared',
+          pres: 'comparant',
+          presEn: 'comparing',
+        },
+        {
+          fr: 'connecter',
+          en: 'to connect',
+          past: 'connecté',
+          pastEn: 'connected',
+          pres: 'connectant',
+          presEn: 'connecting',
+        },
+        {
+          fr: 'déconnecter',
+          en: 'to disconnect',
+          past: 'déconnecté',
+          pastEn: 'disconnected',
+          pres: 'déconnectant',
+          presEn: 'disconnecting',
+        },
+        {
+          fr: 'charger',
+          en: 'to load',
+          past: 'chargé',
+          pastEn: 'loaded',
+          pres: 'chargeant',
+          presEn: 'loading',
+        },
+        {
+          fr: 'télécharger',
+          en: 'to download',
+          past: 'téléchargé',
+          pastEn: 'downloaded',
+          pres: 'téléchargeant',
+          presEn: 'downloading',
+        },
+        {
+          fr: 'imprimer',
+          en: 'to print',
+          past: 'imprimé',
+          pastEn: 'printed',
+          pres: 'imprimant',
+          presEn: 'printing',
+        },
+        {
+          fr: 'scanner',
+          en: 'to scan',
+          past: 'scanné',
+          pastEn: 'scanned',
+          pres: 'scannant',
+          presEn: 'scanning',
+        },
+        {
+          fr: 'enregistrer',
+          en: 'to record',
+          past: 'enregistré',
+          pastEn: 'recorded',
+          pres: 'enregistrant',
+          presEn: 'recording',
+        },
+        {
+          fr: 'partager',
+          en: 'to share',
+          past: 'partagé',
+          pastEn: 'shared',
+          pres: 'partageant',
+          presEn: 'sharing',
+        },
+        {
+          fr: 'créer',
+          en: 'to create',
+          past: 'créé',
+          pastEn: 'created',
+          pres: 'créant',
+          presEn: 'creating',
+        },
+        {
+          fr: 'modifier',
+          en: 'to modify',
+          past: 'modifié',
+          pastEn: 'modified',
+          pres: 'modifiant',
+          presEn: 'modifying',
+        },
+        // (Full original list continues with corrected values...)
+      ];
+      const dictionaryExpansionPart1 = [
+        {
+          fr: 'être',
+          en: 'to be',
+          past: 'été',
+          pastEn: 'been',
+          pres: 'étant',
+          presEn: 'being',
+        },
+        {
+          fr: 'avoir',
+          en: 'to have',
+          past: 'eu',
+          pastEn: 'had',
+          pres: 'ayant',
+          presEn: 'having',
+        },
+        {
+          fr: 'faire',
+          en: 'to do/make',
+          past: 'fait',
+          pastEn: 'done/made',
+          pres: 'faisant',
+          presEn: 'doing',
+        },
+        {
+          fr: 'dire',
+          en: 'to say/tell',
+          past: 'dit',
+          pastEn: 'said/told',
+          pres: 'disant',
+          presEn: 'saying',
+        },
+        {
+          fr: 'aller',
+          en: 'to go',
+          past: 'allé',
+          pastEn: 'gone',
+          pres: 'allant',
+          presEn: 'going',
+        },
+        {
+          fr: 'voir',
+          en: 'to see',
+          past: 'vu',
+          pastEn: 'seen',
+          pres: 'voyant',
+          presEn: 'seeing',
+        },
+        {
+          fr: 'savoir',
+          en: 'to know (fact)',
+          past: 'su',
+          pastEn: 'known',
+          pres: 'sachant',
+          presEn: 'knowing',
+        },
+        {
+          fr: 'pouvoir',
+          en: 'can/may',
+          past: 'pu',
+          pastEn: 'been able to',
+          pres: 'pouvant',
+          presEn: 'being able',
+        },
+        {
+          fr: 'vouloir',
+          en: 'to want',
+          past: 'voulu',
+          pastEn: 'wanted',
+          pres: 'voulant',
+          presEn: 'wanting',
+        },
+        {
+          fr: 'venir',
+          en: 'to come',
+          past: 'venu',
+          pastEn: 'come',
+          pres: 'venant',
+          presEn: 'coming',
+        },
+
+        {
+          fr: 'prendre',
+          en: 'to take',
+          past: 'pris',
+          pastEn: 'taken',
+          pres: 'prenant',
+          presEn: 'taking',
+        },
+        {
+          fr: 'trouver',
+          en: 'to find',
+          past: 'trouvé',
+          pastEn: 'found',
+          pres: 'trouvant',
+          presEn: 'finding',
+        },
+        {
+          fr: 'donner',
+          en: 'to give',
+          past: 'donné',
+          pastEn: 'given',
+          pres: 'donnant',
+          presEn: 'giving',
+        },
+        {
+          fr: 'parler',
+          en: 'to speak',
+          past: 'parlé',
+          pastEn: 'spoken',
+          pres: 'parlant',
+          presEn: 'speaking',
+        },
+        {
+          fr: 'mettre',
+          en: 'to put',
+          past: 'mis',
+          pastEn: 'put',
+          pres: 'mettant',
+          presEn: 'putting',
+        },
+        {
+          fr: 'tenir',
+          en: 'to hold',
+          past: 'tenu',
+          pastEn: 'held',
+          pres: 'tenant',
+          presEn: 'holding',
+        },
+        {
+          fr: 'croire',
+          en: 'to believe',
+          past: 'cru',
+          pastEn: 'believed',
+          pres: 'croyant',
+          presEn: 'believing',
+        },
+        {
+          fr: 'aimer',
+          en: 'to love/like',
+          past: 'aimé',
+          pastEn: 'loved/liked',
+          pres: 'aimant',
+          presEn: 'loving',
+        },
+        {
+          fr: 'passer',
+          en: 'to pass/spend',
+          past: 'passé',
+          pastEn: 'passed/spent',
+          pres: 'passant',
+          presEn: 'passing',
+        },
+        {
+          fr: 'penser',
+          en: 'to think',
+          past: 'pensé',
+          pastEn: 'thought',
+          pres: 'pensant',
+          presEn: 'thinking',
+        },
+
+        {
+          fr: 'arriver',
+          en: 'to arrive',
+          past: 'arrivé',
+          pastEn: 'arrived',
+          pres: 'arrivant',
+          presEn: 'arriving',
+        },
+        {
+          fr: 'devoir',
+          en: 'must/have to',
+          past: 'dû',
+          pastEn: 'had to',
+          pres: 'devant',
+          presEn: 'having to',
+        },
+        {
+          fr: 'rester',
+          en: 'to stay',
+          past: 'resté',
+          pastEn: 'stayed',
+          pres: 'restant',
+          presEn: 'staying',
+        },
+        {
+          fr: 'sortir',
+          en: 'to go out',
+          past: 'sorti',
+          pastEn: 'gone out',
+          pres: 'sortant',
+          presEn: 'going out',
+        },
+        {
+          fr: 'partir',
+          en: 'to leave',
+          past: 'parti',
+          pastEn: 'left',
+          pres: 'partant',
+          presEn: 'leaving',
+        },
+        {
+          fr: 'vivre',
+          en: 'to live',
+          past: 'vécu',
+          pastEn: 'lived',
+          pres: 'vivant',
+          presEn: 'living',
+        },
+        {
+          fr: 'entrer',
+          en: 'to enter',
+          past: 'entré',
+          pastEn: 'entered',
+          pres: 'entrant',
+          presEn: 'entering',
+        },
+        {
+          fr: 'porter',
+          en: 'to carry/wear',
+          past: 'porté',
+          pastEn: 'carried/worn',
+          pres: 'portant',
+          presEn: 'carrying',
+        },
+        {
+          fr: 'suivre',
+          en: 'to follow',
+          past: 'suivi',
+          pastEn: 'followed',
+          pres: 'suivant',
+          presEn: 'following',
+        },
+        {
+          fr: 'connaître',
+          en: 'to know (person)',
+          past: 'connu',
+          pastEn: 'known',
+          pres: 'connaissant',
+          presEn: 'knowing',
+        },
+
+        {
+          fr: 'jouer',
+          en: 'to play',
+          past: 'joué',
+          pastEn: 'played',
+          pres: 'jouant',
+          presEn: 'playing',
+        },
+        {
+          fr: 'comprendre',
+          en: 'to understand',
+          past: 'compris',
+          pastEn: 'understood',
+          pres: 'comprenant',
+          presEn: 'understanding',
+        },
+        {
+          fr: 'demander',
+          en: 'to ask',
+          past: 'demandé',
+          pastEn: 'asked',
+          pres: 'demandant',
+          presEn: 'asking',
+        },
+        {
+          fr: 'recevoir',
+          en: 'to receive',
+          past: 'reçu',
+          pastEn: 'received',
+          pres: 'recevant',
+          presEn: 'receiving',
+        },
+        {
+          fr: 'travailler',
+          en: 'to work',
+          past: 'travaillé',
+          pastEn: 'worked',
+          pres: 'travaillant',
+          presEn: 'working',
+        },
+        {
+          fr: 'appeler',
+          en: 'to call',
+          past: 'appelé',
+          pastEn: 'called',
+          pres: 'appelant',
+          presEn: 'calling',
+        },
+        {
+          fr: 'essayer',
+          en: 'to try',
+          past: 'essayé',
+          pastEn: 'tried',
+          pres: 'essayant',
+          presEn: 'trying',
+        },
+        {
+          fr: 'ouvrir',
+          en: 'to open',
+          past: 'ouvert',
+          pastEn: 'opened',
+          pres: 'ouvrant',
+          presEn: 'opening',
+        },
+        {
+          fr: 'fermer',
+          en: 'to close',
+          past: 'fermé',
+          pastEn: 'closed',
+          pres: 'fermant',
+          presEn: 'closing',
+        },
+        {
+          fr: 'lire',
+          en: 'to read',
+          past: 'lu',
+          pastEn: 'read',
+          pres: 'lisant',
+          presEn: 'reading',
+        },
+
+        {
+          fr: 'écrire',
+          en: 'to write',
+          past: 'écrit',
+          pastEn: 'written',
+          pres: 'écrivant',
+          presEn: 'writing',
+        },
+        {
+          fr: 'courir',
+          en: 'to run',
+          past: 'couru',
+          pastEn: 'run',
+          pres: 'courant',
+          presEn: 'running',
+        },
+        {
+          fr: 'marcher',
+          en: 'to walk',
+          past: 'marché',
+          pastEn: 'walked',
+          pres: 'marchant',
+          presEn: 'walking',
+        },
+        {
+          fr: 'dormir',
+          en: 'to sleep',
+          past: 'dormi',
+          pastEn: 'slept',
+          pres: 'dormant',
+          presEn: 'sleeping',
+        },
+        {
+          fr: 'attendre',
+          en: 'to wait',
+          past: 'attendu',
+          pastEn: 'waited',
+          pres: 'attendant',
+          presEn: 'waiting',
+        },
+        {
+          fr: 'répondre',
+          en: 'to answer',
+          past: 'répondu',
+          pastEn: 'answered',
+          pres: 'répondant',
+          presEn: 'answering',
+        },
+        {
+          fr: 'perdre',
+          en: 'to lose',
+          past: 'perdu',
+          pastEn: 'lost',
+          pres: 'perdant',
+          presEn: 'losing',
+        },
+        {
+          fr: 'gagner',
+          en: 'to win/earn',
+          past: 'gagné',
+          pastEn: 'won/earned',
+          pres: 'gagnant',
+          presEn: 'winning',
+        },
+        {
+          fr: 'changer',
+          en: 'to change',
+          past: 'changé',
+          pastEn: 'changed',
+          pres: 'changeant',
+          presEn: 'changing',
+        },
+        {
+          fr: 'montrer',
+          en: 'to show',
+          past: 'montré',
+          pastEn: 'shown',
+          pres: 'montrant',
+          presEn: 'showing',
+        },
+
+        {
+          fr: 'utiliser',
+          en: 'to use',
+          past: 'utilisé',
+          pastEn: 'used',
+          pres: 'utilisant',
+          presEn: 'using',
+        },
+        {
+          fr: 'regarder',
+          en: 'to watch',
+          past: 'regardé',
+          pastEn: 'watched',
+          pres: 'regardant',
+          presEn: 'watching',
+        },
+        {
+          fr: 'écouter',
+          en: 'to listen',
+          past: 'écouté',
+          pastEn: 'listened',
+          pres: 'écoutant',
+          presEn: 'listening',
+        },
+        {
+          fr: 'manger',
+          en: 'to eat',
+          past: 'mangé',
+          pastEn: 'eaten',
+          pres: 'mangeant',
+          presEn: 'eating',
+        },
+        {
+          fr: 'boire',
+          en: 'to drink',
+          past: 'bu',
+          pastEn: 'drunk',
+          pres: 'buvant',
+          presEn: 'drinking',
+        },
+        {
+          fr: 'acheter',
+          en: 'to buy',
+          past: 'acheté',
+          pastEn: 'bought',
+          pres: 'achetant',
+          presEn: 'buying',
+        },
+        {
+          fr: 'vendre',
+          en: 'to sell',
+          past: 'vendu',
+          pastEn: 'sold',
+          pres: 'vendant',
+          presEn: 'selling',
+        },
+        {
+          fr: 'payer',
+          en: 'to pay',
+          past: 'payé',
+          pastEn: 'paid',
+          pres: 'payant',
+          presEn: 'paying',
+        },
+        {
+          fr: 'apprendre',
+          en: 'to learn',
+          past: 'appris',
+          pastEn: 'learned',
+          pres: 'apprenant',
+          presEn: 'learning',
+        },
+        {
+          fr: 'enseigner',
+          en: 'to teach',
+          past: 'enseigné',
+          pastEn: 'taught',
+          pres: 'enseignant',
+          presEn: 'teaching',
+        },
+
+        {
+          fr: 'étudier',
+          en: 'to study',
+          past: 'étudié',
+          pastEn: 'studied',
+          pres: 'étudiant',
+          presEn: 'studying',
+        },
+        {
+          fr: 'semer',
+          en: 'to sow',
+          past: 'semé',
+          pastEn: 'sown',
+          pres: 'semant',
+          presEn: 'sowing',
+        },
+        {
+          fr: 'tirer',
+          en: 'to pull',
+          past: 'tiré',
+          pastEn: 'pulled',
+          pres: 'tirant',
+          presEn: 'pulling',
+        },
+        {
+          fr: 'pousser',
+          en: 'to push',
+          past: 'poussé',
+          pastEn: 'pushed',
+          pres: 'poussant',
+          presEn: 'pushing',
+        },
+        {
+          fr: 'remplir',
+          en: 'to fill',
+          past: 'rempli',
+          pastEn: 'filled',
+          pres: 'remplissant',
+          presEn: 'filling',
+        },
+        {
+          fr: 'vider',
+          en: 'to empty',
+          past: 'vidé',
+          pastEn: 'emptied',
+          pres: 'vidant',
+          presEn: 'emptying',
+        },
+        {
+          fr: 'couper',
+          en: 'to cut',
+          past: 'coupé',
+          pastEn: 'cut',
+          pres: 'coupant',
+          presEn: 'cutting',
+        },
+        {
+          fr: 'casser',
+          en: 'to break',
+          past: 'cassé',
+          pastEn: 'broken',
+          pres: 'cassant',
+          presEn: 'breaking',
+        },
+        {
+          fr: 'réparer',
+          en: 'to repair',
+          past: 'réparé',
+          pastEn: 'repaired',
+          pres: 'réparant',
+          presEn: 'repairing',
+        },
+        {
+          fr: 'nettoyer',
+          en: 'to clean',
+          past: 'nettoyé',
+          pastEn: 'cleaned',
+          pres: 'nettoyant',
+          presEn: 'cleaning',
+        },
+
+        {
+          fr: 'laver',
+          en: 'to wash',
+          past: 'lavé',
+          pastEn: 'washed',
+          pres: 'lavant',
+          presEn: 'washing',
+        },
+        {
+          fr: 'sécher',
+          en: 'to dry',
+          past: 'séché',
+          pastEn: 'dried',
+          pres: 'séchant',
+          presEn: 'drying',
+        },
+        {
+          fr: 'habiter',
+          en: 'to live/reside',
+          past: 'habité',
+          pastEn: 'lived',
+          pres: 'habitant',
+          presEn: 'living',
+        },
+        {
+          fr: 'voyager',
+          en: 'to travel',
+          past: 'voyagé',
+          pastEn: 'traveled',
+          pres: 'voyageant',
+          presEn: 'traveling',
+        },
+        {
+          fr: 'visiter',
+          en: 'to visit',
+          past: 'visité',
+          pastEn: 'visited',
+          pres: 'visitant',
+          presEn: 'visiting',
+        },
+        {
+          fr: 'rencontrer',
+          en: 'to meet',
+          past: 'rencontré',
+          pastEn: 'met',
+          pres: 'rencontrant',
+          presEn: 'meeting',
+        },
+        {
+          fr: 'inviter',
+          en: 'to invite',
+          past: 'invité',
+          pastEn: 'invited',
+          pres: 'invitant',
+          presEn: 'inviting',
+        },
+        {
+          fr: 'refuser',
+          en: 'to refuse',
+          past: 'refusé',
+          pastEn: 'refused',
+          pres: 'refusant',
+          presEn: 'refusing',
+        },
+        {
+          fr: 'accepter',
+          en: 'to accept',
+          past: 'accepté',
+          pastEn: 'accepted',
+          pres: 'acceptant',
+          presEn: 'accepting',
+        },
+        {
+          fr: 'choisir',
+          en: 'to choose',
+          past: 'choisi',
+          pastEn: 'chosen',
+          pres: 'choisissant',
+          presEn: 'choosing',
+        },
+      ];
+      const dictionaryExpansionPart2 = [
+        {
+          fr: 'ajouter',
+          en: 'to add',
+          past: 'ajouté',
+          pastEn: 'added',
+          pres: 'ajoutant',
+          presEn: 'adding',
+        },
+        {
+          fr: 'enlever',
+          en: 'to remove',
+          past: 'enlevé',
+          pastEn: 'removed',
+          pres: 'enlevant',
+          presEn: 'removing',
+        },
+        {
+          fr: 'garder',
+          en: 'to keep',
+          past: 'gardé',
+          pastEn: 'kept',
+          pres: 'gardant',
+          presEn: 'keeping',
+        },
+        {
+          fr: 'laisser',
+          en: 'to leave/let',
+          past: 'laissé',
+          pastEn: 'left/let',
+          pres: 'laissant',
+          presEn: 'leaving/letting',
+        },
+        {
+          fr: 'ramener',
+          en: 'to bring back',
+          past: 'ramené',
+          pastEn: 'brought back',
+          pres: 'ramenant',
+          presEn: 'bringing back',
+        },
+        {
+          fr: 'emporter',
+          en: 'to take away',
+          past: 'emporté',
+          pastEn: 'taken away',
+          pres: 'emportant',
+          presEn: 'taking away',
+        },
+        {
+          fr: 'retourner',
+          en: 'to return',
+          past: 'retourné',
+          pastEn: 'returned',
+          pres: 'retournant',
+          presEn: 'returning',
+        },
+        {
+          fr: 'rentrer',
+          en: 'to go home',
+          past: 'rentré',
+          pastEn: 'gone home',
+          pres: 'rentrant',
+          presEn: 'going home',
+        },
+        {
+          fr: 'monter',
+          en: 'to go up',
+          past: 'monté',
+          pastEn: 'gone up',
+          pres: 'montant',
+          presEn: 'going up',
+        },
+        {
+          fr: 'descendre',
+          en: 'to go down',
+          past: 'descendu',
+          pastEn: 'gone down',
+          pres: 'descendant',
+          presEn: 'going down',
+        },
+
+        {
+          fr: 'tomber',
+          en: 'to fall',
+          past: 'tombé',
+          pastEn: 'fallen',
+          pres: 'tombant',
+          presEn: 'falling',
+        },
+        {
+          fr: 'revenir',
+          en: 'to come back',
+          past: 'revenu',
+          pastEn: 'come back',
+          pres: 'revenant',
+          presEn: 'coming back',
+        },
+        {
+          fr: 'devenir',
+          en: 'to become',
+          past: 'devenu',
+          pastEn: 'become',
+          pres: 'devenant',
+          presEn: 'becoming',
+        },
+        {
+          fr: 'rester',
+          en: 'to remain',
+          past: 'resté',
+          pastEn: 'remained',
+          pres: 'restant',
+          presEn: 'remaining',
+        },
+        {
+          fr: 'expliquer',
+          en: 'to explain',
+          past: 'expliqué',
+          pastEn: 'explained',
+          pres: 'expliquant',
+          presEn: 'explaining',
+        },
+        {
+          fr: 'monter',
+          en: 'to assemble',
+          past: 'monté',
+          pastEn: 'assembled',
+          pres: 'montant',
+          presEn: 'assembling',
+        },
+        {
+          fr: 'préparer',
+          en: 'to prepare',
+          past: 'préparé',
+          pastEn: 'prepared',
+          pres: 'préparant',
+          presEn: 'preparing',
+        },
+        {
+          fr: 'organiser',
+          en: 'to organize',
+          past: 'organisé',
+          pastEn: 'organized',
+          pres: 'organisant',
+          presEn: 'organizing',
+        },
+        {
+          fr: 'planifier',
+          en: 'to plan',
+          past: 'planifié',
+          pastEn: 'planned',
+          pres: 'planifiant',
+          presEn: 'planning',
+        },
+        {
+          fr: 'décider',
+          en: 'to decide',
+          past: 'décidé',
+          pastEn: 'decided',
+          pres: 'décidant',
+          presEn: 'deciding',
+        },
+
+        {
+          fr: 'choisir',
+          en: 'to select',
+          past: 'choisi',
+          pastEn: 'selected',
+          pres: 'choisissant',
+          presEn: 'selecting',
+        },
+        {
+          fr: 'proposer',
+          en: 'to propose',
+          past: 'proposé',
+          pastEn: 'proposed',
+          pres: 'proposant',
+          presEn: 'proposing',
+        },
+        {
+          fr: 'offrir',
+          en: 'to offer',
+          past: 'offert',
+          pastEn: 'offered',
+          pres: 'offrant',
+          presEn: 'offering',
+        },
+        {
+          fr: 'permettre',
+          en: 'to allow',
+          past: 'permis',
+          pastEn: 'allowed',
+          pres: 'permettant',
+          presEn: 'allowing',
+        },
+        {
+          fr: 'empêcher',
+          en: 'to prevent',
+          past: 'empêché',
+          pastEn: 'prevented',
+          pres: 'empêchant',
+          presEn: 'preventing',
+        },
+        {
+          fr: 'continuer',
+          en: 'to continue',
+          past: 'continué',
+          pastEn: 'continued',
+          pres: 'continuant',
+          presEn: 'continuing',
+        },
+        {
+          fr: 'arrêter',
+          en: 'to stop',
+          past: 'arrêté',
+          pastEn: 'stopped',
+          pres: 'arrêtant',
+          presEn: 'stopping',
+        },
+        {
+          fr: 'commencer',
+          en: 'to start',
+          past: 'commencé',
+          pastEn: 'started',
+          pres: 'commençant',
+          presEn: 'starting',
+        },
+        {
+          fr: 'finir',
+          en: 'to finish',
+          past: 'fini',
+          pastEn: 'finished',
+          pres: 'finissant',
+          presEn: 'finishing',
+        },
+        {
+          fr: 'terminer',
+          en: 'to end',
+          past: 'terminé',
+          pastEn: 'ended',
+          pres: 'terminant',
+          presEn: 'ending',
+        },
+
+        {
+          fr: 'utiliser',
+          en: 'to apply/use',
+          past: 'utilisé',
+          pastEn: 'applied/used',
+          pres: 'utilisant',
+          presEn: 'applying',
+        },
+        {
+          fr: 'créer',
+          en: 'to create',
+          past: 'créé',
+          pastEn: 'created',
+          pres: 'créant',
+          presEn: 'creating',
+        },
+        {
+          fr: 'construire',
+          en: 'to build',
+          past: 'construit',
+          pastEn: 'built',
+          pres: 'construisant',
+          presEn: 'building',
+        },
+        {
+          fr: 'développer',
+          en: 'to develop',
+          past: 'développé',
+          pastEn: 'developed',
+          pres: 'développant',
+          presEn: 'developing',
+        },
+        {
+          fr: 'produire',
+          en: 'to produce',
+          past: 'produit',
+          pastEn: 'produced',
+          pres: 'produisant',
+          presEn: 'producing',
+        },
+        {
+          fr: 'améliorer',
+          en: 'to improve',
+          past: 'amélioré',
+          pastEn: 'improved',
+          pres: 'améliorant',
+          presEn: 'improving',
+        },
+        {
+          fr: 'augmenter',
+          en: 'to increase',
+          past: 'augmenté',
+          pastEn: 'increased',
+          pres: 'augmentant',
+          presEn: 'increasing',
+        },
+        {
+          fr: 'réduire',
+          en: 'to reduce',
+          past: 'réduit',
+          pastEn: 'reduced',
+          pres: 'réduisant',
+          presEn: 'reducing',
+        },
+        {
+          fr: 'changer',
+          en: 'to modify',
+          past: 'changé',
+          pastEn: 'modified',
+          pres: 'changeant',
+          presEn: 'modifying',
+        },
+        {
+          fr: 'adapter',
+          en: 'to adapt',
+          past: 'adapté',
+          pastEn: 'adapted',
+          pres: 'adaptant',
+          presEn: 'adapting',
+        },
+
+        {
+          fr: 'vérifier',
+          en: 'to check',
+          past: 'vérifié',
+          pastEn: 'checked',
+          pres: 'vérifiant',
+          presEn: 'checking',
+        },
+        {
+          fr: 'contrôler',
+          en: 'to control',
+          past: 'contrôlé',
+          pastEn: 'controlled',
+          pres: 'contrôlant',
+          presEn: 'controlling',
+        },
+        {
+          fr: 'tester',
+          en: 'to test',
+          past: 'testé',
+          pastEn: 'tested',
+          pres: 'testant',
+          presEn: 'testing',
+        },
+        {
+          fr: 'analyser',
+          en: 'to analyze',
+          past: 'analysé',
+          pastEn: 'analyzed',
+          pres: 'analysant',
+          presEn: 'analyzing',
+        },
+        {
+          fr: 'mesurer',
+          en: 'to measure',
+          past: 'mesuré',
+          pastEn: 'measured',
+          pres: 'mesurant',
+          presEn: 'measuring',
+        },
+        {
+          fr: 'calculer',
+          en: 'to calculate',
+          past: 'calculé',
+          pastEn: 'calculated',
+          pres: 'calculant',
+          presEn: 'calculating',
+        },
+        {
+          fr: 'comparer',
+          en: 'to compare',
+          past: 'comparé',
+          pastEn: 'compared',
+          pres: 'comparant',
+          presEn: 'comparing',
+        },
+        {
+          fr: 'corriger',
+          en: 'to correct',
+          past: 'corrigé',
+          pastEn: 'corrected',
+          pres: 'corrigeant',
+          presEn: 'correcting',
+        },
+        {
+          fr: 'réviser',
+          en: 'to review',
+          past: 'révisé',
+          pastEn: 'reviewed',
+          pres: 'révisant',
+          presEn: 'reviewing',
+        },
+        {
+          fr: 'valider',
+          en: 'to validate',
+          past: 'validé',
+          pastEn: 'validated',
+          pres: 'validant',
+          presEn: 'validating',
+        },
+
+        {
+          fr: 'signer',
+          en: 'to sign',
+          past: 'signé',
+          pastEn: 'signed',
+          pres: 'signant',
+          presEn: 'signing',
+        },
+        {
+          fr: 'envoyer',
+          en: 'to send',
+          past: 'envoyé',
+          pastEn: 'sent',
+          pres: 'envoyant',
+          presEn: 'sending',
+        },
+        {
+          fr: 'recevoir',
+          en: 'to get',
+          past: 'reçu',
+          pastEn: 'got',
+          pres: 'recevant',
+          presEn: 'getting',
+        },
+        {
+          fr: 'transmettre',
+          en: 'to transmit',
+          past: 'transmis',
+          pastEn: 'transmitted',
+          pres: 'transmettant',
+          presEn: 'transmitting',
+        },
+        {
+          fr: 'partager',
+          en: 'to share',
+          past: 'partagé',
+          pastEn: 'shared',
+          pres: 'partageant',
+          presEn: 'sharing',
+        },
+        {
+          fr: 'publier',
+          en: 'to publish',
+          past: 'publié',
+          pastEn: 'published',
+          pres: 'publiant',
+          presEn: 'publishing',
+        },
+        {
+          fr: 'imprimer',
+          en: 'to print',
+          past: 'imprimé',
+          pastEn: 'printed',
+          pres: 'imprimant',
+          presEn: 'printing',
+        },
+        {
+          fr: 'copier',
+          en: 'to copy',
+          past: 'copié',
+          pastEn: 'copied',
+          pres: 'copiant',
+          presEn: 'copying',
+        },
+        {
+          fr: 'coller',
+          en: 'to paste',
+          past: 'collé',
+          pastEn: 'pasted',
+          pres: 'collant',
+          presEn: 'pasting',
+        },
+        {
+          fr: 'télécharger',
+          en: 'to download',
+          past: 'téléchargé',
+          pastEn: 'downloaded',
+          pres: 'téléchargeant',
+          presEn: 'downloading',
+        },
+
+        {
+          fr: 'installer',
+          en: 'to install',
+          past: 'installé',
+          pastEn: 'installed',
+          pres: 'installant',
+          presEn: 'installing',
+        },
+        {
+          fr: 'configurer',
+          en: 'to configure',
+          past: 'configuré',
+          pastEn: 'configured',
+          pres: 'configurant',
+          presEn: 'configuring',
+        },
+        {
+          fr: 'connecter',
+          en: 'to connect',
+          past: 'connecté',
+          pastEn: 'connected',
+          pres: 'connectant',
+          presEn: 'connecting',
+        },
+        {
+          fr: 'déconnecter',
+          en: 'to disconnect',
+          past: 'déconnecté',
+          pastEn: 'disconnected',
+          pres: 'déconnectant',
+          presEn: 'disconnecting',
+        },
+        {
+          fr: 'sauvegarder',
+          en: 'to save',
+          past: 'sauvegardé',
+          pastEn: 'saved',
+          pres: 'sauvegardant',
+          presEn: 'saving',
+        },
+        {
+          fr: 'supprimer',
+          en: 'to delete',
+          past: 'supprimé',
+          pastEn: 'deleted',
+          pres: 'supprimant',
+          presEn: 'deleting',
+        },
+        {
+          fr: 'restaurer',
+          en: 'to restore',
+          past: 'restauré',
+          pastEn: 'restored',
+          pres: 'restaurant',
+          presEn: 'restoring',
+        },
+        {
+          fr: 'charger',
+          en: 'to load',
+          past: 'chargé',
+          pastEn: 'loaded',
+          pres: 'chargeant',
+          presEn: 'loading',
+        },
+        {
+          fr: 'cliquer',
+          en: 'to click',
+          past: 'cliqué',
+          pastEn: 'clicked',
+          pres: 'cliquant',
+          presEn: 'clicking',
+        },
+        {
+          fr: 'taper',
+          en: 'to type',
+          past: 'tapé',
+          pastEn: 'typed',
+          pres: 'tapant',
+          presEn: 'typing',
+        },
+      ];
+
+      const dictionaryExpansionPart3 = [
+        {
+          fr: 'sentir',
+          en: 'to feel',
+          past: 'senti',
+          pastEn: 'felt',
+          pres: 'sentant',
+          presEn: 'feeling',
+        },
+        {
+          fr: 'ressentir',
+          en: 'to experience (emotion)',
+          past: 'ressenti',
+          pastEn: 'experienced',
+          pres: 'ressentant',
+          presEn: 'experiencing',
+        },
+        {
+          fr: 'craindre',
+          en: 'to fear',
+          past: 'craint',
+          pastEn: 'feared',
+          pres: 'craignant',
+          presEn: 'fearing',
+        },
+        {
+          fr: 'espérer',
+          en: 'to hope',
+          past: 'espéré',
+          pastEn: 'hoped',
+          pres: 'espérant',
+          presEn: 'hoping',
+        },
+        {
+          fr: 'souhaiter',
+          en: 'to wish',
+          past: 'souhaité',
+          pastEn: 'wished',
+          pres: 'souhaitant',
+          presEn: 'wishing',
+        },
+        {
+          fr: 'désirer',
+          en: 'to desire',
+          past: 'désiré',
+          pastEn: 'desired',
+          pres: 'désirant',
+          presEn: 'desiring',
+        },
+        {
+          fr: 'aimer',
+          en: 'to enjoy',
+          past: 'aimé',
+          pastEn: 'enjoyed',
+          pres: 'aimant',
+          presEn: 'enjoying',
+        },
+        {
+          fr: 'détester',
+          en: 'to hate',
+          past: 'détesté',
+          pastEn: 'hated',
+          pres: 'détestant',
+          presEn: 'hating',
+        },
+        {
+          fr: 'préférer',
+          en: 'to prefer',
+          past: 'préféré',
+          pastEn: 'preferred',
+          pres: 'préférant',
+          presEn: 'preferring',
+        },
+        {
+          fr: 'apprécier',
+          en: 'to appreciate',
+          past: 'apprécié',
+          pastEn: 'appreciated',
+          pres: 'appréciant',
+          presEn: 'appreciating',
+        },
+
+        {
+          fr: 'regretter',
+          en: 'to regret',
+          past: 'regretté',
+          pastEn: 'regretted',
+          pres: 'regrettant',
+          presEn: 'regretting',
+        },
+        {
+          fr: 'pardonner',
+          en: 'to forgive',
+          past: 'pardonné',
+          pastEn: 'forgiven',
+          pres: 'pardonnant',
+          presEn: 'forgiving',
+        },
+        {
+          fr: 'remercier',
+          en: 'to thank',
+          past: 'remercié',
+          pastEn: 'thanked',
+          pres: 'remerciant',
+          presEn: 'thanking',
+        },
+        {
+          fr: 'féliciter',
+          en: 'to congratulate',
+          past: 'félicité',
+          pastEn: 'congratulated',
+          pres: 'félicitant',
+          presEn: 'congratulating',
+        },
+        {
+          fr: 'encourager',
+          en: 'to encourage',
+          past: 'encouragé',
+          pastEn: 'encouraged',
+          pres: 'encourageant',
+          presEn: 'encouraging',
+        },
+        {
+          fr: 'motiver',
+          en: 'to motivate',
+          past: 'motivé',
+          pastEn: 'motivated',
+          pres: 'motivant',
+          presEn: 'motivating',
+        },
+        {
+          fr: 'inspirer',
+          en: 'to inspire',
+          past: 'inspiré',
+          pastEn: 'inspired',
+          pres: 'inspirant',
+          presEn: 'inspiring',
+        },
+        {
+          fr: 'décevoir',
+          en: 'to disappoint',
+          past: 'déçu',
+          pastEn: 'disappointed',
+          pres: 'décevant',
+          presEn: 'disappointing',
+        },
+        {
+          fr: 'surprendre',
+          en: 'to surprise',
+          past: 'surpris',
+          pastEn: 'surprised',
+          pres: 'surprenant',
+          presEn: 'surprising',
+        },
+        {
+          fr: 'étonner',
+          en: 'to amaze',
+          past: 'étonné',
+          pastEn: 'amazed',
+          pres: 'étonnant',
+          presEn: 'amazing',
+        },
+
+        {
+          fr: 'penser',
+          en: 'to consider',
+          past: 'pensé',
+          pastEn: 'considered',
+          pres: 'pensant',
+          presEn: 'considering',
+        },
+        {
+          fr: 'réfléchir',
+          en: 'to reflect',
+          past: 'réfléchi',
+          pastEn: 'reflected',
+          pres: 'réfléchissant',
+          presEn: 'reflecting',
+        },
+        {
+          fr: 'imaginer',
+          en: 'to imagine',
+          past: 'imaginé',
+          pastEn: 'imagined',
+          pres: 'imaginant',
+          presEn: 'imagining',
+        },
+        {
+          fr: 'supposer',
+          en: 'to suppose',
+          past: 'supposé',
+          pastEn: 'supposed',
+          pres: 'supposant',
+          presEn: 'supposing',
+        },
+        {
+          fr: 'estimer',
+          en: 'to estimate',
+          past: 'estimé',
+          pastEn: 'estimated',
+          pres: 'estimant',
+          presEn: 'estimating',
+        },
+        {
+          fr: 'juger',
+          en: 'to judge',
+          past: 'jugé',
+          pastEn: 'judged',
+          pres: 'jugeant',
+          presEn: 'judging',
+        },
+        {
+          fr: 'évaluer',
+          en: 'to evaluate',
+          past: 'évalué',
+          pastEn: 'evaluated',
+          pres: 'évaluant',
+          presEn: 'evaluating',
+        },
+        {
+          fr: 'analyser',
+          en: 'to examine',
+          past: 'analysé',
+          pastEn: 'examined',
+          pres: 'analysant',
+          presEn: 'examining',
+        },
+        {
+          fr: 'observer',
+          en: 'to observe',
+          past: 'observé',
+          pastEn: 'observed',
+          pres: 'observant',
+          presEn: 'observing',
+        },
+        {
+          fr: 'remarquer',
+          en: 'to notice',
+          past: 'remarqué',
+          pastEn: 'noticed',
+          pres: 'remarquant',
+          presEn: 'noticing',
+        },
+
+        {
+          fr: 'se souvenir',
+          en: 'to remember',
+          past: 'souvenu',
+          pastEn: 'remembered',
+          pres: 'se souvenant',
+          presEn: 'remembering',
+        },
+        {
+          fr: 'oublier',
+          en: 'to forget',
+          past: 'oublié',
+          pastEn: 'forgotten',
+          pres: 'oubliant',
+          presEn: 'forgetting',
+        },
+        {
+          fr: 'retenir',
+          en: 'to retain',
+          past: 'retenu',
+          pastEn: 'retained',
+          pres: 'retenant',
+          presEn: 'retaining',
+        },
+        {
+          fr: 'apprendre',
+          en: 'to acquire knowledge',
+          past: 'appris',
+          pastEn: 'acquired',
+          pres: 'apprenant',
+          presEn: 'acquiring',
+        },
+        {
+          fr: 'comprendre',
+          en: 'to grasp',
+          past: 'compris',
+          pastEn: 'grasped',
+          pres: 'comprenant',
+          presEn: 'grasping',
+        },
+        {
+          fr: 'maîtriser',
+          en: 'to master',
+          past: 'maîtrisé',
+          pastEn: 'mastered',
+          pres: 'maîtrisant',
+          presEn: 'mastering',
+        },
+        {
+          fr: 'ignorer',
+          en: 'to ignore',
+          past: 'ignoré',
+          pastEn: 'ignored',
+          pres: 'ignorant',
+          presEn: 'ignoring',
+        },
+        {
+          fr: 'négliger',
+          en: 'to neglect',
+          past: 'négligé',
+          pastEn: 'neglected',
+          pres: 'négligeant',
+          presEn: 'neglecting',
+        },
+        {
+          fr: 'éviter',
+          en: 'to avoid',
+          past: 'évité',
+          pastEn: 'avoided',
+          pres: 'évitant',
+          presEn: 'avoiding',
+        },
+        {
+          fr: 'gérer',
+          en: 'to manage',
+          past: 'géré',
+          pastEn: 'managed',
+          pres: 'gérant',
+          presEn: 'managing',
+        },
+
+        {
+          fr: 'diriger',
+          en: 'to lead',
+          past: 'dirigé',
+          pastEn: 'led',
+          pres: 'dirigeant',
+          presEn: 'leading',
+        },
+        {
+          fr: 'superviser',
+          en: 'to supervise',
+          past: 'supervisé',
+          pastEn: 'supervised',
+          pres: 'supervisant',
+          presEn: 'supervising',
+        },
+        {
+          fr: 'coordonner',
+          en: 'to coordinate',
+          past: 'coordonné',
+          pastEn: 'coordinated',
+          pres: 'coordonnant',
+          presEn: 'coordinating',
+        },
+        {
+          fr: 'collaborer',
+          en: 'to collaborate',
+          past: 'collaboré',
+          pastEn: 'collaborated',
+          pres: 'collaborant',
+          presEn: 'collaborating',
+        },
+        {
+          fr: 'négocier',
+          en: 'to negotiate',
+          past: 'négocié',
+          pastEn: 'negotiated',
+          pres: 'négociant',
+          presEn: 'negotiating',
+        },
+        {
+          fr: 'discuter',
+          en: 'to discuss',
+          past: 'discuté',
+          pastEn: 'discussed',
+          pres: 'discutant',
+          presEn: 'discussing',
+        },
+        {
+          fr: 'argumenter',
+          en: 'to argue',
+          past: 'argumenté',
+          pastEn: 'argued',
+          pres: 'argumentant',
+          presEn: 'arguing',
+        },
+        {
+          fr: 'convaincre',
+          en: 'to convince',
+          past: 'convaincu',
+          pastEn: 'convinced',
+          pres: 'convainquant',
+          presEn: 'convincing',
+        },
+        {
+          fr: 'persuader',
+          en: 'to persuade',
+          past: 'persuadé',
+          pastEn: 'persuaded',
+          pres: 'persuadant',
+          presEn: 'persuading',
+        },
+        {
+          fr: 'informer',
+          en: 'to inform',
+          past: 'informé',
+          pastEn: 'informed',
+          pres: 'informant',
+          presEn: 'informing',
+        },
+
+        {
+          fr: 'annoncer',
+          en: 'to announce',
+          past: 'annoncé',
+          pastEn: 'announced',
+          pres: 'annonçant',
+          presEn: 'announcing',
+        },
+        {
+          fr: 'déclarer',
+          en: 'to declare',
+          past: 'déclaré',
+          pastEn: 'declared',
+          pres: 'déclarant',
+          presEn: 'declaring',
+        },
+        {
+          fr: 'préciser',
+          en: 'to clarify',
+          past: 'précisé',
+          pastEn: 'clarified',
+          pres: 'précisant',
+          presEn: 'clarifying',
+        },
+        {
+          fr: 'résumer',
+          en: 'to summarize',
+          past: 'résumé',
+          pastEn: 'summarized',
+          pres: 'résumant',
+          presEn: 'summarizing',
+        },
+        {
+          fr: 'décrire',
+          en: 'to describe',
+          past: 'décrit',
+          pastEn: 'described',
+          pres: 'décrivant',
+          presEn: 'describing',
+        },
+        {
+          fr: 'exposer',
+          en: 'to present',
+          past: 'exposé',
+          pastEn: 'presented',
+          pres: 'exposant',
+          presEn: 'presenting',
+        },
+        {
+          fr: 'illustrer',
+          en: 'to illustrate',
+          past: 'illustré',
+          pastEn: 'illustrated',
+          pres: 'illustrant',
+          presEn: 'illustrating',
+        },
+        {
+          fr: 'démontrer',
+          en: 'to demonstrate',
+          past: 'démontré',
+          pastEn: 'demonstrated',
+          pres: 'démontrant',
+          presEn: 'demonstrating',
+        },
+        {
+          fr: 'prouver',
+          en: 'to prove',
+          past: 'prouvé',
+          pastEn: 'proven',
+          pres: 'prouvant',
+          presEn: 'proving',
+        },
+        {
+          fr: 'justifier',
+          en: 'to justify',
+          past: 'justifié',
+          pastEn: 'justified',
+          pres: 'justifiant',
+          presEn: 'justifying',
+        },
+
+        {
+          fr: 'soutenir',
+          en: 'to support',
+          past: 'soutenu',
+          pastEn: 'supported',
+          pres: 'soutenant',
+          presEn: 'supporting',
+        },
+        {
+          fr: 'maintenir',
+          en: 'to maintain',
+          past: 'maintenu',
+          pastEn: 'maintained',
+          pres: 'maintenant',
+          presEn: 'maintaining',
+        },
+        {
+          fr: 'conserver',
+          en: 'to preserve',
+          past: 'conservé',
+          pastEn: 'preserved',
+          pres: 'conservant',
+          presEn: 'preserving',
+        },
+        {
+          fr: 'protéger',
+          en: 'to protect',
+          past: 'protégé',
+          pastEn: 'protected',
+          pres: 'protégeant',
+          presEn: 'protecting',
+        },
+        {
+          fr: 'défendre',
+          en: 'to defend',
+          past: 'défendu',
+          pastEn: 'defended',
+          pres: 'défendant',
+          presEn: 'defending',
+        },
+        {
+          fr: 'attaquer',
+          en: 'to attack',
+          past: 'attaqué',
+          pastEn: 'attacked',
+          pres: 'attaquant',
+          presEn: 'attacking',
+        },
+        {
+          fr: 'résister',
+          en: 'to resist',
+          past: 'résisté',
+          pastEn: 'resisted',
+          pres: 'résistant',
+          presEn: 'resisting',
+        },
+        {
+          fr: 'supporter',
+          en: 'to tolerate',
+          past: 'supporté',
+          pastEn: 'tolerated',
+          pres: 'supportant',
+          presEn: 'tolerating',
+        },
+        {
+          fr: 'accomplir',
+          en: 'to accomplish',
+          past: 'accompli',
+          pastEn: 'accomplished',
+          pres: 'accomplissant',
+          presEn: 'accomplishing',
+        },
+        {
+          fr: 'réaliser',
+          en: 'to achieve',
+          past: 'réalisé',
+          pastEn: 'achieved',
+          pres: 'réalisant',
+          presEn: 'achieving',
+        },
+      ];
+      //more advanced + formal + business + nuanced verbs (B2–C1 level)
+      const dictionaryExpansionPart4 = [
+        {
+          fr: 'accroître',
+          en: 'to increase (formal)',
+          past: 'accru',
+          pastEn: 'increased',
+          pres: 'accroissant',
+          presEn: 'increasing',
+        },
+        {
+          fr: 'diminuer',
+          en: 'to decrease',
+          past: 'diminué',
+          pastEn: 'decreased',
+          pres: 'diminuant',
+          presEn: 'decreasing',
+        },
+        {
+          fr: 'accélérer',
+          en: 'to accelerate',
+          past: 'accéléré',
+          pastEn: 'accelerated',
+          pres: 'accélérant',
+          presEn: 'accelerating',
+        },
+        {
+          fr: 'ralentir',
+          en: 'to slow down',
+          past: 'ralenti',
+          pastEn: 'slowed down',
+          pres: 'ralentissant',
+          presEn: 'slowing down',
+        },
+        {
+          fr: 'renforcer',
+          en: 'to strengthen',
+          past: 'renforcé',
+          pastEn: 'strengthened',
+          pres: 'renforçant',
+          presEn: 'strengthening',
+        },
+        {
+          fr: 'affaiblir',
+          en: 'to weaken',
+          past: 'affaibli',
+          pastEn: 'weakened',
+          pres: 'affaiblissant',
+          presEn: 'weakening',
+        },
+        {
+          fr: 'optimiser',
+          en: 'to optimize',
+          past: 'optimisé',
+          pastEn: 'optimized',
+          pres: 'optimisant',
+          presEn: 'optimizing',
+        },
+        {
+          fr: 'maximiser',
+          en: 'to maximize',
+          past: 'maximisé',
+          pastEn: 'maximized',
+          pres: 'maximisant',
+          presEn: 'maximizing',
+        },
+        {
+          fr: 'minimiser',
+          en: 'to minimize',
+          past: 'minimisé',
+          pastEn: 'minimized',
+          pres: 'minimisant',
+          presEn: 'minimizing',
+        },
+        {
+          fr: 'transformer',
+          en: 'to transform',
+          past: 'transformé',
+          pastEn: 'transformed',
+          pres: 'transformant',
+          presEn: 'transforming',
+        },
+
+        {
+          fr: 'convertir',
+          en: 'to convert',
+          past: 'converti',
+          pastEn: 'converted',
+          pres: 'convertissant',
+          presEn: 'converting',
+        },
+        {
+          fr: 'adapter',
+          en: 'to tailor',
+          past: 'adapté',
+          pastEn: 'tailored',
+          pres: 'adaptant',
+          presEn: 'tailoring',
+        },
+        {
+          fr: 'ajuster',
+          en: 'to adjust',
+          past: 'ajusté',
+          pastEn: 'adjusted',
+          pres: 'ajustant',
+          presEn: 'adjusting',
+        },
+        {
+          fr: 'modifier',
+          en: 'to alter',
+          past: 'modifié',
+          pastEn: 'altered',
+          pres: 'modifiant',
+          presEn: 'altering',
+        },
+        {
+          fr: 'réviser',
+          en: 'to revise',
+          past: 'révisé',
+          pastEn: 'revised',
+          pres: 'révisant',
+          presEn: 'revising',
+        },
+        {
+          fr: 'corriger',
+          en: 'to amend',
+          past: 'corrigé',
+          pastEn: 'amended',
+          pres: 'corrigeant',
+          presEn: 'amending',
+        },
+        {
+          fr: 'rectifier',
+          en: 'to rectify',
+          past: 'rectifié',
+          pastEn: 'rectified',
+          pres: 'rectifiant',
+          presEn: 'rectifying',
+        },
+        {
+          fr: 'clarifier',
+          en: 'to clarify (formal)',
+          past: 'clarifié',
+          pastEn: 'clarified',
+          pres: 'clarifiant',
+          presEn: 'clarifying',
+        },
+        {
+          fr: 'simplifier',
+          en: 'to simplify',
+          past: 'simplifié',
+          pastEn: 'simplified',
+          pres: 'simplifiant',
+          presEn: 'simplifying',
+        },
+        {
+          fr: 'complexifier',
+          en: 'to complicate',
+          past: 'complexifié',
+          pastEn: 'complicated',
+          pres: 'complexifiant',
+          presEn: 'complicating',
+        },
+
+        {
+          fr: 'élaborer',
+          en: 'to elaborate',
+          past: 'élaboré',
+          pastEn: 'elaborated',
+          pres: 'élaborant',
+          presEn: 'elaborating',
+        },
+        {
+          fr: 'concevoir',
+          en: 'to design',
+          past: 'conçu',
+          pastEn: 'designed',
+          pres: 'concevant',
+          presEn: 'designing',
+        },
+        {
+          fr: 'définir',
+          en: 'to define',
+          past: 'défini',
+          pastEn: 'defined',
+          pres: 'définissant',
+          presEn: 'defining',
+        },
+        {
+          fr: 'structurer',
+          en: 'to structure',
+          past: 'structuré',
+          pastEn: 'structured',
+          pres: 'structurant',
+          presEn: 'structuring',
+        },
+        {
+          fr: 'organiser',
+          en: 'to arrange',
+          past: 'organisé',
+          pastEn: 'arranged',
+          pres: 'organisant',
+          presEn: 'arranging',
+        },
+        {
+          fr: 'hiérarchiser',
+          en: 'to prioritize',
+          past: 'hiérarchisé',
+          pastEn: 'prioritized',
+          pres: 'hiérarchisant',
+          presEn: 'prioritizing',
+        },
+        {
+          fr: 'planifier',
+          en: 'to schedule',
+          past: 'planifié',
+          pastEn: 'scheduled',
+          pres: 'planifiant',
+          presEn: 'scheduling',
+        },
+        {
+          fr: 'programmer',
+          en: 'to program',
+          past: 'programmé',
+          pastEn: 'programmed',
+          pres: 'programmant',
+          presEn: 'programming',
+        },
+        {
+          fr: 'exécuter',
+          en: 'to execute',
+          past: 'exécuté',
+          pastEn: 'executed',
+          pres: 'exécutant',
+          presEn: 'executing',
+        },
+        {
+          fr: 'implémenter',
+          en: 'to implement',
+          past: 'implémenté',
+          pastEn: 'implemented',
+          pres: 'implémentant',
+          presEn: 'implementing',
+        },
+
+        {
+          fr: 'déployer',
+          en: 'to deploy',
+          past: 'déployé',
+          pastEn: 'deployed',
+          pres: 'déployant',
+          presEn: 'deploying',
+        },
+        {
+          fr: 'lancer',
+          en: 'to launch',
+          past: 'lancé',
+          pastEn: 'launched',
+          pres: 'lançant',
+          presEn: 'launching',
+        },
+        {
+          fr: 'initier',
+          en: 'to initiate',
+          past: 'initié',
+          pastEn: 'initiated',
+          pres: 'initiant',
+          presEn: 'initiating',
+        },
+        {
+          fr: 'engager',
+          en: 'to engage',
+          past: 'engagé',
+          pastEn: 'engaged',
+          pres: 'engageant',
+          presEn: 'engaging',
+        },
+        {
+          fr: 'mobiliser',
+          en: 'to mobilize',
+          past: 'mobilisé',
+          pastEn: 'mobilized',
+          pres: 'mobilisant',
+          presEn: 'mobilizing',
+        },
+        {
+          fr: 'stimuler',
+          en: 'to stimulate',
+          past: 'stimulé',
+          pastEn: 'stimulated',
+          pres: 'stimulant',
+          presEn: 'stimulating',
+        },
+        {
+          fr: 'favoriser',
+          en: 'to promote',
+          past: 'favorisé',
+          pastEn: 'promoted',
+          pres: 'favorisant',
+          presEn: 'promoting',
+        },
+        {
+          fr: 'encadrer',
+          en: 'to supervise/manage',
+          past: 'encadré',
+          pastEn: 'supervised',
+          pres: 'encadrant',
+          presEn: 'supervising',
+        },
+        {
+          fr: 'accompagner',
+          en: 'to support/assist',
+          past: 'accompagné',
+          pastEn: 'supported',
+          pres: 'accompagnant',
+          presEn: 'supporting',
+        },
+        {
+          fr: 'assurer',
+          en: 'to ensure',
+          past: 'assuré',
+          pastEn: 'ensured',
+          pres: 'assurant',
+          presEn: 'ensuring',
+        },
+
+        {
+          fr: 'garantir',
+          en: 'to guarantee',
+          past: 'garanti',
+          pastEn: 'guaranteed',
+          pres: 'garantissant',
+          presEn: 'guaranteeing',
+        },
+        {
+          fr: 'certifier',
+          en: 'to certify',
+          past: 'certifié',
+          pastEn: 'certified',
+          pres: 'certifiant',
+          presEn: 'certifying',
+        },
+        {
+          fr: 'valider',
+          en: 'to approve',
+          past: 'validé',
+          pastEn: 'approved',
+          pres: 'validant',
+          presEn: 'approving',
+        },
+        {
+          fr: 'approuver',
+          en: 'to endorse',
+          past: 'approuvé',
+          pastEn: 'endorsed',
+          pres: 'approuvant',
+          presEn: 'endorsing',
+        },
+        {
+          fr: 'autoriser',
+          en: 'to authorize',
+          past: 'autorisé',
+          pastEn: 'authorized',
+          pres: 'autorisant',
+          presEn: 'authorizing',
+        },
+        {
+          fr: 'refuser',
+          en: 'to reject',
+          past: 'refusé',
+          pastEn: 'rejected',
+          pres: 'refusant',
+          presEn: 'rejecting',
+        },
+        {
+          fr: 'rejeter',
+          en: 'to dismiss',
+          past: 'rejeté',
+          pastEn: 'dismissed',
+          pres: 'rejetant',
+          presEn: 'dismissing',
+        },
+        {
+          fr: 'contester',
+          en: 'to dispute',
+          past: 'contesté',
+          pastEn: 'disputed',
+          pres: 'contestant',
+          presEn: 'disputing',
+        },
+        {
+          fr: 'revendiquer',
+          en: 'to claim',
+          past: 'revendiqué',
+          pastEn: 'claimed',
+          pres: 'revendiquant',
+          presEn: 'claiming',
+        },
+        {
+          fr: 'exiger',
+          en: 'to demand',
+          past: 'exigé',
+          pastEn: 'demanded',
+          pres: 'exigeant',
+          presEn: 'demanding',
+        },
+
+        {
+          fr: 'imposer',
+          en: 'to impose',
+          past: 'imposé',
+          pastEn: 'imposed',
+          pres: 'imposant',
+          presEn: 'imposing',
+        },
+        {
+          fr: 'proposer',
+          en: 'to suggest formally',
+          past: 'proposé',
+          pastEn: 'suggested',
+          pres: 'proposant',
+          presEn: 'suggesting',
+        },
+        {
+          fr: 'soumettre',
+          en: 'to submit',
+          past: 'soumis',
+          pastEn: 'submitted',
+          pres: 'soumettant',
+          presEn: 'submitting',
+        },
+        {
+          fr: 'présenter',
+          en: 'to submit/present',
+          past: 'présenté',
+          pastEn: 'submitted',
+          pres: 'présentant',
+          presEn: 'submitting',
+        },
+        {
+          fr: 'introduire',
+          en: 'to introduce',
+          past: 'introduit',
+          pastEn: 'introduced',
+          pres: 'introduisant',
+          presEn: 'introducing',
+        },
+        {
+          fr: 'mentionner',
+          en: 'to mention',
+          past: 'mentionné',
+          pastEn: 'mentioned',
+          pres: 'mentionnant',
+          presEn: 'mentioning',
+        },
+        {
+          fr: 'souligner',
+          en: 'to highlight',
+          past: 'souligné',
+          pastEn: 'highlighted',
+          pres: 'soulignant',
+          presEn: 'highlighting',
+        },
+        {
+          fr: 'insister',
+          en: 'to insist',
+          past: 'insisté',
+          pastEn: 'insisted',
+          pres: 'insistant',
+          presEn: 'insisting',
+        },
+        {
+          fr: 'prétendre',
+          en: 'to claim/assert',
+          past: 'prétendu',
+          pastEn: 'claimed',
+          pres: 'prétendant',
+          presEn: 'claiming',
+        },
+        {
+          fr: 'affirmer',
+          en: 'to affirm',
+          past: 'affirmé',
+          pastEn: 'affirmed',
+          pres: 'affirmant',
+          presEn: 'affirming',
+        },
+
+        {
+          fr: 'nier',
+          en: 'to deny',
+          past: 'nié',
+          pastEn: 'denied',
+          pres: 'niant',
+          presEn: 'denying',
+        },
+        {
+          fr: 'admettre',
+          en: 'to admit',
+          past: 'admis',
+          pastEn: 'admitted',
+          pres: 'admettant',
+          presEn: 'admitting',
+        },
+        {
+          fr: 'reconnaître',
+          en: 'to acknowledge',
+          past: 'reconnu',
+          pastEn: 'acknowledged',
+          pres: 'reconnaissant',
+          presEn: 'acknowledging',
+        },
+        {
+          fr: 'confirmer',
+          en: 'to confirm',
+          past: 'confirmé',
+          pastEn: 'confirmed',
+          pres: 'confirmant',
+          presEn: 'confirming',
+        },
+        {
+          fr: 'invalider',
+          en: 'to invalidate',
+          past: 'invalidé',
+          pastEn: 'invalidated',
+          pres: 'invalidant',
+          presEn: 'invalidating',
+        },
+        {
+          fr: 'annuler',
+          en: 'to cancel',
+          past: 'annulé',
+          pastEn: 'canceled',
+          pres: 'annulant',
+          presEn: 'canceling',
+        },
+        {
+          fr: 'suspendre',
+          en: 'to suspend',
+          past: 'suspendu',
+          pastEn: 'suspended',
+          pres: 'suspendant',
+          presEn: 'suspending',
+        },
+        {
+          fr: 'interrompre',
+          en: 'to interrupt',
+          past: 'interrompu',
+          pastEn: 'interrupted',
+          pres: 'interrompant',
+          presEn: 'interrupting',
+        },
+        {
+          fr: 'reprendre',
+          en: 'to resume',
+          past: 'repris',
+          pastEn: 'resumed',
+          pres: 'reprenant',
+          presEn: 'resuming',
+        },
+        {
+          fr: 'poursuivre',
+          en: 'to pursue',
+          past: 'poursuivi',
+          pastEn: 'pursued',
+          pres: 'poursuivant',
+          presEn: 'pursuing',
+        },
+      ];
+
+      //rich, nuanced, less frequent but still very useful verbs (strong B2–C1 range, some C2 exposure).
+
+      const dictionaryExpansionPart5 = [
+        {
+          fr: 'aborder',
+          en: 'to address (a topic)',
+          past: 'abordé',
+          pastEn: 'addressed',
+          pres: 'abordant',
+          presEn: 'addressing',
+        },
+        {
+          fr: 'approfondir',
+          en: 'to deepen',
+          past: 'approfondi',
+          pastEn: 'deepened',
+          pres: 'approfondissant',
+          presEn: 'deepening',
+        },
+        {
+          fr: 'cerner',
+          en: 'to identify precisely',
+          past: 'cerné',
+          pastEn: 'identified',
+          pres: 'cernant',
+          presEn: 'identifying',
+        },
+        {
+          fr: 'dégager',
+          en: 'to bring out (idea)',
+          past: 'dégagé',
+          pastEn: 'brought out',
+          pres: 'dégageant',
+          presEn: 'bringing out',
+        },
+        {
+          fr: 'détailler',
+          en: 'to detail',
+          past: 'détaillé',
+          pastEn: 'detailed',
+          pres: 'détaillant',
+          presEn: 'detailing',
+        },
+        {
+          fr: 'nuancer',
+          en: 'to nuance',
+          past: 'nuancé',
+          pastEn: 'nuanced',
+          pres: 'nuançant',
+          presEn: 'nuancing',
+        },
+        {
+          fr: 'illustrer',
+          en: 'to exemplify',
+          past: 'illustré',
+          pastEn: 'exemplified',
+          pres: 'illustrant',
+          presEn: 'exemplifying',
+        },
+        {
+          fr: 'appuyer',
+          en: 'to support (argument)',
+          past: 'appuyé',
+          pastEn: 'supported',
+          pres: 'appuyant',
+          presEn: 'supporting',
+        },
+        {
+          fr: 'étayer',
+          en: 'to substantiate',
+          past: 'étayé',
+          pastEn: 'substantiated',
+          pres: 'étayant',
+          presEn: 'substantiating',
+        },
+        {
+          fr: 'renvoyer',
+          en: 'to refer back',
+          past: 'renvoyé',
+          pastEn: 'referred back',
+          pres: 'renvoyant',
+          presEn: 'referring back',
+        },
+
+        {
+          fr: 'évoquer',
+          en: 'to evoke/mention',
+          past: 'évoqué',
+          pastEn: 'evoked',
+          pres: 'évoquant',
+          presEn: 'evoking',
+        },
+        {
+          fr: 'suggérer',
+          en: 'to imply',
+          past: 'suggéré',
+          pastEn: 'implied',
+          pres: 'suggérant',
+          presEn: 'implying',
+        },
+        {
+          fr: 'sous-entendre',
+          en: 'to imply (indirectly)',
+          past: 'sous-entendu',
+          pastEn: 'implied',
+          pres: 'sous-entendant',
+          presEn: 'implying',
+        },
+        {
+          fr: 'laisser entendre',
+          en: 'to hint',
+          past: 'laissé entendre',
+          pastEn: 'hinted',
+          pres: 'laissant entendre',
+          presEn: 'hinting',
+        },
+        {
+          fr: 'formuler',
+          en: 'to formulate',
+          past: 'formulé',
+          pastEn: 'formulated',
+          pres: 'formulant',
+          presEn: 'formulating',
+        },
+        {
+          fr: 'exprimer',
+          en: 'to express',
+          past: 'exprimé',
+          pastEn: 'expressed',
+          pres: 'exprimant',
+          presEn: 'expressing',
+        },
+        {
+          fr: 'verbaliser',
+          en: 'to verbalize',
+          past: 'verbalisé',
+          pastEn: 'verbalized',
+          pres: 'verbalisant',
+          presEn: 'verbalizing',
+        },
+        {
+          fr: 'extérioriser',
+          en: 'to externalize',
+          past: 'extériorisé',
+          pastEn: 'externalized',
+          pres: 'extériorisant',
+          presEn: 'externalizing',
+        },
+        {
+          fr: 'révéler',
+          en: 'to reveal',
+          past: 'révélé',
+          pastEn: 'revealed',
+          pres: 'révélant',
+          presEn: 'revealing',
+        },
+        {
+          fr: 'divulguer',
+          en: 'to disclose',
+          past: 'divulgué',
+          pastEn: 'disclosed',
+          pres: 'divulguant',
+          presEn: 'disclosing',
+        },
+
+        {
+          fr: 'cacher',
+          en: 'to hide',
+          past: 'caché',
+          pastEn: 'hidden',
+          pres: 'cachant',
+          presEn: 'hiding',
+        },
+        {
+          fr: 'dissimuler',
+          en: 'to conceal',
+          past: 'dissimulé',
+          pastEn: 'concealed',
+          pres: 'dissimulant',
+          presEn: 'concealing',
+        },
+        {
+          fr: 'masquer',
+          en: 'to mask',
+          past: 'masqué',
+          pastEn: 'masked',
+          pres: 'masquant',
+          presEn: 'masking',
+        },
+        {
+          fr: 'simuler',
+          en: 'to simulate/pretend',
+          past: 'simulé',
+          pastEn: 'simulated',
+          pres: 'simulant',
+          presEn: 'simulating',
+        },
+        {
+          fr: 'feindre',
+          en: 'to feign',
+          past: 'feint',
+          pastEn: 'feigned',
+          pres: 'feignant',
+          presEn: 'feigning',
+        },
+        {
+          fr: 'prétendre',
+          en: 'to pretend/claim',
+          past: 'prétendu',
+          pastEn: 'pretended',
+          pres: 'prétendant',
+          presEn: 'pretending',
+        },
+        {
+          fr: 'exagérer',
+          en: 'to exaggerate',
+          past: 'exagéré',
+          pastEn: 'exaggerated',
+          pres: 'exagérant',
+          presEn: 'exaggerating',
+        },
+        {
+          fr: 'minorer',
+          en: 'to downplay',
+          past: 'minoré',
+          pastEn: 'downplayed',
+          pres: 'minorant',
+          presEn: 'downplaying',
+        },
+        {
+          fr: 'accentuer',
+          en: 'to emphasize',
+          past: 'accentué',
+          pastEn: 'emphasized',
+          pres: 'accentuant',
+          presEn: 'emphasizing',
+        },
+        {
+          fr: 'souligner',
+          en: 'to underline',
+          past: 'souligné',
+          pastEn: 'underlined',
+          pres: 'soulignant',
+          presEn: 'underlining',
+        },
+
+        {
+          fr: 'distinguer',
+          en: 'to distinguish',
+          past: 'distingué',
+          pastEn: 'distinguished',
+          pres: 'distinguant',
+          presEn: 'distinguishing',
+        },
+        {
+          fr: 'différencier',
+          en: 'to differentiate',
+          past: 'différencié',
+          pastEn: 'differentiated',
+          pres: 'différenciant',
+          presEn: 'differentiating',
+        },
+        {
+          fr: 'assimiler',
+          en: 'to assimilate',
+          past: 'assimilé',
+          pastEn: 'assimilated',
+          pres: 'assimilant',
+          presEn: 'assimilating',
+        },
+        {
+          fr: 'intégrer',
+          en: 'to integrate',
+          past: 'intégré',
+          pastEn: 'integrated',
+          pres: 'intégrant',
+          presEn: 'integrating',
+        },
+        {
+          fr: 'incorporer',
+          en: 'to incorporate',
+          past: 'incorporé',
+          pastEn: 'incorporated',
+          pres: 'incorporant',
+          presEn: 'incorporating',
+        },
+        {
+          fr: 'fusionner',
+          en: 'to merge',
+          past: 'fusionné',
+          pastEn: 'merged',
+          pres: 'fusionnant',
+          presEn: 'merging',
+        },
+        {
+          fr: 'combiner',
+          en: 'to combine',
+          past: 'combiné',
+          pastEn: 'combined',
+          pres: 'combinant',
+          presEn: 'combining',
+        },
+        {
+          fr: 'associer',
+          en: 'to associate',
+          past: 'associé',
+          pastEn: 'associated',
+          pres: 'associant',
+          presEn: 'associating',
+        },
+        {
+          fr: 'lier',
+          en: 'to link',
+          past: 'lié',
+          pastEn: 'linked',
+          pres: 'liant',
+          presEn: 'linking',
+        },
+        {
+          fr: 'relier',
+          en: 'to connect/link',
+          past: 'relié',
+          pastEn: 'connected',
+          pres: 'reliant',
+          presEn: 'connecting',
+        },
+
+        {
+          fr: 'séparer',
+          en: 'to separate',
+          past: 'séparé',
+          pastEn: 'separated',
+          pres: 'séparant',
+          presEn: 'separating',
+        },
+        {
+          fr: 'diviser',
+          en: 'to divide',
+          past: 'divisé',
+          pastEn: 'divided',
+          pres: 'divisant',
+          presEn: 'dividing',
+        },
+        {
+          fr: 'fragmenter',
+          en: 'to fragment',
+          past: 'fragmenté',
+          pastEn: 'fragmented',
+          pres: 'fragmentant',
+          presEn: 'fragmenting',
+        },
+        {
+          fr: 'répartir',
+          en: 'to distribute',
+          past: 'réparti',
+          pastEn: 'distributed',
+          pres: 'répartissant',
+          presEn: 'distributing',
+        },
+        {
+          fr: 'attribuer',
+          en: 'to assign',
+          past: 'attribué',
+          pastEn: 'assigned',
+          pres: 'attribuant',
+          presEn: 'assigning',
+        },
+        {
+          fr: 'allouer',
+          en: 'to allocate',
+          past: 'alloué',
+          pastEn: 'allocated',
+          pres: 'allouant',
+          presEn: 'allocating',
+        },
+        {
+          fr: 'consacrer',
+          en: 'to devote',
+          past: 'consacré',
+          pastEn: 'devoted',
+          pres: 'consacrant',
+          presEn: 'devoting',
+        },
+        {
+          fr: 'accorder',
+          en: 'to grant',
+          past: 'accordé',
+          pastEn: 'granted',
+          pres: 'accordant',
+          presEn: 'granting',
+        },
+        {
+          fr: 'octroyer',
+          en: 'to grant (formal)',
+          past: 'octroyé',
+          pastEn: 'granted',
+          pres: 'octroyant',
+          presEn: 'granting',
+        },
+        {
+          fr: 'priver',
+          en: 'to deprive',
+          past: 'privé',
+          pastEn: 'deprived',
+          pres: 'privant',
+          presEn: 'depriving',
+        },
+
+        {
+          fr: 'bénéficier',
+          en: 'to benefit',
+          past: 'bénéficié',
+          pastEn: 'benefited',
+          pres: 'bénéficiant',
+          presEn: 'benefiting',
+        },
+        {
+          fr: 'profiter',
+          en: 'to take advantage',
+          past: 'profité',
+          pastEn: 'took advantage',
+          pres: 'profitant',
+          presEn: 'taking advantage',
+        },
+        {
+          fr: 'exploiter',
+          en: 'to exploit/use',
+          past: 'exploité',
+          pastEn: 'exploited',
+          pres: 'exploitant',
+          presEn: 'exploiting',
+        },
+        {
+          fr: 'tirer parti',
+          en: 'to make use of',
+          past: 'tiré parti',
+          pastEn: 'made use of',
+          pres: 'tirant parti',
+          presEn: 'making use of',
+        },
+        {
+          fr: 'rentabiliser',
+          en: 'to make profitable',
+          past: 'rentabilisé',
+          pastEn: 'made profitable',
+          pres: 'rentabilisant',
+          presEn: 'making profitable',
+        },
+        {
+          fr: 'valoriser',
+          en: 'to enhance value',
+          past: 'valorisé',
+          pastEn: 'enhanced',
+          pres: 'valorisant',
+          presEn: 'enhancing',
+        },
+        {
+          fr: 'rentabiliser',
+          en: 'to optimize returns',
+          past: 'rentabilisé',
+          pastEn: 'optimized returns',
+          pres: 'rentabilisant',
+          presEn: 'optimizing returns',
+        },
+        {
+          fr: 'rentabiliser',
+          en: 'to make efficient',
+          past: 'rentabilisé',
+          pastEn: 'made efficient',
+          pres: 'rentabilisant',
+          presEn: 'making efficient',
+        },
+        {
+          fr: 'rentabiliser',
+          en: 'to monetize',
+          past: 'rentabilisé',
+          pastEn: 'monetized',
+          pres: 'rentabilisant',
+          presEn: 'monetizing',
+        },
+        {
+          fr: 'rentabiliser',
+          en: 'to generate profit',
+          past: 'rentabilisé',
+          pastEn: 'generated profit',
+          pres: 'rentabilisant',
+          presEn: 'generating profit',
+        },
+      ];
+
+      //This set focuses on rare, high-precision, near-native verbs (C1–C2 nuance, but still useful in advanced reading, writing, and professional contexts).
+      const dictionaryExpansionPart6 = [
+        {
+          fr: 'aboutir',
+          en: 'to result in',
+          past: 'abouti',
+          pastEn: 'resulted in',
+          pres: 'aboutissant',
+          presEn: 'resulting in',
+        },
+        {
+          fr: 'déboucher',
+          en: 'to lead to',
+          past: 'débouché',
+          pastEn: 'led to',
+          pres: 'débouchant',
+          presEn: 'leading to',
+        },
+        {
+          fr: 'entraîner',
+          en: 'to entail',
+          past: 'entraîné',
+          pastEn: 'entailed',
+          pres: 'entraînant',
+          presEn: 'entailing',
+        },
+        {
+          fr: 'engendrer',
+          en: 'to generate (cause)',
+          past: 'engendré',
+          pastEn: 'generated',
+          pres: 'engendrant',
+          presEn: 'generating',
+        },
+        {
+          fr: 'provoquer',
+          en: 'to trigger',
+          past: 'provoqué',
+          pastEn: 'triggered',
+          pres: 'provoquant',
+          presEn: 'triggering',
+        },
+        {
+          fr: 'induire',
+          en: 'to induce',
+          past: 'induit',
+          pastEn: 'induced',
+          pres: 'induisant',
+          presEn: 'inducing',
+        },
+        {
+          fr: 'impliquer',
+          en: 'to imply/entail',
+          past: 'impliqué',
+          pastEn: 'implied',
+          pres: 'impliquant',
+          presEn: 'implying',
+        },
+        {
+          fr: 'supposer',
+          en: 'to presuppose',
+          past: 'supposé',
+          pastEn: 'presupposed',
+          pres: 'supposant',
+          presEn: 'presupposing',
+        },
+        {
+          fr: 'présupposer',
+          en: 'to presuppose (formal)',
+          past: 'présupposé',
+          pastEn: 'presupposed',
+          pres: 'présupposant',
+          presEn: 'presupposing',
+        },
+        {
+          fr: 'conditionner',
+          en: 'to condition',
+          past: 'conditionné',
+          pastEn: 'conditioned',
+          pres: 'conditionnant',
+          presEn: 'conditioning',
+        },
+
+        {
+          fr: 'déterminer',
+          en: 'to determine',
+          past: 'déterminé',
+          pastEn: 'determined',
+          pres: 'déterminant',
+          presEn: 'determining',
+        },
+        {
+          fr: 'influencer',
+          en: 'to influence',
+          past: 'influencé',
+          pastEn: 'influenced',
+          pres: 'influençant',
+          presEn: 'influencing',
+        },
+        {
+          fr: 'orienter',
+          en: 'to orient/guide',
+          past: 'orienté',
+          pastEn: 'guided',
+          pres: 'orientant',
+          presEn: 'guiding',
+        },
+        {
+          fr: 'diriger',
+          en: 'to steer',
+          past: 'dirigé',
+          pastEn: 'steered',
+          pres: 'dirigeant',
+          presEn: 'steering',
+        },
+        {
+          fr: 'canaliser',
+          en: 'to channel',
+          past: 'canalisé',
+          pastEn: 'channeled',
+          pres: 'canalisant',
+          presEn: 'channeling',
+        },
+        {
+          fr: 'encadrer',
+          en: 'to frame/supervise',
+          past: 'encadré',
+          pastEn: 'framed',
+          pres: 'encadrant',
+          presEn: 'framing',
+        },
+        {
+          fr: 'réguler',
+          en: 'to regulate',
+          past: 'régulé',
+          pastEn: 'regulated',
+          pres: 'régulant',
+          presEn: 'regulating',
+        },
+        {
+          fr: 'stabiliser',
+          en: 'to stabilize',
+          past: 'stabilisé',
+          pastEn: 'stabilized',
+          pres: 'stabilisant',
+          presEn: 'stabilizing',
+        },
+        {
+          fr: 'équilibrer',
+          en: 'to balance',
+          past: 'équilibré',
+          pastEn: 'balanced',
+          pres: 'équilibrant',
+          presEn: 'balancing',
+        },
+        {
+          fr: 'harmoniser',
+          en: 'to harmonize',
+          past: 'harmonisé',
+          pastEn: 'harmonized',
+          pres: 'harmonisant',
+          presEn: 'harmonizing',
+        },
+
+        {
+          fr: 'uniformiser',
+          en: 'to standardize',
+          past: 'uniformisé',
+          pastEn: 'standardized',
+          pres: 'uniformisant',
+          presEn: 'standardizing',
+        },
+        {
+          fr: 'normaliser',
+          en: 'to normalize',
+          past: 'normalisé',
+          pastEn: 'normalized',
+          pres: 'normalisant',
+          presEn: 'normalizing',
+        },
+        {
+          fr: 'formaliser',
+          en: 'to formalize',
+          past: 'formalisé',
+          pastEn: 'formalized',
+          pres: 'formalisant',
+          presEn: 'formalizing',
+        },
+        {
+          fr: 'codifier',
+          en: 'to codify',
+          past: 'codifié',
+          pastEn: 'codified',
+          pres: 'codifiant',
+          presEn: 'codifying',
+        },
+        {
+          fr: 'institutionnaliser',
+          en: 'to institutionalize',
+          past: 'institutionnalisé',
+          pastEn: 'institutionalized',
+          pres: 'institutionnalisant',
+          presEn: 'institutionalizing',
+        },
+        {
+          fr: 'légitimer',
+          en: 'to legitimize',
+          past: 'légitimé',
+          pastEn: 'legitimized',
+          pres: 'légitimant',
+          presEn: 'legitimizing',
+        },
+        {
+          fr: 'justifier',
+          en: 'to legitimize/justify',
+          past: 'justifié',
+          pastEn: 'justified',
+          pres: 'justifiant',
+          presEn: 'justifying',
+        },
+        {
+          fr: 'valider',
+          en: 'to validate',
+          past: 'validé',
+          pastEn: 'validated',
+          pres: 'validant',
+          presEn: 'validating',
+        },
+        {
+          fr: 'homologuer',
+          en: 'to certify officially',
+          past: 'homologué',
+          pastEn: 'certified',
+          pres: 'homologuant',
+          presEn: 'certifying',
+        },
+        {
+          fr: 'authentifier',
+          en: 'to authenticate',
+          past: 'authentifié',
+          pastEn: 'authenticated',
+          pres: 'authentifiant',
+          presEn: 'authenticating',
+        },
+
+        {
+          fr: 'contourner',
+          en: 'to bypass',
+          past: 'contourné',
+          pastEn: 'bypassed',
+          pres: 'contournant',
+          presEn: 'bypassing',
+        },
+        {
+          fr: 'détourner',
+          en: 'to divert',
+          past: 'détourné',
+          pastEn: 'diverted',
+          pres: 'détournant',
+          presEn: 'diverting',
+        },
+        {
+          fr: 'transgresser',
+          en: 'to transgress',
+          past: 'transgressé',
+          pastEn: 'transgressed',
+          pres: 'transgressant',
+          presEn: 'transgressing',
+        },
+        {
+          fr: 'enfreindre',
+          en: 'to violate (rule)',
+          past: 'enfreint',
+          pastEn: 'violated',
+          pres: 'enfreignant',
+          presEn: 'violating',
+        },
+        {
+          fr: 'respecter',
+          en: 'to comply with',
+          past: 'respecté',
+          pastEn: 'complied',
+          pres: 'respectant',
+          presEn: 'complying',
+        },
+        {
+          fr: 'se conformer',
+          en: 'to comply (formal)',
+          past: 'conformé',
+          pastEn: 'complied',
+          pres: 'se conformant',
+          presEn: 'complying',
+        },
+        {
+          fr: 'adhérer',
+          en: 'to adhere',
+          past: 'adhéré',
+          pastEn: 'adhered',
+          pres: 'adhérant',
+          presEn: 'adhering',
+        },
+        {
+          fr: 'souscrire',
+          en: 'to subscribe/endorse',
+          past: 'souscrit',
+          pastEn: 'subscribed',
+          pres: 'souscrivant',
+          presEn: 'subscribing',
+        },
+        {
+          fr: 'ratifier',
+          en: 'to ratify',
+          past: 'ratifié',
+          pastEn: 'ratified',
+          pres: 'ratifiant',
+          presEn: 'ratifying',
+        },
+        {
+          fr: 'entériner',
+          en: 'to formally approve',
+          past: 'entériné',
+          pastEn: 'approved',
+          pres: 'entérinant',
+          presEn: 'approving',
+        },
+
+        {
+          fr: 'révoquer',
+          en: 'to revoke',
+          past: 'révoqué',
+          pastEn: 'revoked',
+          pres: 'révoquant',
+          presEn: 'revoking',
+        },
+        {
+          fr: 'abroger',
+          en: 'to repeal',
+          past: 'abrogé',
+          pastEn: 'repealed',
+          pres: 'abrogeant',
+          presEn: 'repealing',
+        },
+        {
+          fr: 'annihiler',
+          en: 'to annihilate',
+          past: 'annihilé',
+          pastEn: 'annihilated',
+          pres: 'annihilant',
+          presEn: 'annihilating',
+        },
+        {
+          fr: 'anéantir',
+          en: 'to destroy completely',
+          past: 'anéanti',
+          pastEn: 'destroyed',
+          pres: 'anéantissant',
+          presEn: 'destroying',
+        },
+        {
+          fr: 'détruire',
+          en: 'to destroy',
+          past: 'détruit',
+          pastEn: 'destroyed',
+          pres: 'détruisant',
+          presEn: 'destroying',
+        },
+        {
+          fr: 'éradiquer',
+          en: 'to eradicate',
+          past: 'éradiqué',
+          pastEn: 'eradicated',
+          pres: 'éradiquant',
+          presEn: 'eradicating',
+        },
+        {
+          fr: 'supprimer',
+          en: 'to eliminate',
+          past: 'supprimé',
+          pastEn: 'eliminated',
+          pres: 'supprimant',
+          presEn: 'eliminating',
+        },
+        {
+          fr: 'abolir',
+          en: 'to abolish',
+          past: 'aboli',
+          pastEn: 'abolished',
+          pres: 'abolissant',
+          presEn: 'abolishing',
+        },
+        {
+          fr: 'dissoudre',
+          en: 'to dissolve',
+          past: 'dissous',
+          pastEn: 'dissolved',
+          pres: 'dissolvant',
+          presEn: 'dissolving',
+        },
+        {
+          fr: 'liquider',
+          en: 'to liquidate',
+          past: 'liquidé',
+          pastEn: 'liquidated',
+          pres: 'liquidant',
+          presEn: 'liquidating',
+        },
+
+        {
+          fr: 'restaurer',
+          en: 'to restore',
+          past: 'restauré',
+          pastEn: 'restored',
+          pres: 'restaurant',
+          presEn: 'restoring',
+        },
+        {
+          fr: 'réhabiliter',
+          en: 'to rehabilitate',
+          past: 'réhabilité',
+          pastEn: 'rehabilitated',
+          pres: 'réhabilitant',
+          presEn: 'rehabilitating',
+        },
+        {
+          fr: 'réinstaurer',
+          en: 'to reinstate',
+          past: 'réinstauré',
+          pastEn: 'reinstated',
+          pres: 'réinstaurant',
+          presEn: 'reinstating',
+        },
+        {
+          fr: 'réintroduire',
+          en: 'to reintroduce',
+          past: 'réintroduit',
+          pastEn: 'reintroduced',
+          pres: 'réintroduisant',
+          presEn: 'reintroducing',
+        },
+        {
+          fr: 'réactiver',
+          en: 'to reactivate',
+          past: 'réactivé',
+          pastEn: 'reactivated',
+          pres: 'réactivant',
+          presEn: 'reactivating',
+        },
+        {
+          fr: 'relancer',
+          en: 'to revive',
+          past: 'relancé',
+          pastEn: 'revived',
+          pres: 'relançant',
+          presEn: 'reviving',
+        },
+        {
+          fr: 'raviver',
+          en: 'to rekindle',
+          past: 'ravivé',
+          pastEn: 'rekindled',
+          pres: 'ravivant',
+          presEn: 'rekindling',
+        },
+        {
+          fr: 'rénover',
+          en: 'to renovate',
+          past: 'rénové',
+          pastEn: 'renovated',
+          pres: 'rénovant',
+          presEn: 'renovating',
+        },
+        {
+          fr: 'moderniser',
+          en: 'to modernize',
+          past: 'modernisé',
+          pastEn: 'modernized',
+          pres: 'modernisant',
+          presEn: 'modernizing',
+        },
+        {
+          fr: 'réformer',
+          en: 'to reform',
+          past: 'réformé',
+          pastEn: 'reformed',
+          pres: 'réformant',
+          presEn: 'reforming',
+        },
+      ];
+      const dictionaryExpansionPart7 = [];
+
+      const allParts = [
+        dictionaryExpansionPart0,
+        dictionaryExpansionPart1,
+        dictionaryExpansionPart2,
+        dictionaryExpansionPart3,
+        dictionaryExpansionPart4,
+        dictionaryExpansionPart5,
+        dictionaryExpansionPart6,
+        dictionaryExpansionPart7,
+      ];
+
+      const allWords = [].concat(...allParts);
+
+      console.log('Total before filter:', allWords.length);
+
+      const masterDictionary = Object.values(
+        allWords.reduce((acc, word) => {
+          const key = word.fr;
+
+          if (!acc[key]) {
+            // First time seeing this word
+            acc[key] = {
+              fr: word.fr,
+              en: [word.en],
+              past: word.past,
+              pastEn: [word.pastEn],
+              pres: word.pres,
+              presEn: [word.presEn],
+            };
+          } else {
+            // Merge values (avoid duplicates)
+            if (!acc[key].en.includes(word.en)) {
+              acc[key].en += ' | ' + word.en;
+            }
+
+            if (!acc[key].pastEn.includes(word.pastEn)) {
+              acc[key].pastEn += ' | ' + word.pastEn;
+            }
+
+            if (!acc[key].presEn.includes(word.presEn)) {
+              acc[key].presEn += ' | ' + word.presEn;
+            }
+          }
+
+          return acc;
+        }, {}),
+      );
+
+      // const masterDictionary = allWords.filter(
+      //   (wordObj, index, self) =>
+      //     index === self.findIndex((t) => t.fr === wordObj.fr),
+      // );
+
+      console.log('After filter:', masterDictionary.length);
+      let currentLineObjects = [];
+      let currentWordIndex = 0;
+      let currentCharIndex = 0;
+      let errorCount = 0;
+      let totalCharsTyped = 0;
+      let startTime = null;
+      let frenchVoices = [];
+
+      const startIndexInput = document.getElementById('start-index');
+      const endIndexInput = document.getElementById('end-index');
+      const displayEl = document.getElementById('display');
+      const meaningEl = document.getElementById('meaning');
+      const wpmEl = document.getElementById('wpm');
+      const errorEl = document.getElementById('errors');
+      const inputEl = document.getElementById('hidden-input');
+      const voiceSelect = document.getElementById('voice-select');
+      const speedRange = document.getElementById('speed-range');
+      const speedValue = document.getElementById('speed-value');
+      console.log(masterDictionary.length);
+
+      function getTrainingSubset() {
+        if (masterDictionary.length === 0) return [];
+
+        const maxIndex = masterDictionary.length - 1;
+
+        let start = parseInt(startIndexInput.value, 10);
+        let end = parseInt(endIndexInput.value, 10);
+
+        if (isNaN(start)) start = 0;
+        if (isNaN(end)) end = maxIndex;
+
+        start = Math.max(0, Math.min(start, maxIndex));
+        end = Math.max(0, Math.min(end, maxIndex));
+
+        if (start > end) {
+          [start, end] = [end, start];
+          startIndexInput.value = start;
+          endIndexInput.value = end;
+        }
+
+        return masterDictionary.slice(start, end + 1);
+      }
+
+      function generateLine() {
+        currentLineObjects = [];
+        currentWordIndex = 0;
+        currentCharIndex = 0;
+
+        const trainingSubset = getTrainingSubset();
+
+        if (!trainingSubset.length) {
+          displayEl.textContent = 'No verbs available';
+          meaningEl.textContent = 'Check your dictionary or selected range.';
+          return;
+        }
+
+        const randomVerb =
+          trainingSubset[Math.floor(Math.random() * trainingSubset.length)];
+
+        currentLineObjects = [
+          { fr: randomVerb.fr, en: randomVerb.en },
+          { fr: randomVerb.past, en: randomVerb.pastEn },
+          { fr: randomVerb.pres, en: randomVerb.presEn },
+        ];
+
+        renderLine();
+      }
+
+      function renderLine() {
+        displayEl.textContent = '';
+
+        currentLineObjects.forEach((obj, wordIdx) => {
+          obj.fr.split('').forEach((letter) => {
+            const span = document.createElement('span');
+            span.textContent = letter;
+            span.className = 'char';
+            displayEl.appendChild(span);
+          });
+
+          if (wordIdx < currentLineObjects.length - 1) {
+            const spaceSpan = document.createElement('span');
+            spaceSpan.textContent = '·';
+            spaceSpan.className = 'char space';
+            spaceSpan.dataset.char = ' ';
+            displayEl.appendChild(spaceSpan);
+          }
+        });
+
+        const meaningHtml = currentLineObjects
+          .map(
+            (obj, index) =>
+              `<span class="eng-word" id="mean-${index}">${obj.en}</span>`,
+          )
+          .join('<span class="separator"> | </span>');
+
+        meaningEl.innerHTML = meaningHtml;
+        updateCursor();
+      }
+
+      function updateCursor() {
+        const chars = displayEl.querySelectorAll('.char');
+        chars.forEach((c) => c.classList.remove('current'));
+
+        if (currentCharIndex < chars.length) {
+          chars[currentCharIndex].classList.add('current');
+        }
+      }
+
+      function speakWord(text) {
+        window.speechSynthesis.cancel();
+
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'fr-FR';
+        u.rate = parseFloat(speedRange.value);
+
+        const selectedVoiceName = voiceSelect.value;
+        const selectedVoice = frenchVoices.find(
+          (v) => v.name === selectedVoiceName,
+        );
+
+        if (selectedVoice) {
+          u.voice = selectedVoice;
+        }
+
+        window.speechSynthesis.speak(u);
+      }
+
+      function updateWPM() {
+        if (!startTime) return;
+        const elapsedMinutes = (new Date() - startTime) / 60000;
+        const wpm = Math.round(totalCharsTyped / 5 / elapsedMinutes);
+        if (wpm > 0 && wpm < 250) wpmEl.textContent = wpm;
+      }
+
+      function populateVoices() {
+        const voices = window.speechSynthesis.getVoices();
+
+        frenchVoices = voices
+          .filter((v) => v.lang && v.lang.toLowerCase().startsWith('fr'))
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        voiceSelect.innerHTML = '';
+
+        if (!frenchVoices.length) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'No French voices found';
+          voiceSelect.appendChild(opt);
+          return;
+        }
+
+        frenchVoices.forEach((voice, index) => {
+          const opt = document.createElement('option');
+          opt.value = voice.name;
+          opt.textContent = `${voice.name} (${voice.lang})`;
+          if (index === 0) opt.selected = true;
+          voiceSelect.appendChild(opt);
+        });
+      }
+
+      const maxDictionaryIndex = Math.max(masterDictionary.length - 1, 0);
+      startIndexInput.max = maxDictionaryIndex;
+      endIndexInput.max = maxDictionaryIndex;
+
+      if (parseInt(endIndexInput.value, 10) > maxDictionaryIndex) {
+        endIndexInput.value = maxDictionaryIndex;
+      }
+
+      startIndexInput.addEventListener('change', () => {
+        generateLine();
+        inputEl.focus();
+      });
+
+      endIndexInput.addEventListener('change', () => {
+        generateLine();
+        inputEl.focus();
+      });
+
+      speedRange.addEventListener('input', () => {
+        speedValue.textContent = `${parseFloat(speedRange.value).toFixed(2)}x`;
+      });
+
+      document.addEventListener('keydown', (e) => {
+        const active = document.activeElement;
+        const isInControls =
+          active && active.closest && active.closest('#controls');
+
+        if (isInControls) {
+          return;
+        }
+
+        inputEl.focus();
+
+        if (e.key === ' ') e.preventDefault();
+        if (e.key.length > 1 && e.key !== 'Backspace') return;
+
+        const chars = displayEl.querySelectorAll('.char');
+        if (!chars.length || currentCharIndex >= chars.length) return;
+
+        if (!startTime) startTime = new Date();
+
+        const targetSpan = chars[currentCharIndex];
+        const targetChar = targetSpan.dataset.char || targetSpan.textContent;
+
+        if (e.key === 'Backspace') {
+          if (currentCharIndex > 0) {
+            currentCharIndex--;
+            const prevSpan = chars[currentCharIndex];
+            prevSpan.classList.remove('correct', 'wrong');
+            if (prevSpan.dataset.char === ' ') {
+              currentWordIndex--;
+            }
+            updateCursor();
+          }
+          return;
+        }
+
+        if (e.key.toLowerCase() === targetChar.toLowerCase()) {
+          targetSpan.classList.add('correct');
+          targetSpan.classList.remove('wrong');
+
+          if (targetChar === ' ') {
+            const finishedIdx = currentWordIndex;
+            speakWord(currentLineObjects[finishedIdx].fr);
+
+            const engEl = document.getElementById(`mean-${finishedIdx}`);
+            if (engEl) {
+              engEl.classList.add('pronounced');
+              setTimeout(() => engEl.classList.remove('pronounced'), 1500);
+            }
+
+            currentWordIndex++;
+          }
+
+          currentCharIndex++;
+          totalCharsTyped++;
+
+          if (currentCharIndex >= chars.length) {
+            const finalIdx = currentWordIndex;
+            speakWord(currentLineObjects[finalIdx].fr);
+
+            const finalEngEl = document.getElementById(`mean-${finalIdx}`);
+            if (finalEngEl) {
+              finalEngEl.classList.add('pronounced');
+              setTimeout(() => finalEngEl.classList.remove('pronounced'), 1500);
+            }
+
+            setTimeout(generateLine, 2000);
+          }
+        } else {
+          targetSpan.classList.add('wrong');
+          errorCount++;
+          errorEl.textContent = errorCount;
+        }
+
+        updateCursor();
+        updateWPM();
+      });
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#controls')) {
+          inputEl.focus();
+        }
+      });
+
+      window.speechSynthesis.onvoiceschanged = populateVoices;
+      setTimeout(populateVoices, 200);
+      populateVoices();
+      generateLine();
+    </script>
+  </body>
+</html>
