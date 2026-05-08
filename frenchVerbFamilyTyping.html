@@ -5250,43 +5250,90 @@
       }
 
       function populateVoices() {
-        const voices = window.speechSynthesis.getVoices();
+  const voices = window.speechSynthesis.getVoices();
 
-        frenchVoices = voices
-          .filter((v) => v.lang && v.lang.toLowerCase().startsWith('fr'))
-          .sort((a, b) => a.name.localeCompare(b.name));
+  frenchVoices = voices
+    .filter((v) => v.lang && v.lang.toLowerCase().startsWith('fr'))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-        const previousSelection =
-          voiceSelect.value || localStorage.getItem(VOICE_STORAGE_KEY);
+  const previousSelection =
+    localStorage.getItem(VOICE_STORAGE_KEY);
 
-        voiceSelect.innerHTML = '';
+  voiceSelect.innerHTML = '';
 
-        if (!frenchVoices.length) {
-          const opt = document.createElement('option');
-          opt.value = '';
-          opt.textContent = 'No French voices found';
-          voiceSelect.appendChild(opt);
-          return;
-        }
+  if (!frenchVoices.length) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'No French voices found';
+    voiceSelect.appendChild(opt);
+    return;
+  }
 
-        frenchVoices.forEach((voice) => {
-          const opt = document.createElement('option');
-          opt.value = voice.name;
-          opt.textContent = `${voice.name} (${voice.lang})`;
-          voiceSelect.appendChild(opt);
-        });
+  // Populate dropdown
+  frenchVoices.forEach((voice) => {
+    const opt = document.createElement('option');
+    opt.value = voice.name;
+    opt.textContent = `${voice.name} (${voice.lang})`;
+    voiceSelect.appendChild(opt);
+  });
 
-        // Restore saved/user-selected voice instead of resetting to the first voice.
-        if (
-          previousSelection &&
-          frenchVoices.some((v) => v.name === previousSelection)
-        ) {
-          voiceSelect.value = previousSelection;
-        } else {
-          voiceSelect.value = frenchVoices[0].name;
-          localStorage.setItem(VOICE_STORAGE_KEY, voiceSelect.value);
-        }
-      }
+  // Browser detection
+  const isEdge = navigator.userAgent.includes('Edg');
+
+  const isChrome =
+    navigator.userAgent.includes('Chrome') &&
+    !navigator.userAgent.includes('Edg');
+
+  const isSafari =
+    navigator.userAgent.includes('Safari') &&
+    !navigator.userAgent.includes('Chrome');
+
+  // If user already selected a voice before, use it
+  if (
+    previousSelection &&
+    frenchVoices.some((v) => v.name === previousSelection)
+  ) {
+    voiceSelect.value = previousSelection;
+    return;
+  }
+
+  // Otherwise choose best browser-specific default
+  let preferredVoice = null;
+
+  // EDGE → Microsoft Antoine
+  if (isEdge) {
+    preferredVoice = frenchVoices.find((v) =>
+      v.name.includes('Microsoft Antoine'),
+    );
+  }
+
+  // CHROME → Google français
+  else if (isChrome) {
+    preferredVoice = frenchVoices.find((v) =>
+      v.name.toLowerCase().includes('google français'),
+    );
+  }
+
+  // SAFARI → Thomas / Amélie
+  else if (isSafari) {
+    preferredVoice =
+      frenchVoices.find((v) => v.name.includes('Thomas')) ||
+      frenchVoices.find((v) => v.name.includes('Amélie'));
+  }
+
+  // Final fallback → first French voice
+  if (!preferredVoice) {
+    preferredVoice = frenchVoices[0];
+  }
+
+  voiceSelect.value = preferredVoice.name;
+
+  // Save selection
+  localStorage.setItem(
+    VOICE_STORAGE_KEY,
+    preferredVoice.name
+  );
+}
 
       const maxDictionaryIndex = Math.max(masterDictionary.length - 1, 0);
       startIndexInput.max = maxDictionaryIndex;
