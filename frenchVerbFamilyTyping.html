@@ -5,158 +5,275 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>French Verb Family Typing Trainer</title>
     <style>
-      body {
-        font-family: sans-serif;
-        background: #1a1a1a;
-        color: #eee;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        margin: 0;
-        padding: 20px;
-        box-sizing: border-box;
-      }
+    * {
+      box-sizing: border-box;
+      user-select: none; /* avoid accidental selection, but input still works */
+    }
 
-      #app {
-        width: 90%;
-        max-width: 1000px;
-      }
+    body {
+      background: linear-gradient(145deg, #f0f4fa 0%, #d9e0eb 100%);
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem 1.5rem;
+    }
 
-      #controls {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-        margin-bottom: 18px;
-        background: #242424;
-        padding: 14px;
-        border-radius: 14px;
-        border: 1px solid #333;
-      }
+    /* main app card */
+    #app {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(2px);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
 
-      .control-group label {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 0.95rem;
-        color: #bbb;
-      }
+    /* ========== NEW HERO SECTION STYLES ========== */
+    .hero-section {
+      background: linear-gradient(112deg, #1e2f4b 0%, #14273e 100%);
+      padding: 1.8rem 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
 
-      select,
-      input[type='range'],
-      input[type='number'] {
-        width: 100%;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid #444;
-        background: #111;
-        color: #eee;
-        box-sizing: border-box;
-      }
+    .hero-section h1 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.3px;
+    }
 
-      #speed-value {
-        margin-top: 6px;
-        font-size: 0.9rem;
-        color: #8ab4ff;
-      }
+    .description {
+      color: #e0e8f2;
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
 
-      #game-container {
-        width: 100%;
-        text-align: center;
-        background: #202020;
-        border: 1px solid #333;
-        border-radius: 18px;
-        padding: 28px 22px;
-        box-sizing: border-box;
-      }
+    .description p {
+      margin: 0 0 0.8rem 0;
+    }
 
+    .how-to {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .how-to span {
+      background: rgba(255, 255, 255, 0.12);
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      font-family: monospace;
+      letter-spacing: 0.3px;
+    }
+    /* ========== END HERO SECTION STYLES ========== */
+
+    /* controls row (original) */
+    #controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
+      background: #f8fafd;
+      border-bottom: 1px solid #e2e8f0;
+      align-items: flex-end;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .control-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #4a5b7a;
+    }
+
+    select, input[type="number"] {
+      padding: 0.5rem 0.8rem;
+      border-radius: 1rem;
+      border: 1px solid #cbd5e1;
+      background: white;
+      font-size: 0.85rem;
+      font-weight: 500;
+      font-family: monospace;
+      cursor: pointer;
+    }
+
+    #speed-range {
+      width: 160px;
+      cursor: pointer;
+    }
+
+    #speed-value {
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #eef2f8;
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 2rem;
+      text-align: center;
+      margin-top: 0.2rem;
+    }
+
+    /* game container + typing area */
+    #game-container {
+      padding: 2rem 2rem 1.8rem;
+    }
+
+    #display {
+      font-family: 'Fira Mono', 'Courier New', monospace;
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      background: #ffffff;
+      padding: 1.2rem 1.2rem;
+      border-radius: 2rem;
+      box-shadow: inset 0 1px 4px #0001, 0 4px 12px rgba(0, 0, 0, 0.02);
+      border: 1px solid #e9edf2;
+      word-break: break-all;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+
+    .char {
+      display: inline-block;
+      transition: all 0.05s linear;
+      border-radius: 8px;
+      padding: 0 2px;
+    }
+
+    .char.current {
+      background: #ffecb3;
+      box-shadow: 0 0 0 2px #ffc107;
+      transform: scale(1.02);
+    }
+
+    .char.correct {
+      color: #2b7e3a;
+      background: #e6f7ec;
+    }
+
+    .char.wrong {
+      color: #c62828;
+      background: #ffe6e6;
+      text-decoration: underline;
+      text-decoration-thickness: 3px;
+    }
+
+    .char.space {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #6c7a91;
+    }
+
+    #meaning {
+      background: #f1f5f9;
+      padding: 0.9rem 1.2rem;
+      border-radius: 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #0f2b3d;
+      margin: 0.75rem 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
+      font-family: 'Segoe UI', system-ui;
+    }
+
+    .eng-word {
+      background: #ffffffdd;
+      padding: 0.2rem 1rem;
+      border-radius: 3rem;
+      transition: all 0.15s;
+    }
+
+    .eng-word.pronounced {
+      background: #c8e6df;
+      box-shadow: 0 0 0 2px #2e7d64;
+      transform: scale(1.02);
+    }
+
+    .separator {
+      color: #8a9bb0;
+      font-weight: 400;
+    }
+
+    .stats {
+      font-size: 0.9rem;
+      background: #eef3fc;
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      color: #1f3a5f;
+      margin-top: 0.5rem;
+    }
+
+    #hidden-input {
+      opacity: 0;
+      position: fixed;
+      top: -100px;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+    }
+
+    @media (max-width: 700px) {
       #display {
-        font-size: 2.3rem;
-        margin-bottom: 18px;
-        min-height: 1.7em;
-        letter-spacing: 2px;
-        line-height: 1.7;
-        word-break: break-word;
+        font-size: 1.4rem;
+        padding: 0.8rem;
       }
-
-      #meaning {
-        font-size: 1.1rem;
-        color: #9aa0a6;
-        margin-bottom: 22px;
-        min-height: 1.6em;
-        line-height: 1.7;
-      }
-
-      .char {
-        border-bottom: 2px solid transparent;
-        transition: all 0.12s ease;
-      }
-
-      .char.current {
-        border-bottom: 2px solid #007bff;
-        background: #333;
-      }
-
-      .char.correct {
-        color: #4caf50;
-      }
-
-      .char.wrong {
-        color: #f44336;
-        background: rgba(244, 67, 54, 0.2);
-      }
-
       .char.space {
-        color: #555;
-        margin: 0 10px;
+        font-size: 1.2rem;
       }
-
-      .eng-word {
-        padding: 0 5px;
-        transition: all 0.3s;
-        display: inline-block;
+      #controls {
+        padding: 1rem 1.2rem;
+        gap: 0.9rem;
       }
-
-      .eng-word.pronounced {
-        color: #fff;
-        font-weight: bold;
-        transform: scale(1.15);
-        text-shadow: 0 0 10px #007bff;
+      #game-container {
+        padding: 1.2rem;
       }
-
-      .separator {
-        color: #444;
-        margin: 0 10px;
+      .hero-section h1 {
+        font-size: 1.4rem;
       }
-
-      .stats {
-        margin-top: 12px;
-        font-size: 0.95rem;
-        opacity: 0.75;
+      .hero-section {
+        padding: 1.2rem 1.2rem;
       }
-
-      #hidden-input {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
+      .how-to span {
+        font-size: 0.7rem;
       }
-
-      @media (max-width: 700px) {
-        #controls {
-          grid-template-columns: 1fr;
-        }
-
-        #display {
-          font-size: 1.7rem;
-        }
-
-        #meaning {
-          font-size: 1rem;
-        }
-      }
-    </style>
+    }
+  </style>
   </head>
   <body>
+
+    <div class="hero-section">
+  <h1>🇫🇷 French Verb Trainer · Typing & Pronunciation</h1>
+  <div class="description">
+    <p><strong>Master French verbs through active typing + native audio.</strong> Type each conjugated form correctly — space = next word. After finishing a word, its English meaning highlights and the French audio is spoken automatically. Perfect for A2 → B1+ learners.</p>
+    <div class="how-to">
+      <span>⌨️ Type the highlighted letter</span>
+      <span>🔊 Auto‑speaks French after each word</span>
+      <span>🎚️ Adjust voice & speed below</span>
+      <span>📚 Choose any verb range (start / end index)</span>
+    </div>
+  </div>
+</div>
     <div id="app">
       <div id="controls">
         <div class="control-group">
