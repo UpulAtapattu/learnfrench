@@ -41350,6 +41350,445 @@ const adjVariation25 = [
   { french: "secret", english: "secret (male sing)", pronunciation: "suh-kreh", category: "Adjective", relatedVerbs: ["garder", "dire", "cacher"] },
   { french: "secrète", english: "secret (female sing)", pronunciation: "suh-krett", category: "Adjective", relatedVerbs: ["révéler", "chuchoter"] }
 ];
+const verbVariationSports1 = [
+  // --- 1. S'ENTRAÎNER (to train / to practice) ---
+  { french: "s'entraîner", english: "to practice", pronunciation: "sahn-treh-nay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "entraîné", english: "practiced", pronunciation: "ahn-treh-nay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "s'entraînant", english: "practicing", pronunciation: "sahn-treh-nahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je m'entraîne", english: "I practice", pronunciation: "zhuh mahn-trehn", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu t'entraînes", english: "you practice", pronunciation: "too tahn-trehn", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il s'entraîne", english: "he practices", pronunciation: "eel sahn-trehn", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous nous entraînons", english: "we practice", pronunciation: "noo noo zahn-treh-nohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous vous entraînez", english: "you practice", pronunciation: "voo voo zahn-treh-nay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils s'entraînent", english: "they practice", pronunciation: "eel sahn-trehn", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je m'entraînais", english: "I was practicing", pronunciation: "zhuh mahn-treh-neh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu t'entraînais", english: "you were practicing", pronunciation: "too tahn-treh-neh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il s'entraînait", english: "he was practicing", pronunciation: "eel sahn-treh-neh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous nous entraînions", english: "we were practicing", pronunciation: "noo noo zahn-treh-nyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous vous entraîniez", english: "you were practicing", pronunciation: "voo voo zahn-treh-nyay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils s'entraînaient", english: "they were practicing", pronunciation: "eel sahn-treh-neh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je m'entraînerai", english: "I will practice", pronunciation: "zhuh mahn-treh-nuh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il s'entraînera", english: "he will practice", pronunciation: "eel sahn-treh-nuh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils s'entraîneront", english: "they will practice", pronunciation: "eel sahn-treh-nuh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 2. RECEVOIR (to receive / get a card) ---
+  { french: "recevoir", english: "to receive", pronunciation: "ruh-suh-vwahr", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "reçu", english: "received", pronunciation: "ruh-soo", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "recevant", english: "receiving", pronunciation: "ruh-suh-vahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je reçois", english: "I receive", pronunciation: "zhuh ruh-swah", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu reçois", english: "you receive", pronunciation: "too ruh-swah", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il reçoit", english: "he receives", pronunciation: "eel ruh-swah", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous recevons", english: "we receive", pronunciation: "noo ruh-suh-vohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous recevez", english: "you receive", pronunciation: "voo ruh-suh-vay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils reçoivent", english: "they receive", pronunciation: "eel ruh-swahv", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je recevais", english: "I was receiving", pronunciation: "zhuh ruh-suh-veh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu recevais", english: "you were receiving", pronunciation: "too ruh-suh-veh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il recevait", english: "he was receiving", pronunciation: "eel ruh-suh-veh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous recevions", english: "we were receiving", pronunciation: "noo ruh-suh-vyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous receviez", english: "you were receiving", pronunciation: "voo ruh-suh-vyay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils recevaient", english: "they were receiving", pronunciation: "eel ruh-suh-veh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je recevrai", english: "I will receive", pronunciation: "zhuh ruh-suh-vray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il recevra", english: "he will receive", pronunciation: "eel ruh-suh-vrah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils recevront", english: "they will receive", pronunciation: "eel ruh-suh-vrohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 3. MARQUER (to score / mark) ---
+  { french: "marquer", english: "to score", pronunciation: "mar-kay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "marqué", english: "scored", pronunciation: "mar-kay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "marquant", english: "scoring", pronunciation: "mar-kahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je marque", english: "I score", pronunciation: "zhuh mark", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu marques", english: "you score", pronunciation: "too mark", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il marque", english: "he scores", pronunciation: "eel mark", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous marquons", english: "we score", pronunciation: "noo mar-kohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous marquez", english: "you score", pronunciation: "voo mar-kay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils marquent", english: "they score", pronunciation: "eel mark", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je marquais", english: "I was scoring", pronunciation: "zhuh mar-keh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu marquais", english: "you were scoring", pronunciation: "too mar-keh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il marquait", english: "he was scoring", pronunciation: "eel mar-keh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous marquions", english: "we were scoring", pronunciation: "noo mar-kyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous marquiez", english: "you were scoring", pronunciation: "voo mar-kyay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils marquaient", english: "they were scoring", pronunciation: "eel mar-keh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je marquerai", english: "I will score", pronunciation: "zhuh mar-kuh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il marquera", english: "he will score", pronunciation: "eel mar-kuh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils marqueront", english: "they will score", pronunciation: "eel mar-kuh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 4. SIFFLER (to whistle / blow the whistle) ---
+  { french: "siffler", english: "to whistle", pronunciation: "seef-lay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "sifflé", english: "whistled", pronunciation: "seef-lay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "sifflant", english: "whistling", pronunciation: "seef-lahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je siffle", english: "I whistle", pronunciation: "zhuh seef-luh", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu siffles", english: "you whistle", pronunciation: "too seef-luh", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il siffle", english: "he whistles", pronunciation: "eel seef-luh", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous sifflons", english: "we whistle", pronunciation: "noo seef-lohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous sifflez", english: "you whistle", pronunciation: "voo seef-lay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils sifflent", english: "they whistle", pronunciation: "eel seef-luh", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je sifflais", english: "I was whistling", pronunciation: "zhuh seef-leh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu sifflais", english: "you were whistling", pronunciation: "too seef-leh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il sifflait", english: "he was whistling", pronunciation: "eel seef-leh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous sifflions", english: "we were whistling", pronunciation: "noo seef-lyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous siffliez", english: "you were whistling", pronunciation: "voo seef-lyay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils sifflaient", english: "they were whistling", pronunciation: "eel seef-leh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je sifflerai", english: "I will whistle", pronunciation: "zhuh seef-luh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il sifflera", english: "he will whistle", pronunciation: "eel seef-luh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils siffleront", english: "they will whistle", pronunciation: "eel seef-luh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 5. APPLAUDIR (to applaud / cheer) ---
+  { french: "applaudir", english: "to applaud", pronunciation: "ah-ploh-deer", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "applaudi", english: "applauded", pronunciation: "ah-ploh-dee", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "applaudissant", english: "applauding", pronunciation: "ah-ploh-dee-sahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "j'applaudis", english: "I applaud", pronunciation: "zhah-ploh-dee", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu applaudis", english: "you applaud", pronunciation: "too ah-ploh-dee", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il applaudit", english: "he applauds", pronunciation: "eel ah-ploh-dee", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous applaudissons", english: "we applaud", pronunciation: "noo zah-ploh-dee-sohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous applaudissez", english: "you applaud", pronunciation: "voo zah-ploh-dee-say", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils applaudissent", english: "they applaud", pronunciation: "eel zah-ploh-deess", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "j'applaudissais", english: "I was applauding", pronunciation: "zhah-ploh-dee-seh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu applaudissais", english: "you were applauding", pronunciation: "too ah-ploh-dee-seh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il applaudissait", english: "he was applauding", pronunciation: "eel ah-ploh-dee-seh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous applaudissions", english: "we were applauding", pronunciation: "noo zah-ploh-dee-syohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous applaudissiez", english: "you were applauding", pronunciation: "voo zah-ploh-dee-syay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils applaudissaient", english: "they were applauding", pronunciation: "eel zah-ploh-dee-seh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "j'applaudirai", english: "I will applaud", pronunciation: "zhah-ploh-dee-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il applaudira", english: "he will applaud", pronunciation: "eel ah-ploh-dee-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils applaudiront", english: "they will applaud", pronunciation: "eel ah-ploh-dee-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" }
+];
+      const verbVariationSports2 = [
+  // --- 6. TOMBER (to fall) ---
+  { french: "tomber", english: "to fall", pronunciation: "tohn-bay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "tombé", english: "fallen", pronunciation: "tohn-bay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "tombant", english: "falling", pronunciation: "tohn-bahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je tombe", english: "I fall", pronunciation: "zhuh tohnb", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu tombes", english: "you fall", pronunciation: "too tohnb", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il tombe", english: "he falls", pronunciation: "eel tohnb", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous tombons", english: "we fall", pronunciation: "noo tohn-bohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous tombez", english: "you fall", pronunciation: "voo tohn-bay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils tombent", english: "they fall", pronunciation: "eel tohnb", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je tombais", english: "I was falling", pronunciation: "zhuh tohn-beh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu tombais", english: "you were falling", pronunciation: "too tohn-beh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il tombait", english: "he was falling", pronunciation: "eel tohn-beh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous tombions", english: "we were falling", pronunciation: "noo tohn-byohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous tombiez", english: "you were falling", pronunciation: "voo tohn-byay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils tombaient", english: "they were falling", pronunciation: "eel tohn-beh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je tomberai", english: "I will fall", pronunciation: "zhuh tohn-bruh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il tombera", english: "he will fall", pronunciation: "eel tohn-bruh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils tomberont", english: "they will fall", pronunciation: "eel tohn-bruh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 7. JOUER (to play) ---
+  { french: "jouer", english: "to play", pronunciation: "zhoo-ay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "joué", english: "played", pronunciation: "zhoo-ay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "jouant", english: "playing", pronunciation: "zhoo-ahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je joue", english: "I play", pronunciation: "zhuh zhoo", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu joues", english: "you play", pronunciation: "too zhoo", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il joue", english: "he plays", pronunciation: "eel zhoo", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous jouons", english: "we play", pronunciation: "noo zhoo-ohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous jouez", english: "you play", pronunciation: "voo zhoo-ay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils jouent", english: "they play", pronunciation: "eel zhoo", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je jouais", english: "I was playing", pronunciation: "zhuh zhoo-eh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu jouais", english: "you were playing", pronunciation: "too zhoo-eh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il jouait", english: "he was playing", pronunciation: "eel zhoo-eh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous jouions", english: "we were playing", pronunciation: "noo zhoo-yohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous jouiez", english: "you were playing", pronunciation: "voo zhoo-yay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils jouaient", english: "they were playing", pronunciation: "eel zhoo-eh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je jouerai", english: "I will play", pronunciation: "zhuh zhoo-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il jouera", english: "he will play", pronunciation: "eel zhoo-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils joueront", english: "they will play", pronunciation: "eel zhoo-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 8. SE BLESSER (to get injured / hurt oneself) ---
+  { french: "se blesser", english: "to get injured", pronunciation: "suh bleh-say", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "blessé", english: "injured", pronunciation: "bleh-say", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "se blessant", english: "getting injured", pronunciation: "suh bleh-sahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je me blesse", english: "I get injured", pronunciation: "zhuh muh blehss", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu te blesses", english: "you get injured", pronunciation: "too tuh blehss", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il se blesse", english: "he gets injured", pronunciation: "eel suh blehss", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous nous blessons", english: "we get injured", pronunciation: "noo noo bleh-sohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous vous blessez", english: "you get injured", pronunciation: "voo voo bleh-say", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils se blessent", english: "they get injured", pronunciation: "eel suh blehss", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je me blessais", english: "I was getting injured", pronunciation: "zhuh muh bleh-seh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu te blessais", english: "you were getting injured", pronunciation: "too tuh bleh-seh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il se blessait", english: "he was getting injured", pronunciation: "eel suh bleh-seh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous nous blessions", english: "we were getting injured", pronunciation: "noo noo bleh-syohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous vous blessiez", english: "you were getting injured", pronunciation: "voo voo bleh-syay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils se blessaient", english: "they were getting injured", pronunciation: "eel suh bleh-seh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je me blesserai", english: "I will get injured", pronunciation: "zhuh muh bleh-suh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il se blessera", english: "he will get injured", pronunciation: "eel suh bleh-suh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils se blesseront", english: "they will get injured", pronunciation: "eel suh bleh-suh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 9. COURIR (to run) ---
+  { french: "courir", english: "to run", pronunciation: "koo-reer", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "couru", english: "run (past participle)", pronunciation: "koo-roo", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "courant", english: "running", pronunciation: "koo-rahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je cours", english: "I run", pronunciation: "zhuh koor", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu cours", english: "you run", pronunciation: "too koor", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il court", english: "he runs", pronunciation: "eel koor", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous courons", english: "we run", pronunciation: "noo koo-rohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous courez", english: "you run", pronunciation: "voo koo-ray", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils courent", english: "they run", pronunciation: "eel koor", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je courais", english: "I was running", pronunciation: "zhuh koo-reh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu courais", english: "you were running", pronunciation: "too koo-reh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il courait", english: "he was running", pronunciation: "eel koo-reh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous courions", english: "we were running", pronunciation: "noo koo-ryohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous couriez", english: "you were running", pronunciation: "voo koo-ryay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils couraient", english: "they were running", pronunciation: "eel koo-reh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je courrai", english: "I will run", pronunciation: "zhuh koor-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il courra", english: "he will run", pronunciation: "eel koor-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils courront", english: "they will run", pronunciation: "eel koor-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 10. DONNER (to give) ---
+  { french: "donner", english: "to give", pronunciation: "duh-nay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "donné", english: "given", pronunciation: "duh-nay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "donnant", english: "giving", pronunciation: "duh-nahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je donne", english: "I give", pronunciation: "zhuh duhn", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu donnes", english: "you give", pronunciation: "too duhn", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il donne", english: "he gives", pronunciation: "eel duhn", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous donnons", english: "we give", pronunciation: "noo duh-nohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous donnez", english: "you give", pronunciation: "voo duh-nay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils donnent", english: "they give", pronunciation: "eel duhn", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je donnais", english: "I was giving", pronunciation: "zhuh duh-neh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu donnais", english: "you were giving", pronunciation: "too duh-neh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il donnait", english: "he was giving", pronunciation: "eel duh-neh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous donnions", english: "we were giving", pronunciation: "noo duh-nyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous donniez", english: "you were giving", pronunciation: "voo duh-nyay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils donnaient", english: "they were giving", pronunciation: "eel duh-neh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je donnerai", english: "I will give", pronunciation: "zhuh duh-nuh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il donnera", english: "he will give", pronunciation: "eel duh-nuh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils donneront", english: "they will give", pronunciation: "eel duh-nuh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" }
+];
+      const verbVariationSports3 = [
+  // --- 11. REGARDER (to watch / look at) ---
+  { french: "regarder", english: "to watch", pronunciation: "ruh-gar-day", category: "Verb", tense: "Infinitive", pronoun: "N/A" }, [cite: 1]
+  { french: "regardé", english: "watched", pronunciation: "ruh-gar-day", category: "Verb", tense: "Past Participle", pronoun: "N/A" }, [cite: 1]
+  { french: "regardant", english: "watching", pronunciation: "ruh-gar-dahn", category: "Verb", tense: "Gerund", pronoun: "N/A" }, [cite: 1]
+  { french: "je regarde", english: "I watch", pronunciation: "zhuh ruh-gard", category: "Verb", tense: "Present", pronoun: "je" }, [cite: 1]
+  { french: "tu regardes", english: "you watch", pronunciation: "too ruh-gard", category: "Verb", tense: "Present", pronoun: "tu" }, [cite: 1]
+  { french: "il regarde", english: "he watches", pronunciation: "eel ruh-gard", category: "Verb", tense: "Present", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous regardons", english: "we watch", pronunciation: "noo ruh-gar-dohn", category: "Verb", tense: "Present", pronoun: "nous" }, [cite: 1]
+  { french: "vous regardez", english: "you watch", pronunciation: "voo ruh-gar-day", category: "Verb", tense: "Present", pronoun: "vous" }, [cite: 1]
+  { french: "ils regardent", english: "they watch", pronunciation: "eel ruh-gard", category: "Verb", tense: "Present", pronoun: "ils/elles" }, [cite: 1]
+  { french: "je regardais", english: "I was watching", pronunciation: "zhuh ruh-gar-deh", category: "Verb", tense: "Imparfait", pronoun: "je" }, [cite: 1]
+  { french: "tu regardais", english: "you were watching", pronunciation: "too ruh-gar-deh", category: "Verb", tense: "Imparfait", pronoun: "tu" }, [cite: 1]
+  { french: "il regardait", english: "he was watching", pronunciation: "eel ruh-gar-deh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous regardions", english: "we were watching", pronunciation: "noo ruh-gar-dyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" }, [cite: 1]
+  { french: "vous regardiez", english: "you were watching", pronunciation: "voo ruh-gar-dyay", category: "Verb", tense: "Imparfait", pronoun: "vous" }, [cite: 1]
+  { french: "ils regardaient", english: "they were watching", pronunciation: "eel ruh-gar-deh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" }, [cite: 1]
+  { french: "je regarderai", english: "I will watch", pronunciation: "zhuh ruh-gar-duh-ray", category: "Verb", tense: "Future", pronoun: "je" }, [cite: 1]
+  { french: "il regardera", english: "he will watch", pronunciation: "eel ruh-gar-duh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" }, [cite: 1]
+  { french: "ils regarderont", english: "they will watch", pronunciation: "eel ruh-gar-duh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" }, [cite: 1]
+
+  // --- 12. ÊTRE (to be) ---
+  { french: "être", english: "to be", pronunciation: "eh-truh", category: "Verb", tense: "Infinitive", pronoun: "N/A" }, [cite: 1]
+  { french: "été", english: "been", pronunciation: "ay-tay", category: "Verb", tense: "Past Participle", pronoun: "N/A" }, [cite: 1]
+  { french: "étant", english: "being", pronunciation: "ay-tahn", category: "Verb", tense: "Gerund", pronoun: "N/A" }, [cite: 1]
+  { french: "je suis", english: "I am", pronunciation: "zhuh swee", category: "Verb", tense: "Present", pronoun: "je" }, [cite: 1]
+  { french: "tu es", english: "you are", pronunciation: "too ay", category: "Verb", tense: "Present", pronoun: "tu" }, [cite: 1]
+  { french: "il est", english: "he is", pronunciation: "eel ay", category: "Verb", tense: "Present", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous sommes", english: "we are", pronunciation: "noo suhm", category: "Verb", tense: "Present", pronoun: "nous" }, [cite: 1]
+  { french: "vous êtes", english: "you are", pronunciation: "voo zeht", category: "Verb", tense: "Present", pronoun: "vous" }, [cite: 1]
+  { french: "ils sont", english: "they are", pronunciation: "eel sohn", category: "Verb", tense: "Present", pronoun: "ils/elles" }, [cite: 1]
+  { french: "j'étais", english: "I was", pronunciation: "zhay-teh", category: "Verb", tense: "Imparfait", pronoun: "je" }, [cite: 1]
+  { french: "tu étais", english: "you were", pronunciation: "too ay-teh", category: "Verb", tense: "Imparfait", pronoun: "tu" }, [cite: 1]
+  { french: "il était", english: "he was", pronunciation: "eel ay-teh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous étions", english: "we were", pronunciation: "noo zay-tyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" }, [cite: 1]
+  { french: "vous étiez", english: "you were", pronunciation: "voo zay-tyay", category: "Verb", tense: "Imparfait", pronoun: "vous" }, [cite: 1]
+  { french: "ils étaient", english: "they were", pronunciation: "eel zay-teh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" }, [cite: 1]
+  { french: "je serai", english: "I will be", pronunciation: "zhuh suh-ray", category: "Verb", tense: "Future", pronoun: "je" }, [cite: 1]
+  { french: "il sera", english: "he will be", pronunciation: "eel suh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" }, [cite: 1]
+  { french: "ils seront", english: "they will be", pronunciation: "eel suh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" }, [cite: 1]
+
+  // --- 13. FAIRE (to do / to make / used for weather) ---
+  { french: "faire", english: "to do", pronunciation: "fehr", category: "Verb", tense: "Infinitive", pronoun: "N/A" }, [cite: 1]
+  { french: "fait", english: "done", pronunciation: "feh", category: "Verb", tense: "Past Participle", pronoun: "N/A" }, [cite: 1]
+  { french: "faisant", english: "doing", pronunciation: "fuh-zahn", category: "Verb", tense: "Gerund", pronoun: "N/A" }, [cite: 1]
+  { french: "je fais", english: "I do", pronunciation: "zhuh feh", category: "Verb", tense: "Present", pronoun: "je" }, [cite: 1]
+  { french: "tu fais", english: "you do", pronunciation: "too feh", category: "Verb", tense: "Present", pronoun: "tu" }, [cite: 1]
+  { french: "il fait", english: "he does", pronunciation: "eel feh", category: "Verb", tense: "Present", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous faisons", english: "we do", pronunciation: "noo fuh-zohn", category: "Verb", tense: "Present", pronoun: "nous" }, [cite: 1]
+  { french: "vous faites", english: "you do", pronunciation: "voo fett", category: "Verb", tense: "Present", pronoun: "vous" }, [cite: 1]
+  { french: "ils font", english: "they do", pronunciation: "eel fohn", category: "Verb", tense: "Present", pronoun: "ils/elles" }, [cite: 1]
+  { french: "je faisais", english: "I was doing", pronunciation: "zhuh fuh-zeh", category: "Verb", tense: "Imparfait", pronoun: "je" }, [cite: 1]
+  { french: "tu faisais", english: "you were doing", pronunciation: "too fuh-zeh", category: "Verb", tense: "Imparfait", pronoun: "tu" }, [cite: 1]
+  { french: "il faisait", english: "he was doing", pronunciation: "eel fuh-zeh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous faisions", english: "we were doing", pronunciation: "noo fuh-zyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" }, [cite: 1]
+  { french: "vous faisiez", english: "you were doing", pronunciation: "voo fuh-zyay", category: "Verb", tense: "Imparfait", pronoun: "vous" }, [cite: 1]
+  { french: "ils faisaient", english: "they were doing", pronunciation: "eel fuh-zeh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" }, [cite: 1]
+  { french: "je ferai", english: "I will do", pronunciation: "zhuh fuh-ray", category: "Verb", tense: "Future", pronoun: "je" }, [cite: 1]
+  { french: "il fera", english: "he will do", pronunciation: "eel fuh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" }, [cite: 1]
+  { french: "ils feront", english: "they will do", pronunciation: "eel fuh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" }, [cite: 1]
+
+  // --- 14. GAGNER (to win / to earn) ---
+  { french: "gagner", english: "to win", pronunciation: "gah-nyay", category: "Verb", tense: "Infinitive", pronoun: "N/A" }, [cite: 1]
+  { french: "gagné", english: "won", pronunciation: "gah-nyay", category: "Verb", tense: "Past Participle", pronoun: "N/A" }, [cite: 1]
+  { french: "gagnant", english: "winning", pronunciation: "gah-nyahn", category: "Verb", tense: "Gerund", pronoun: "N/A" }, [cite: 1]
+  { french: "je gagne", english: "I win", pronunciation: "zhuh gah-nyuh", category: "Verb", tense: "Present", pronoun: "je" }, [cite: 1]
+  { french: "tu gagnes", english: "you win", pronunciation: "too gah-nyuh", category: "Verb", tense: "Present", pronoun: "tu" }, [cite: 1]
+  { french: "il gagne", english: "he wins", pronunciation: "eel gah-nyuh", category: "Verb", tense: "Present", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous gagnons", english: "we win", pronunciation: "noo gah-nyohn", category: "Verb", tense: "Present", pronoun: "nous" }, [cite: 1]
+  { french: "vous gagnez", english: "you win", pronunciation: "voo gah-nyay", category: "Verb", tense: "Present", pronoun: "vous" }, [cite: 1]
+  { french: "ils gagnent", english: "they win", pronunciation: "eel gah-nyuh", category: "Verb", tense: "Present", pronoun: "ils/elles" }, [cite: 1]
+  { french: "je gagnais", english: "I was winning", pronunciation: "zhuh gah-nyeh", category: "Verb", tense: "Imparfait", pronoun: "je" }, [cite: 1]
+  { french: "tu gagnais", english: "you were winning", pronunciation: "too gah-nyeh", category: "Verb", tense: "Imparfait", pronoun: "tu" }, [cite: 1]
+  { french: "il gagnait", english: "he was winning", pronunciation: "eel gah-nyeh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous gagnions", english: "we were winning", pronunciation: "noo gah-nyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" }, [cite: 1]
+  { french: "vous gagniez", english: "you were winning", pronunciation: "voo gah-nyay", category: "Verb", tense: "Imparfait", pronoun: "vous" }, [cite: 1]
+  { french: "ils gagnaient", english: "they were winning", pronunciation: "eel gah-nyeh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" }, [cite: 1]
+  { french: "je gagnerai", english: "I will win", pronunciation: "zhuh gah-nyuh-ray", category: "Verb", tense: "Future", pronoun: "je" }, [cite: 1]
+  { french: "il gagnera", english: "he will win", pronunciation: "eel gah-nyuh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" }, [cite: 1]
+  { french: "ils gagneront", english: "they will win", pronunciation: "eel gah-nyuh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" }, [cite: 1]
+
+  // --- 15. PLEURER (to cry) ---
+  { french: "pleurer", english: "to cry", pronunciation: "pluh-ray", category: "Verb", tense: "Infinitive", pronoun: "N/A" }, [cite: 1]
+  { french: "pleuré", english: "cried", pronunciation: "pluh-ray", category: "Verb", tense: "Past Participle", pronoun: "N/A" }, [cite: 1]
+  { french: "pleurant", english: "crying", pronunciation: "pluh-rahn", category: "Verb", tense: "Gerund", pronoun: "N/A" }, [cite: 1]
+  { french: "je pleure", english: "I cry", pronunciation: "zhuh pluhr", category: "Verb", tense: "Present", pronoun: "je" }, [cite: 1]
+  { french: "tu pleures", english: "you cry", pronunciation: "too pluhr", category: "Verb", tense: "Present", pronoun: "tu" }, [cite: 1]
+  { french: "il pleure", english: "he cries", pronunciation: "eel pluhr", category: "Verb", tense: "Present", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous pleurons", english: "we cry", pronunciation: "noo pluh-rohn", category: "Verb", tense: "Present", pronoun: "nous" }, [cite: 1]
+  { french: "vous pleurez", english: "you cry", pronunciation: "voo pluh-ray", category: "Verb", tense: "Present", pronoun: "vous" }, [cite: 1]
+  { french: "ils pleurent", english: "they cry", pronunciation: "eel pluhr", category: "Verb", tense: "Present", pronoun: "ils/elles" }, [cite: 1]
+  { french: "je pleurais", english: "I was crying", pronunciation: "zhuh pluh-reh", category: "Verb", tense: "Imparfait", pronoun: "je" }, [cite: 1]
+  { french: "tu pleurais", english: "you were crying", pronunciation: "too pluh-reh", category: "Verb", tense: "Imparfait", pronoun: "tu" }, [cite: 1]
+  { french: "il pleurait", english: "he was crying", pronunciation: "eel pluh-reh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" }, [cite: 1]
+  { french: "nous pleurions", english: "we were crying", pronunciation: "noo pluh-ryohn", category: "Verb", tense: "Imparfait", pronoun: "nous" }, [cite: 1]
+  { french: "vous pleuriez", english: "you were crying", pronunciation: "voo pluh-ryay", category: "Verb", tense: "Imparfait", pronoun: "vous" }, [cite: 1]
+  { french: "ils pleuraient", english: "they were crying", pronunciation: "eel pluh-reh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" }, [cite: 1]
+  { french: "je pleurerai", english: "I will cry", pronunciation: "zhuh pluh-ruh-ray", category: "Verb", tense: "Future", pronoun: "je" }, [cite: 1]
+  { french: "il pleurera", english: "he will cry", pronunciation: "eel pluh-ruh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" }, [cite: 1]
+  { french: "ils pleureront", english: "they will cry", pronunciation: "eel pluh-ruh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" } [cite: 1]
+];
+      const verbVariationSports4 = [
+  // --- 16. PORTER (to wear / to carry) ---
+  { french: "porter", english: "to wear", pronunciation: "por-tay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "porté", english: "worn", pronunciation: "por-tay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "portant", english: "wearing", pronunciation: "por-tahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je porte", english: "I wear", pronunciation: "zhuh port", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu portes", english: "you wear", pronunciation: "too port", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il porte", english: "he wears", pronunciation: "eel port", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous portons", english: "we wear", pronunciation: "noo por-tohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous portez", english: "you wear", pronunciation: "voo por-tay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils portent", english: "they wear", pronunciation: "eel port", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je portais", english: "I was wearing", pronunciation: "zhuh por-teh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu portais", english: "you were wearing", pronunciation: "too por-teh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il portait", english: "he was wearing", pronunciation: "eel por-teh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous portions", english: "we were wearing", pronunciation: "noo por-tyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous portiez", english: "you were wearing", pronunciation: "voo por-tyay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils portaient", english: "they were wearing", pronunciation: "eel por-teh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je porterai", english: "I will wear", pronunciation: "zhuh por-truh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il portera", english: "he will wear", pronunciation: "eel por-truh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils porteront", english: "they will wear", pronunciation: "eel por-truh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 17. ACHETER (to buy) ---
+  { french: "acheter", english: "to buy", pronunciation: "ahsh-tay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "acheté", english: "bought", pronunciation: "ahsh-tay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "achetant", english: "buying", pronunciation: "ahsh-tahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "j'achète", english: "I buy", pronunciation: "zhah-shet", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu achètes", english: "you buy", pronunciation: "too ah-shet", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il achète", english: "he buys", pronunciation: "eel ah-shet", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous achetons", english: "we buy", pronunciation: "noo zahsh-tohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous achetez", english: "you buy", pronunciation: "voo zahsh-tay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils achètent", english: "they buy", pronunciation: "eel zah-shet", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "j'achetais", english: "I was buying", pronunciation: "zhahsh-teh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu achetais", english: "you were buying", pronunciation: "too ahsh-teh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il achetait", english: "he was buying", pronunciation: "eel ahsh-teh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous achetions", english: "we were buying", pronunciation: "noo zahsh-tyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous achetiez", english: "you were buying", pronunciation: "voo zahsh-tyay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils achetaient", english: "they were buying", pronunciation: "eel zahsh-teh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "j'achèterai", english: "I will buy", pronunciation: "zhah-shet-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il achètera", english: "he will buy", pronunciation: "eel ah-shet-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils achèteront", english: "they will buy", pronunciation: "eel ah-shet-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 18. COMMENCER (to start / to begin) ---
+  { french: "commencer", english: "to start", pronunciation: "koh-mahn-say", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "commencé", english: "started", pronunciation: "koh-mahn-say", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "commençant", english: "starting", pronunciation: "koh-mahn-sahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je commence", english: "I start", pronunciation: "zhuh koh-mahnss", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu commences", english: "you start", pronunciation: "too koh-mahnss", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il commence", english: "he starts", pronunciation: "eel koh-mahnss", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous commençons", english: "we start", pronunciation: "noo koh-mahn-sohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous commencez", english: "you start", pronunciation: "voo koh-mahn-say", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils commencent", english: "they start", pronunciation: "eel koh-mahnss", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je commençais", english: "I was starting", pronunciation: "zhuh koh-mahn-seh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu commençais", english: "you were starting", pronunciation: "too koh-mahn-seh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il commençait", english: "he was starting", pronunciation: "eel koh-mahn-seh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous commencions", english: "we were starting", pronunciation: "noo koh-mahn-syohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous commenciez", english: "you were starting", pronunciation: "voo koh-mahn-syay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils commençaient", english: "they were starting", pronunciation: "eel koh-mahn-seh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je commencerai", english: "I will start", pronunciation: "zhuh koh-mahns-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il commencera", english: "he will start", pronunciation: "eel koh-mahns-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils commenceront", english: "they will start", pronunciation: "eel koh-mahns-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+ // --- 19. RETOURNER (to return / to go back) ---
+  { french: "retourner", english: "to return", pronunciation: "ruh-toor-nay", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "retourné", english: "returned", pronunciation: "ruh-toor-nay", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "retournant", english: "returning", pronunciation: "ruh-toor-nahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "je retourne", english: "I return", pronunciation: "zhuh ruh-toorn", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu retournes", english: "you return", pronunciation: "too ruh-toorn", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il retourne", english: "he returns", pronunciation: "eel ruh-toorn", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous retournons", english: "we return", pronunciation: "noo ruh-toor-nohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous retournez", english: "you return", pronunciation: "voo ruh-toor-nay", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils retournent", english: "they return", pronunciation: "eel ruh-toorn", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "je retournais", english: "I was returning", pronunciation: "zhuh ruh-toor-neh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu retournais", english: "you were returning", pronunciation: "too ruh-toor-neh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il retournait", english: "he was returning", pronunciation: "eel ruh-toor-neh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous retournions", english: "we were returning", pronunciation: "noo ruh-toor-nyohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous retourniez", english: "you were returning", pronunciation: "voo ruh-toor-nyay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils retournaient", english: "they were returning", pronunciation: "eel ruh-toor-neh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "je retournerai", english: "I will return", pronunciation: "zhuh ruh-toor-nuh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il retournera", english: "he will return", pronunciation: "eel ruh-toor-nuh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils retourneront", english: "they will return", pronunciation: "eel ruh-toor-nuh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" },
+
+  // --- 20. ENTRER (to enter / to go in) ---
+  { french: "entrer", english: "to enter", pronunciation: "ahn-tray", category: "Verb", tense: "Infinitive", pronoun: "N/A" },
+  { french: "entré", english: "entered", pronunciation: "ahn-tray", category: "Verb", tense: "Past Participle", pronoun: "N/A" },
+  { french: "entrant", english: "entering", pronunciation: "ahn-trahn", category: "Verb", tense: "Gerund", pronoun: "N/A" },
+  { french: "j'entre", english: "I enter", pronunciation: "zhahnt-ruh", category: "Verb", tense: "Present", pronoun: "je" },
+  { french: "tu entres", english: "you enter", pronunciation: "too ahnt-ruh", category: "Verb", tense: "Present", pronoun: "tu" },
+  { french: "il entre", english: "he enters", pronunciation: "eel ahnt-ruh", category: "Verb", tense: "Present", pronoun: "il/elle" },
+  { french: "nous entrons", english: "we enter", pronunciation: "noo zahn-trohn", category: "Verb", tense: "Present", pronoun: "nous" },
+  { french: "vous entrez", english: "you enter", pronunciation: "voo zahn-tray", category: "Verb", tense: "Present", pronoun: "vous" },
+  { french: "ils entrent", english: "they enter", pronunciation: "eel zahnt-ruh", category: "Verb", tense: "Present", pronoun: "ils/elles" },
+  { french: "j'entrais", english: "I was entering", pronunciation: "zhahn-treh", category: "Verb", tense: "Imparfait", pronoun: "je" },
+  { french: "tu entrais", english: "you were entering", pronunciation: "too ahn-treh", category: "Verb", tense: "Imparfait", pronoun: "tu" },
+  { french: "il entrait", english: "he was entering", pronunciation: "eel ahn-treh", category: "Verb", tense: "Imparfait", pronoun: "il/elle" },
+  { french: "nous entrions", english: "we were entering", pronunciation: "noo zahn-tryohn", category: "Verb", tense: "Imparfait", pronoun: "nous" },
+  { french: "vous entriez", english: "you were entering", pronunciation: "voo zahn-tryay", category: "Verb", tense: "Imparfait", pronoun: "vous" },
+  { french: "ils entraient", english: "they were entering", pronunciation: "eel zahn-treh", category: "Verb", tense: "Imparfait", pronoun: "ils/elles" },
+  { french: "j'entrerai", english: "I will enter", pronunciation: "zhahn-truh-ray", category: "Verb", tense: "Future", pronoun: "je" },
+  { french: "il entrera", english: "he will enter", pronunciation: "eel ahn-truh-rah", category: "Verb", tense: "Future", pronoun: "il/elle" },
+  { french: "ils entreront", english: "they will enter", pronunciation: "eel ahn-truh-rohn", category: "Verb", tense: "Future", pronoun: "ils/elles" }
+];
+
+    const supportWordsSports = [
+  // --- PEOPLE & TEAMS ---
+  { french: "arbitre", english: "the referee (male/female)", pronunciation: "ar-bee-truh", category: "Sports", relatedVerbs: ["siffler", "donner", "regarder"] }, // [cite: 17]
+  { french: "équipe", english: "the team (female)", pronunciation: "ay-keep", category: "Sports", relatedVerbs: ["s'entraîner", "gagner", "jouer"] }, // [cite: 15]
+  { french: "spectateurs", english: "spectators (male plural)", pronunciation: "spek-tah-tuhr", category: "Sports", relatedVerbs: ["regarder", "applaudir", "crier"] }, // [cite: 17]
+  { french: "goal", english: "the goal/goalkeeper (male)", pronunciation: "gohl", category: "Sports", relatedVerbs: ["regarder", "arrêter", "marquer"] }, // [cite: 1]
+
+  // --- EQUIPMENT & GAMEPLAY ---
+  { french: "but", english: "a goal (male)", pronunciation: "boo", category: "Sports", relatedVerbs: ["marquer", "voir", "célébrer"] }, // [cite: 17]
+  { french: "maillot", english: "a jersey (male)", pronunciation: "mah-yoh", category: "Sports", relatedVerbs: ["porter", "acheter", "laver"] }, // [cite: 17]
+  { french: "carton rouge", english: "a red card (male)", pronunciation: "kar-tohn roozh", category: "Sports", relatedVerbs: ["recevoir", "donner", "voir"] }, // [cite: 1]
+  { french: "carton jaune", english: "a yellow card (male)", pronunciation: "kar-tohn zhohn", category: "Sports", relatedVerbs: ["recevoir", "donner"] }, // [cite: 17]
+  { french: "match", english: "the match (male)", pronunciation: "mahtsh", category: "Sports", relatedVerbs: ["commencer", "regarder", "gagner"] }, // [cite: 17]
+  { french: "mi-temps", english: "half-time / half (female)", pronunciation: "mee-tahn", category: "Sports", relatedVerbs: ["commencer", "finir", "jouer"] }, // [cite: 17]
+
+  // --- LOCATION & ENVIRONMENT ---
+  { french: "stade", english: "the stadium (male)", pronunciation: "stahd", category: "Sports", relatedVerbs: ["entrer", "aller", "retourner"] }, // [cite: 1]
+  { french: "gazon", english: "the grass / pitch (male)", pronunciation: "gah-zohn", category: "Sports", relatedVerbs: ["courir", "tomber", "jouer"] }, // [cite: 17]
+
+  // --- ADJECTIVES (Condition & Feelings) ---
+  { french: "motivée", english: "motivated (female adjective)", pronunciation: "mo-tee-vay", category: "Sports", relatedVerbs: ["être", "sembler"] }, // [cite: 15]
+  { french: "en forme", english: "fit / in shape (phrase)", pronunciation: "ahn form", category: "Sports", relatedVerbs: ["être", "rester", "s'entraîner"] }, // [cite: 15]
+  { french: "neuf", english: "brand new (male adjective)", pronunciation: "nuhf", category: "Sports", relatedVerbs: ["acheter", "porter"] }, // [cite: 17]
+  { french: "injuste", english: "unfair (adjective)", pronunciation: "an-zhoost", category: "Sports", relatedVerbs: ["être", "paraître"] }, // [cite: 17]
+  { french: "magnifique", english: "magnificent (adjective)", pronunciation: "mah-nyee-feek", category: "Sports", relatedVerbs: ["marquer", "voir", "être"] }, // [cite: 17]
+  { french: "déception", english: "disappointment (female)", pronunciation: "day-sep-syohn", category: "Sports", relatedVerbs: ["être", "ressentir"] }, // [cite: 17]
+  { french: "dur", english: "hard / tough (adverb/adjective)", pronunciation: "door", category: "Sports", relatedVerbs: ["s'entraîner", "travailler"] }, // [cite: 17]
+
+  // --- TIME MARKERS ---
+  { french: "la veille", pronunciation: "lah vay-yuh", category: "Time", english: "the day before" }, // [cite: 17]
+  { french: "première fois", pronunciation: "pruh-myehr fwah", category: "Time", english: "the first time" }, // [cite: 17]
+  { french: "longtemps", pronunciation: "lohn-tahn", category: "Time", english: "a long time" } // [cite: 17]
+];
+      
       const allParts = [
         vocabList0,
         vocabList1,
@@ -41424,7 +41863,12 @@ const adjVariation25 = [
 supportWordsSea,
 supportWordsTransport,
 supportWordsBirds,
-adjVariation25
+adjVariation25,
+        verbVariationSports1,
+        verbVariationSports2,
+        verbVariationSports3,
+        verbVariationSports4,
+        supportWordsSports
 
 
 
