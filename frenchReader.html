@@ -42107,7 +42107,54 @@ adjVariation25,
 
         return null;
       }
+function speakWordByWord(text, customRate) {
+  speechSynthesis.cancel();
+  currentReadingText = text;
 
+  const tokens = tokenizeFrench(text);
+  let index = 0;
+
+  readBtn.disabled = true;
+
+  function speakNext() {
+    if (index >= tokens.length) {
+      processText();
+      readBtn.disabled = false;
+      return;
+    }
+
+    const token = tokens[index];
+
+    highlightCurrentReadingWord(token.start);
+
+    const utterance = new SpeechSynthesisUtterance(token.text);
+    const selectedVoice = voices[Number(voiceSelect.value)];
+
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice.lang || 'fr-FR';
+    } else {
+      utterance.lang = 'fr-FR';
+    }
+
+    utterance.rate = customRate || Number(rate.value);
+    utterance.pitch = 1;
+
+    utterance.onend = () => {
+      index++;
+      speakNext();
+    };
+
+    utterance.onerror = () => {
+      index++;
+      speakNext();
+    };
+
+    speechSynthesis.speak(utterance);
+  }
+
+  speakNext();
+}
       function getBestMatches(text, maxWords = 4) {
         const tokens = tokenizeFrench(text);
         const matches = [];
@@ -42393,7 +42440,13 @@ adjVariation25,
 
         readBtn.disabled = true;
 
-        speak(input.value);
+       const isChrome = /Chrome/i.test(navigator.userAgent) && !/Edg/i.test(navigator.userAgent);
+
+if (isChrome) {
+  speakWordByWord(input.value);
+} else {
+  speak(input.value);
+}
       });
       stopBtn.addEventListener('click', () => {
         speechSynthesis.cancel();
