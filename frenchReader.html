@@ -42440,13 +42440,7 @@ function speakWordByWord(text, customRate) {
 
         readBtn.disabled = true;
 
-       const isChrome = /Chrome/i.test(navigator.userAgent) && !/Edg/i.test(navigator.userAgent);
-
-if (isChrome) {
-  speakWordByWord(input.value);
-} else {
-  speak(input.value);
-}
+       speak(input.value);
       });
       stopBtn.addEventListener('click', () => {
         speechSynthesis.cancel();
