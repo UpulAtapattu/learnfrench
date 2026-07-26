@@ -1,0 +1,1520 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>S1E1 - Warning at Mimizan Plage | French Study</title>
+    <style>
+      :root {
+        --orange: #ff8f5b;
+        --orange-dark: #e76f38;
+        --orange-light: #fff3ed;
+        --paper: #ffffff;
+        --ink: #292929;
+        --muted: #777777;
+        --border: #ead8cf;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: #f7f4f2;
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.65;
+      }
+
+      .page {
+        width: min(1000px, calc(100% - 32px));
+        margin: 28px auto 80px;
+      }
+
+      .study-header {
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(22px, 3vw, 32px);
+        line-height: 1.25;
+      }
+
+      audio {
+        width: 100%;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .toolbar button {
+        appearance: none;
+        border: 0;
+        border-radius: 7px;
+        padding: 8px 12px;
+        background: var(--orange);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .toolbar button:hover {
+        background: var(--orange-dark);
+      }
+
+      /*
+     * ONE parent container holds the useful timeline content.
+     *
+     * Transcript formatting such as <strong>, <em> and dictionary
+     * <abbr> markup remains intact when copied into Word.
+     */
+      #transcript-copy-area {
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px 22px 24px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+      }
+
+      .transcript-row,
+      .image-row {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        padding: 13px 0;
+        border-bottom: 1px solid #eeeeee;
+      }
+
+      #transcript-copy-area > :last-child {
+        border-bottom: 0;
+      }
+
+      /*
+     * Keep timestamps completely separate from selectable transcript text.
+     */
+      .timestamp-container {
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .tag_time {
+        width: 62px;
+        border: 0;
+        border-radius: 6px;
+        padding: 6px 7px;
+        background: var(--orange-light);
+        color: var(--orange-dark);
+        font:
+          600 13px/1.2 Arial,
+          Helvetica,
+          sans-serif;
+        cursor: pointer;
+      }
+
+      .tag_time:hover {
+        background: var(--orange-dark);
+        color: white;
+      }
+
+      /*
+     * Currently playing timestamp.
+     * Soft green so it is visually distinct from
+     * the orange dictionary highlighting.
+     */
+      .tag_time.active {
+        background: #b7e4c7;
+        color: #1b4332;
+        font-weight: 700;
+        box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.15);
+      }
+
+      .transcript_tag_body {
+        font-size: 18px;
+        min-width: 0;
+      }
+
+      .transcript_tag_body strong {
+        font-weight: 700;
+      }
+
+      .transcript_tag_body em {
+        font-style: italic;
+      }
+
+      /*
+     * IMAGE ROWS
+     *
+     * These are the original timeline annotation JPGs only.
+     * The whole row is non-selectable so text copying remains clean.
+     */
+      .image-row {
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .timeline-image-container {
+        padding: 5px 0;
+      }
+
+      .timeline-image-container img {
+        display: block;
+        width: auto;
+        max-width: min(100%, 620px);
+        max-height: 430px;
+        object-fit: contain;
+        border-radius: 10px;
+        border: 1px solid #eeeeee;
+        background: #fff;
+      }
+
+      /*
+     * Dictionary appearance.
+     */
+      abbr.french-vocab-word {
+        text-decoration: none !important;
+        border-bottom: none !important;
+        color: inherit;
+        font: inherit;
+        background: rgba(255, 143, 91, 0.12);
+        border-radius: 3px;
+        padding: 0 2px;
+        cursor: help;
+      }
+
+      abbr.french-vocab-word:hover {
+        background: rgba(255, 143, 91, 0.3);
+      }
+
+      /*
+     * Toggle states.
+     */
+      body.hide-timestamps .transcript-row,
+      body.hide-timestamps .image-row {
+        grid-template-columns: 1fr;
+      }
+
+      body.hide-timestamps .timestamp-container {
+        display: none;
+      }
+
+      body.hide-images .image-row {
+        display: none !important;
+      }
+
+      .status {
+        margin-top: 10px;
+        min-height: 1.3em;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 650px) {
+        .page {
+          width: min(100% - 16px, 1000px);
+          margin-top: 8px;
+        }
+
+        #transcript-copy-area {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .transcript-row,
+        .image-row {
+          grid-template-columns: 58px minmax(0, 1fr);
+          gap: 8px;
+        }
+
+        .tag_time {
+          width: 54px;
+          font-size: 12px;
+        }
+
+        .transcript_tag_body {
+          font-size: 17px;
+        }
+      }
+
+      @media print {
+        .study-header,
+        .timestamp-container,
+        .image-row {
+          display: none !important;
+        }
+
+        body {
+          background: white;
+        }
+
+        .page {
+          width: 100%;
+          margin: 0;
+        }
+
+        #transcript-copy-area {
+          border: 0;
+          box-shadow: none;
+          padding: 0;
+        }
+
+        .transcript-row {
+          display: block;
+        }
+      }
+
+      /*
+     * ==========================================
+     * HIGHLIGHTED / COPY TRANSCRIPT CARD
+     * ==========================================
+     */
+
+      .copy-card {
+        margin-top: 22px;
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px 22px 24px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+      }
+
+      .copy-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .copy-card h2 {
+        margin: 0;
+        font-size: 23px;
+        line-height: 1.25;
+      }
+
+      #copy-transcript-button {
+        appearance: none;
+        border: 0;
+        border-radius: 7px;
+        padding: 9px 14px;
+        background: var(--orange);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      #copy-transcript-button:hover {
+        background: var(--orange-dark);
+      }
+
+      #copy-transcript-button.copied {
+        background: #4c9b61;
+      }
+
+      #output.output {
+        font-size: 18px;
+        line-height: 1.72;
+      }
+
+      /*
+     * This section contains no timestamps or images,
+     * so the entire block can be selected/copied cleanly.
+     */
+      #output {
+        user-select: text;
+        -webkit-user-select: text;
+      }
+
+      @media (max-width: 650px) {
+        .copy-card-header {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        #copy-transcript-button {
+          width: 100%;
+        }
+      }
+
+      @media print {
+        .copy-card {
+          margin-top: 24px;
+          border: 0;
+          box-shadow: none;
+          padding: 0;
+        }
+
+        #copy-transcript-button {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="study-header">
+        <h1>S1E1 — Warning at Mimizan Plage</h1>
+        <audio controls="" id="main_player" preload="metadata">
+          <source
+            src="https://player.timelinenotation.com/media/episode/audio/22517.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support HTML audio.
+        </audio>
+        <div class="toolbar">
+          <button id="toggle-timestamps" type="button">Hide timestamps</button>
+          <button id="toggle-images" type="button">Hide images</button>
+          <button id="restart-french" type="button">Restart French</button>
+        </div>
+        <div class="status" id="status"></div>
+      </section>
+      <div id="transcript-copy-area">
+        <div class="tag_block transcript-row" data-time="104000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="104000"
+              title="Play from 01:44"
+              type="button"
+            >
+              01:44
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Nathalie:</strong> C’est le mois d’août et les vacances
+              d’été. Comme chaque année, toute ma famille va à Mimizan Plage.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="111000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="111000"
+              title="Play from 01:51"
+              type="button"
+            >
+              01:51
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Nous nous baignons, nous faisons du vélo, nous jouons aux cartes…
+              C’est le paradis !
+            </div>
+          </div>
+        </div>
+        <div class="tag_block image-row" data-time="115000">
+          <div aria-hidden="true" class="timestamp-container image-timestamp">
+            <button
+              class="tag_time image-time"
+              data-time="115000"
+              title="Play from 01:55"
+              type="button"
+            >
+              01:55
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img alt="Episode image at 01:55" loading="lazy" src="img/13610.jpg" />
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="116000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="116000"
+              title="Play from 01:56"
+              type="button"
+            >
+              01:56
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Pour aller à la plage, nous traversons la forêt. Nous marchons
+              longtemps. Et de l’autre côté de la forêt, il y a les dunes.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="126000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="126000"
+              title="Play from 02:06"
+              type="button"
+            >
+              02:06
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Nous grimpons tout en haut, c’est long et fatigant. Et il fait
+              TRÈS chaud…
+            </div>
+          </div>
+        </div>
+        <div class="tag_block image-row" data-time="126000">
+          <div aria-hidden="true" class="timestamp-container image-timestamp">
+            <button
+              class="tag_time image-time"
+              data-time="126000"
+              title="Play from 02:06"
+              type="button"
+            >
+              02:06
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img alt="Episode image at 02:06" loading="lazy" src="13611.jpg" />
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="133000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="133000"
+              title="Play from 02:13"
+              type="button"
+            >
+              02:13
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Mais une fois arrivé, c’est magnifique : nous sommes soudain face
+              à l’océan !
+            </div>
+          </div>
+        </div>
+        <div class="tag_block image-row" data-time="173000">
+          <div aria-hidden="true" class="timestamp-container image-timestamp">
+            <button
+              class="tag_time image-time"
+              data-time="173000"
+              title="Play from 02:53"
+              type="button"
+            >
+              02:53
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img alt="Episode image at 02:53" loading="lazy" src="img/13612.jpg" />
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="177000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="177000"
+              title="Play from 02:57"
+              type="button"
+            >
+              02:57
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Nathalie:</strong> A Mimizan, les vagues sont hautes et
+              fortes. Ça fait peur, mais c’est aussi super amusant !
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="185000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="185000"
+              title="Play from 03:05"
+              type="button"
+            >
+              03:05
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Quand la marée est basse, nous marchons — encore une fois ! —
+              trèèès longtemps pour nous baigner…
+            </div>
+          </div>
+        </div>
+        <div class="tag_block image-row" data-time="190000">
+          <div aria-hidden="true" class="timestamp-container image-timestamp">
+            <button
+              class="tag_time image-time"
+              data-time="190000"
+              title="Play from 03:10"
+              type="button"
+            >
+              03:10
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img alt="Episode image at 03:10" loading="lazy" src="img/13614.jpg" />
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="191000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="191000"
+              title="Play from 03:11"
+              type="button"
+            >
+              03:11
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Cet été-là, j’ai 18 ans. J’ai un petit frère de 16 ans, Jacques,
+              et deux petites sœurs, Corinne et Isabelle.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="200000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="200000"
+              title="Play from 03:20"
+              type="button"
+            >
+              03:20
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Nous savons tous nager, bien sûr. Mais quand nous allons à l’eau,
+              nous restons toujours ensemble.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="206000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="206000"
+              title="Play from 03:26"
+              type="button"
+            >
+              03:26
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              En famille. Parce que nous savons quelque chose de très important
+              : ici, la mer est dangereuse…
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="251000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="251000"
+              title="Play from 04:11"
+              type="button"
+            >
+              04:11
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Nathalie:</strong> Un jour, le drapeau est orange :
+              attention, danger ! Mais il y a beaucoup de monde à la plage
+              surveillée et ma mère dit : “Venez, nous allons plus loin !”.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="260000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="260000"
+              title="Play from 04:20"
+              type="button"
+            >
+              04:20
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Nous trouvons un endroit où il n’y a personne. Je saute dans l’eau
+              avec mes frères et sœurs.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block image-row" data-time="265000">
+          <div aria-hidden="true" class="timestamp-container image-timestamp">
+            <button
+              class="tag_time image-time"
+              data-time="265000"
+              title="Play from 04:25"
+              type="button"
+            >
+              04:25
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img alt="Episode image at 04:25" loading="lazy" src="img/13615.jpg" />
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="267000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="267000"
+              title="Play from 04:27"
+              type="button"
+            >
+              04:27
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              La marée est haute, les vagues sont trois fois plus hautes que
+              nous ! Nous nous amusons et nous rions.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="275000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="275000"
+              title="Play from 04:35"
+              type="button"
+            >
+              04:35
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Enfin, nous voulons rentrer. Mais nous ne pouvons pas.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="279000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="279000"
+              title="Play from 04:39"
+              type="button"
+            >
+              04:39
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Nous ne sommes pourtant pas loin du rivage — à quelques mètres —
+              mais nous ne POUVONS pas revenir sur la plage…
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="315000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="315000"
+              title="Play from 05:15"
+              type="button"
+            >
+              05:15
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Nathalie:</strong> Oh non, nous sommes dans une baïne !
+              Nous sommes prisonniers des vagues !
+            </div>
+          </div>
+        </div>
+        <div class="tag_block image-row" data-time="317000">
+          <div aria-hidden="true" class="timestamp-container image-timestamp">
+            <button
+              class="tag_time image-time"
+              data-time="317000"
+              title="Play from 05:17"
+              type="button"
+            >
+              05:17
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img alt="Episode image at 05:17" loading="lazy" src="img/13616.jpg" />
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="320000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="320000"
+              title="Play from 05:20"
+              type="button"
+            >
+              05:20
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Elles sont de plus en plus fortes. De plus en plus nombreuses, de
+              plus en plus rapides…
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="326000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="326000"
+              title="Play from 05:26"
+              type="button"
+            >
+              05:26
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Et surtout, elles nous tirent vers le large et nous éloignent de
+              la plage.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="331000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="331000"
+              title="Play from 05:31"
+              type="button"
+            >
+              05:31
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Au loin, je vois mon père : il gesticule et il crie quelque chose.
+              Il court dans tous les sens.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="338000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="338000"
+              title="Play from 05:38"
+              type="button"
+            >
+              05:38
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Je n’entends rien — seulement le bruit des vagues — mais je sais
+              ce qu’il dit : Ne paniquez pas ! Ne luttez pas contre le courant !
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="374000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="374000"
+              title="Play from 06:14"
+              type="button"
+            >
+              06:14
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Nathalie:</strong> Je pense : “Est-ce que quel qu’un peut
+              nous aider ? Est-ce qu’un hélicoptère va nous voir ? Où sont les
+              sauveteurs ?”…
+            </div>
+          </div>
+        </div>
+        <div class="tag_block image-row" data-time="375000">
+          <div aria-hidden="true" class="timestamp-container image-timestamp">
+            <button
+              class="tag_time image-time"
+              data-time="375000"
+              title="Play from 06:15"
+              type="button"
+            >
+              06:15
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img alt="Episode image at 06:15" loading="lazy" src="img/13617.jpg" />
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="380000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="380000"
+              title="Play from 06:20"
+              type="button"
+            >
+              06:20
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Mais nous sommes complètement seuls et rien ne se passe.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="385000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="385000"
+              title="Play from 06:25"
+              type="button"
+            >
+              06:25
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              J’ai très peur. J’essaie de ne pas paniquer. L’important, c’est de
+              rester calme et de garder mes forces. Je ne lutte plus et me
+              laisse porter par le courant.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="396000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="396000"
+              title="Play from 06:36"
+              type="button"
+            >
+              06:36
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Jacques est avec moi. Corinne pleure. Je ne vois plus Isabelle. Où
+              est-elle ?
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="427000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="427000"
+              title="Play from 07:07"
+              type="button"
+            >
+              07:07
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Nathalie:</strong> Je ne sais pas combien de temps a
+              passé. Pour moi, une éternité.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block image-row" data-time="428000">
+          <div aria-hidden="true" class="timestamp-container image-timestamp">
+            <button
+              class="tag_time image-time"
+              data-time="428000"
+              title="Play from 07:08"
+              type="button"
+            >
+              07:08
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img alt="Episode image at 07:08" loading="lazy" src="img/13618.jpg" />
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="432000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="432000"
+              title="Play from 07:12"
+              type="button"
+            >
+              07:12
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Finalement, une vague nous rejette sur le rivage. Nous sommes tous
+              là, Isabelle aussi, et nous pouvons enfin poser le pied sur le
+              sable !
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="445000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="445000"
+              title="Play from 07:25"
+              type="button"
+            >
+              07:25
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Nous sommes épuisés, choqués, nous ne savons pas où nous sommes…
+              Mais nous sommes hors de danger.
+            </div>
+          </div>
+        </div>
+        <div class="tag_block transcript-row" data-time="451000">
+          <div aria-hidden="true" class="timestamp-container">
+            <button
+              class="tag_time"
+              data-time="451000"
+              title="Play from 07:31"
+              type="button"
+            >
+              07:31
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Et nous savons que nous avons eu de la chance. Une sacrée chance !
+            </div>
+          </div>
+        </div>
+        <div class="tag_block image-row" data-time="482000">
+          <div aria-hidden="true" class="timestamp-container image-timestamp">
+            <button
+              class="tag_time image-time"
+              data-time="482000"
+              title="Play from 08:02"
+              type="button"
+            >
+              08:02
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img alt="Episode image at 08:02" loading="lazy" src="13619.jpg" />
+          </div>
+        </div>
+      </div>
+      <!--
+      ==========================================================
+      COPY-FRIENDLY HIGHLIGHTED TRANSCRIPT
+      ==========================================================
+
+      This duplicates only the French transcript text as one continuous HTML block.
+
+      It intentionally has the class "transcript_tag_body",
+      so french-dictionary.js automatically applies the same
+      vocabulary <abbr> markup and hover definitions here too.
+
+      No timestamps.
+      No images.
+      One continuous section with line breaks for copying into Word.
+    -->
+      <section class="copy-card">
+        <div class="copy-card-header">
+          <h2>Highlighted Text</h2>
+          <button id="copy-transcript-button" type="button">
+            Copy Transcript
+          </button>
+        </div>
+        <div
+          aria-label="Copy-friendly highlighted French transcript"
+          class="output transcript_tag_body"
+          id="output"
+        >
+          <strong>Nathalie:</strong> C’est le mois d’août et les vacances d’été.
+          Comme chaque année, toute ma famille va à Mimizan Plage.
+
+          <br /><br />
+
+          Nous nous baignons, nous faisons du vélo, nous jouons aux cartes…
+          C’est le paradis !
+
+          <br /><br />
+
+          Pour aller à la plage, nous traversons la forêt. Nous marchons
+          longtemps. Et de l’autre côté de la forêt, il y a les dunes.
+
+          <br /><br />
+
+          Nous grimpons tout en haut, c’est long et fatigant. Et il fait TRÈS
+          chaud…
+
+          <br /><br />
+
+          Mais une fois arrivé, c’est magnifique : nous sommes soudain face à
+          l’océan !
+
+          <br /><br />
+          <strong>Nathalie:</strong> A Mimizan, les vagues sont hautes et
+          fortes. Ça fait peur, mais c’est aussi super amusant !
+
+          <br /><br />
+
+          Quand la marée est basse, nous marchons — encore une fois ! — trèèès
+          longtemps pour nous baigner…
+
+          <br /><br />
+
+          Cet été-là, j’ai 18 ans. J’ai un petit frère de 16 ans, Jacques, et
+          deux petites sœurs, Corinne et Isabelle.
+
+          <br /><br />
+
+          Nous savons tous nager, bien sûr. Mais quand nous allons à l’eau, nous
+          restons toujours ensemble.
+
+          <br /><br />
+
+          En famille. Parce que nous savons quelque chose de très important :
+          ici, la mer est dangereuse…
+
+          <br /><br />
+          <strong>Nathalie:</strong> Un jour, le drapeau est orange : attention,
+          danger ! Mais il y a beaucoup de monde à la plage surveillée et ma
+          mère dit : “Venez, nous allons plus loin !”.
+
+          <br /><br />
+
+          Nous trouvons un endroit où il n’y a personne. Je saute dans l’eau
+          avec mes frères et sœurs.
+
+          <br /><br />
+
+          La marée est haute, les vagues sont trois fois plus hautes que nous !
+          Nous nous amusons et nous rions.
+
+          <br /><br />
+
+          Enfin, nous voulons rentrer. Mais nous ne pouvons pas.
+
+          <br /><br />
+
+          Nous ne sommes pourtant pas loin du rivage — à quelques mètres — mais
+          nous ne POUVONS pas revenir sur la plage…
+
+          <br /><br />
+          <strong>Nathalie:</strong> Oh non, nous sommes dans une baïne ! Nous
+          sommes prisonniers des vagues !
+
+          <br /><br />
+
+          Elles sont de plus en plus fortes. De plus en plus nombreuses, de plus
+          en plus rapides…
+
+          <br /><br />
+
+          Et surtout, elles nous tirent vers le large et nous éloignent de la
+          plage.
+
+          <br /><br />
+
+          Au loin, je vois mon père : il gesticule et il crie quelque chose. Il
+          court dans tous les sens.
+
+          <br /><br />
+
+          Je n’entends rien — seulement le bruit des vagues — mais je sais ce
+          qu’il dit : Ne paniquez pas ! Ne luttez pas contre le courant !
+
+          <br /><br />
+          <strong>Nathalie:</strong> Je pense : “Est-ce que quel qu’un peut nous
+          aider ? Est-ce qu’un hélicoptère va nous voir ? Où sont les sauveteurs
+          ?”…
+
+          <br /><br />
+
+          Mais nous sommes complètement seuls et rien ne se passe.
+
+          <br /><br />
+
+          J’ai très peur. J’essaie de ne pas paniquer. L’important, c’est de
+          rester calme et de garder mes forces. Je ne lutte plus et me laisse
+          porter par le courant.
+
+          <br /><br />
+
+          Jacques est avec moi. Corinne pleure. Je ne vois plus Isabelle. Où
+          est-elle ?
+
+          <br /><br />
+          <strong>Nathalie:</strong> Je ne sais pas combien de temps a passé.
+          Pour moi, une éternité.
+
+          <br /><br />
+
+          Finalement, une vague nous rejette sur le rivage. Nous sommes tous là,
+          Isabelle aussi, et nous pouvons enfin poser le pied sur le sable !
+
+          <br /><br />
+
+          Nous sommes épuisés, choqués, nous ne savons pas où nous sommes… Mais
+          nous sommes hors de danger.
+
+          <br /><br />
+
+          Et nous savons que nous avons eu de la chance. Une sacrée chance !
+        </div>
+      </section>
+    </main>
+    <!-- Keep these files beside this HTML. -->
+    <script src="vocabulary.js"></script>
+    <script>
+      try {
+        if (
+          !Array.isArray(window.allWords) &&
+          typeof allWords !== 'undefined' &&
+          Array.isArray(allWords)
+        ) {
+          window.allWords = allWords;
+        }
+      } catch (error) {
+        console.warn('Vocabulary bridge:', error);
+      }
+    </script>
+    <script src="french-dictionary.js"></script>
+    <script>
+      (() => {
+        'use strict';
+
+        const audio = document.getElementById('main_player');
+        const status = document.getElementById('status');
+        const timestampButton = document.getElementById('toggle-timestamps');
+        const imageButton = document.getElementById('toggle-images');
+        const restartButton = document.getElementById('restart-french');
+
+        const frenchSections = [
+          { start: 104, end: 141 },
+          { start: 177, end: 213 },
+          { start: 251, end: 288 },
+          { start: 315, end: 347 },
+          { start: 374, end: 403 },
+          { start: 427, end: 457 },
+        ];
+
+        const firstFrench = frenchSections[0].start;
+        const lastFrenchEnd = frenchSections[frenchSections.length - 1].end;
+
+        let seekingProgrammatically = false;
+        let lastTimestampMs = null;
+        const clickTimers = new WeakMap();
+
+        function isFrench(time) {
+          return frenchSections.some(
+            (section) => time >= section.start && time < section.end,
+          );
+        }
+
+        function nextFrenchSection(time) {
+          return frenchSections.find((section) => section.start > time);
+        }
+
+        function enforceFrenchOnly() {
+          if (seekingProgrammatically) return;
+
+          const time = audio.currentTime;
+
+          if (isFrench(time)) return;
+
+          if (time < firstFrench) {
+            seekingProgrammatically = true;
+            audio.currentTime = firstFrench;
+            seekingProgrammatically = false;
+            return;
+          }
+
+          const next = nextFrenchSection(time);
+
+          if (next) {
+            seekingProgrammatically = true;
+            audio.currentTime = next.start;
+            seekingProgrammatically = false;
+            return;
+          }
+
+          if (time >= lastFrenchEnd) {
+            audio.pause();
+            audio.currentTime = lastFrenchEnd;
+            status.textContent = 'French sections finished.';
+          }
+        }
+
+        function setActiveTimestamp(ms) {
+          document.querySelectorAll('.tag_time.active').forEach((button) => {
+            button.classList.remove('active');
+          });
+
+          document
+            .querySelectorAll(`.tag_time[data-time="${ms}"]`)
+            .forEach((button) => {
+              button.classList.add('active');
+            });
+        }
+
+        /*
+         * Highlight the timestamp whose segment
+         * is currently playing.
+         */
+        function updateCurrentTimestampHighlight() {
+          const currentMs = audio.currentTime * 1000;
+
+          const buttons = [
+            ...document.querySelectorAll('.tag_time[data-time]'),
+          ].sort((a, b) => Number(a.dataset.time) - Number(b.dataset.time));
+
+          let activeMs = null;
+
+          for (let i = 0; i < buttons.length; i++) {
+            const currentButtonTime = Number(buttons[i].dataset.time);
+
+            const nextButtonTime =
+              i + 1 < buttons.length
+                ? Number(buttons[i + 1].dataset.time)
+                : Infinity;
+
+            if (currentMs >= currentButtonTime && currentMs < nextButtonTime) {
+              activeMs = currentButtonTime;
+              break;
+            }
+          }
+
+          if (activeMs !== null) {
+            setActiveTimestamp(activeMs);
+          } else {
+            document.querySelectorAll('.tag_time.active').forEach((button) => {
+              button.classList.remove('active');
+            });
+          }
+        }
+
+        function playFrom(ms) {
+          lastTimestampMs = ms;
+          setActiveTimestamp(ms);
+          audio.currentTime = ms / 1000;
+
+          audio.play().catch((error) => {
+            console.error('Playback failed:', error);
+          });
+        }
+
+        document.querySelectorAll('.tag_time').forEach((button) => {
+          const ms = Number(button.dataset.time);
+
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const oldTimer = clickTimers.get(button);
+            if (oldTimer) clearTimeout(oldTimer);
+
+            const timer = setTimeout(() => {
+              if (lastTimestampMs === ms) {
+                if (audio.paused) {
+                  audio.play().catch(console.error);
+                } else {
+                  audio.pause();
+                }
+              } else {
+                playFrom(ms);
+              }
+
+              clickTimers.delete(button);
+            }, 220);
+
+            clickTimers.set(button, timer);
+          });
+
+          button.addEventListener('dblclick', (event) => {
+            event.preventDefault();
+
+            const timer = clickTimers.get(button);
+            if (timer) {
+              clearTimeout(timer);
+              clickTimers.delete(button);
+            }
+
+            playFrom(ms);
+          });
+        });
+
+        timestampButton.addEventListener('click', () => {
+          const hidden = document.body.classList.toggle('hide-timestamps');
+
+          timestampButton.textContent = hidden
+            ? 'Show timestamps'
+            : 'Hide timestamps';
+        });
+
+        imageButton.addEventListener('click', () => {
+          const hidden = document.body.classList.toggle('hide-images');
+
+          imageButton.textContent = hidden ? 'Show images' : 'Hide images';
+        });
+
+        restartButton.addEventListener('click', () => {
+          lastTimestampMs = 104000;
+          setActiveTimestamp(104000);
+          audio.currentTime = firstFrench;
+          audio.play().catch(console.error);
+        });
+
+        audio.addEventListener('play', () => {
+          if (audio.currentTime < firstFrench) {
+            audio.currentTime = firstFrench;
+          }
+        });
+
+        audio.addEventListener('timeupdate', () => {
+          enforceFrenchOnly();
+          updateCurrentTimestampHighlight();
+        });
+
+        audio.addEventListener('seeked', () => {
+          enforceFrenchOnly();
+          updateCurrentTimestampHighlight();
+        });
+
+        /*
+         * ==========================================
+         * COPY HIGHLIGHTED TRANSCRIPT
+         * ==========================================
+         *
+         * Copies the #output section as rich HTML.
+         *
+         * This means Word can preserve:
+         *   - bold speaker names
+         *   - italics
+         *   - dictionary <abbr> elements
+         *   - orange vocabulary highlighting
+         *
+         * A plain-text version is also supplied.
+         */
+
+        const copyTranscriptButton = document.getElementById(
+          'copy-transcript-button',
+        );
+
+        const copyOutput = document.getElementById('output');
+
+        async function copyRichTranscript() {
+          if (!copyOutput) return;
+
+          const richHtml = copyOutput.innerHTML;
+          const plainText = copyOutput.innerText;
+
+          let copied = false;
+
+          /*
+           * Modern clipboard method.
+           */
+          try {
+            if (
+              navigator.clipboard &&
+              navigator.clipboard.write &&
+              window.ClipboardItem
+            ) {
+              const htmlBlob = new Blob([richHtml], { type: 'text/html' });
+
+              const textBlob = new Blob([plainText], { type: 'text/plain' });
+
+              const clipboardItem = new ClipboardItem({
+                'text/html': htmlBlob,
+                'text/plain': textBlob,
+              });
+
+              await navigator.clipboard.write([clipboardItem]);
+
+              copied = true;
+            }
+          } catch (error) {
+            console.warn(
+              'Modern rich clipboard unavailable; using selection fallback.',
+              error,
+            );
+          }
+
+          /*
+           * file:// pages may not receive the modern
+           * Clipboard API, so use the browser's normal
+           * rich-selection copy as a fallback.
+           */
+          if (!copied) {
+            try {
+              const selection = window.getSelection();
+              const range = document.createRange();
+
+              range.selectNodeContents(copyOutput);
+
+              selection.removeAllRanges();
+              selection.addRange(range);
+
+              copied = document.execCommand('copy');
+
+              selection.removeAllRanges();
+            } catch (error) {
+              console.error('Transcript copy failed:', error);
+            }
+          }
+
+          if (copied) {
+            const originalText = copyTranscriptButton.textContent;
+
+            copyTranscriptButton.textContent = 'Copied!';
+
+            copyTranscriptButton.classList.add('copied');
+
+            setTimeout(() => {
+              copyTranscriptButton.textContent = originalText;
+
+              copyTranscriptButton.classList.remove('copied');
+            }, 1400);
+          } else {
+            alert(
+              'Automatic copy was blocked. Select the Highlighted Text section and press Ctrl+C.',
+            );
+          }
+        }
+
+        if (copyTranscriptButton) {
+          copyTranscriptButton.addEventListener('click', copyRichTranscript);
+        }
+
+        status.textContent =
+          'French-only audio enabled. Timestamps and original timeline images can be toggled independently.';
+
+        console.log('🇫🇷 Clean local French study page enabled.');
+      })();
+    </script>
+  </body>
+</html>

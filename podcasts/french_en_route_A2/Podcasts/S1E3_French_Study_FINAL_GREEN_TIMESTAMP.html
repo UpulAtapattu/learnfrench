@@ -1,0 +1,1395 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>S1E3 - Wild camping in the Pyrenees | French Study</title>
+
+    <style>
+      :root {
+        --orange: #ff8f5b;
+        --orange-dark: #e76f38;
+        --orange-light: #fff3ed;
+        --paper: #ffffff;
+        --ink: #292929;
+        --muted: #777777;
+        --border: #ead8cf;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: #f7f4f2;
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.65;
+      }
+
+      .page {
+        width: min(1000px, calc(100% - 32px));
+        margin: 28px auto 80px;
+      }
+
+      .study-header,
+      #transcript-copy-area,
+      .copy-card {
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+      }
+
+      .study-header {
+        padding: 20px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(22px, 3vw, 32px);
+        line-height: 1.25;
+      }
+
+      audio {
+        width: 100%;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .toolbar button,
+      #copy-transcript-button {
+        appearance: none;
+        border: 0;
+        border-radius: 7px;
+        padding: 8px 12px;
+        background: var(--orange);
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .toolbar button:hover,
+      #copy-transcript-button:hover {
+        background: var(--orange-dark);
+      }
+
+      #copy-transcript-button.copied {
+        background: #4c9b61;
+      }
+
+      .status {
+        margin-top: 10px;
+        min-height: 1.3em;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /*
+     * ========================================================
+     * TIMELINE
+     * ========================================================
+     */
+
+      #transcript-copy-area {
+        padding: 12px 22px 24px;
+      }
+
+      .transcript-row,
+      .image-row {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        padding: 13px 0;
+        border-bottom: 1px solid #eeeeee;
+      }
+
+      #transcript-copy-area > :last-child {
+        border-bottom: 0;
+      }
+
+      .timestamp-container {
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .tag_time {
+        width: 62px;
+        border: 0;
+        border-radius: 6px;
+        padding: 6px 7px;
+        background: var(--orange-light);
+        color: var(--orange-dark);
+        font:
+          600 13px/1.2 Arial,
+          Helvetica,
+          sans-serif;
+        cursor: pointer;
+      }
+
+      .tag_time:hover {
+        background: var(--orange-dark);
+        color: #fff;
+      }
+
+      /*
+     * Currently playing timestamp.
+     */
+      .tag_time.active {
+        background: #b7e4c7;
+        color: #1b4332;
+        font-weight: 700;
+        box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.15);
+      }
+
+      .transcript_tag_body {
+        font-size: 18px;
+        min-width: 0;
+      }
+
+      .transcript_tag_body strong {
+        font-weight: 700;
+      }
+
+      .transcript_tag_body em {
+        font-style: italic;
+      }
+
+      /*
+     * ========================================================
+     * IMAGES
+     * ========================================================
+     */
+
+      .image-row {
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .timeline-image-container {
+        padding: 5px 0;
+      }
+
+      .timeline-image-container img {
+        display: block;
+        width: auto;
+        max-width: min(100%, 620px);
+        max-height: 430px;
+        object-fit: contain;
+        border-radius: 10px;
+        border: 1px solid #eeeeee;
+        background: #fff;
+      }
+
+      .image-caption {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      /*
+     * ========================================================
+     * DICTIONARY
+     * ========================================================
+     */
+
+      abbr.french-vocab-word {
+        text-decoration: none !important;
+        border-bottom: none !important;
+        color: inherit;
+        font: inherit;
+        background: rgba(255, 143, 91, 0.12);
+        border-radius: 3px;
+        padding: 0 2px;
+        cursor: help;
+      }
+
+      abbr.french-vocab-word:hover {
+        background: rgba(255, 143, 91, 0.3);
+      }
+
+      /*
+     * ========================================================
+     * TOGGLES
+     * ========================================================
+     */
+
+      body.hide-timestamps .transcript-row,
+      body.hide-timestamps .image-row {
+        grid-template-columns: 1fr;
+      }
+
+      body.hide-timestamps .timestamp-container {
+        display: none;
+      }
+
+      body.hide-images .image-row {
+        display: none !important;
+      }
+
+      /*
+     * ========================================================
+     * FINAL COPY TRANSCRIPT
+     * ========================================================
+     */
+
+      .copy-card {
+        margin-top: 22px;
+        padding: 20px 22px 24px;
+      }
+
+      .copy-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .copy-card h2 {
+        margin: 0;
+        font-size: 23px;
+        line-height: 1.25;
+      }
+
+      #output {
+        font-size: 18px;
+        line-height: 1.72;
+        user-select: text;
+        -webkit-user-select: text;
+      }
+
+      @media (max-width: 650px) {
+        .page {
+          width: min(100% - 16px, 1000px);
+          margin-top: 8px;
+        }
+
+        #transcript-copy-area,
+        .copy-card {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .transcript-row,
+        .image-row {
+          grid-template-columns: 58px minmax(0, 1fr);
+          gap: 8px;
+        }
+
+        .tag_time {
+          width: 54px;
+          font-size: 12px;
+        }
+
+        .transcript_tag_body,
+        #output {
+          font-size: 17px;
+        }
+
+        .copy-card-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        #copy-transcript-button {
+          width: 100%;
+        }
+      }
+
+      @media print {
+        .study-header,
+        .timestamp-container,
+        .image-row,
+        #copy-transcript-button {
+          display: none !important;
+        }
+
+        body {
+          background: white;
+        }
+
+        .page {
+          width: 100%;
+          margin: 0;
+        }
+
+        #transcript-copy-area,
+        .copy-card {
+          border: 0;
+          box-shadow: none;
+          padding: 0;
+        }
+
+        .transcript-row {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <section class="study-header">
+        <h1>S1E3 — Wild camping in the Pyrenees</h1>
+
+        <audio id="main_player" controls preload="metadata">
+          <source
+            src="https://player.timelinenotation.com/media/episode/audio/22531.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support HTML audio.
+        </audio>
+
+        <div class="toolbar">
+          <button id="toggle-timestamps" type="button">Hide timestamps</button>
+
+          <button id="toggle-images" type="button">Hide images</button>
+
+          <button id="restart-french" type="button">Restart French</button>
+        </div>
+
+        <div class="status" id="status"></div>
+      </section>
+
+      <div id="transcript-copy-area">
+        <div class="tag_block transcript-row" data-time="86000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="86000"
+              title="Play from 01:26"
+            >
+              01:26
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Isa:</strong> Cette année-là, j'ai 19 ans, je termine ma
+              première année à l’université de Perpignan, et c’est bientôt les
+              grandes vacances : deux longs mois de vacances en perspective… Le
+              pied ! Avec des copains, on a un projet : faire du camping à la
+              montagne.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="105000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="105000"
+              title="Play from 01:45"
+            >
+              01:45
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img src="img/14653.jpg" alt="Episode image at 01:45" loading="lazy" />
+            <div class="image-caption">
+              Credit: Eric Gaba, CC BY-SA 3.0 , via Wikimedia Commons
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="106000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="106000"
+              title="Play from 01:46"
+            >
+              01:46
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              On veut traverser les Pyrénées de la mer Méditerranée jusqu’à
+              l’océan Atlantique… Le 7 juillet 2000, c’est parti : 2 voitures, 4
+              filles, 3 garçons, et 500 km de nature devant nous ! On est prêt !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="175000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="175000"
+              title="Play from 02:55"
+            >
+              02:55
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Isa:</strong> C’est la première fois qu’on fait de la
+              randonnée. On n’est pas très sportifs, mais on a tout ce qu’il
+              faut : de bonnes chaussures de marche, un sac à dos léger, de
+              l’eau, du pain et du camembert… Le kit de survie du randonneur !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="193000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="193000"
+              title="Play from 03:13"
+            >
+              03:13
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Tous les jours, on se lève avec le soleil et on se couche quand il
+              fait nuit. On vit au rythme de la nature.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="200000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="200000"
+              title="Play from 03:20"
+            >
+              03:20
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Au milieu du voyage, on marche vers le Nord. Direction Lourdes, la
+              ville des miracles ! Le ciel est bleu, le soleil brille, on est en
+              pleine forme…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="212000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="212000"
+              title="Play from 03:32"
+            >
+              03:32
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img src="img/14654.jpg" alt="Episode image at 03:32" loading="lazy" />
+            <div class="image-caption">Credit: Camille Grandbarbe</div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="213000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="213000"
+              title="Play from 03:33"
+            >
+              03:33
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img src="img/14663.jpg" alt="Episode image at 03:33" loading="lazy" />
+            <div class="image-caption">Credit: Camille Grandbarbe</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="248000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="248000"
+              title="Play from 04:08"
+            >
+              04:08
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Isa:</strong> Forêts, lacs, cascades, ruisseaux… Le
+              paysage est magnifique ! On respire le bon air frais !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="254000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="254000"
+              title="Play from 04:14"
+            >
+              04:14
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img src="img/14656.jpg" alt="Episode image at 04:14" loading="lazy" />
+            <div class="image-caption">Credit: Camille Grandbarbe</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="257000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="257000"
+              title="Play from 04:17"
+            >
+              04:17
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Et surtout : personne sur notre chemin… On est seuls ! Enfin,
+              presque… On rencontre des vaches et des moutons.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="266000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="266000"
+              title="Play from 04:26"
+            >
+              04:26
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img src="img/14657.jpg" alt="Episode image at 04:26" loading="lazy" />
+            <div class="image-caption">Credit: Camille Grandbarbe</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="267000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="267000"
+              title="Play from 04:27"
+            >
+              04:27
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Après 20 km, on est très, très fatigués mais loin du camping. On
+              réalise qu’on est perdus et qu’il est trop tard pour continuer à
+              marcher.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="278000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="278000"
+              title="Play from 04:38"
+            >
+              04:38
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              La nuit tombe. Il faut dormir à la belle étoile, ici, dans la
+              vallée. Heureusement, il fait 30 degrés !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="343000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="343000"
+              title="Play from 05:43"
+            >
+              05:43
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Isa:</strong> On trouve un joli endroit pour pique-niquer.
+              On chante, on est joyeux ! Marie a peur des araignées, ça nous
+              amuse.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="351000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="351000"
+              title="Play from 05:51"
+            >
+              05:51
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Bientôt, il fait nuit noire et il faut sortir nos sacs de couchage
+              et nos matelas... On s’endort très vite.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="358000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="358000"
+              title="Play from 05:58"
+            >
+              05:58
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img src="img/14664.jpg" alt="Episode image at 05:58" loading="lazy" />
+            <div class="image-caption">Credit: Camille Grandbarbe</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="360000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="360000"
+              title="Play from 06:00"
+            >
+              06:00
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Mais au milieu de la nuit, un hurlement nous réveille. Un long
+              hurlement de bête. Un, puis deux, puis trois… Espacés. Lointains.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="378000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="378000"
+              title="Play from 06:18"
+            >
+              06:18
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Je m’assoie terrorisée. Qu’est-ce que c’est que ça ?! Sûrement pas
+              un mouton !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="416000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="416000"
+              title="Play from 06:56"
+            >
+              06:56
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Isa:</strong> Marie se réveille, puis Marc, puis Louise…
+              Bientôt, tout le monde est réveillé. On est comme paralysés.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="424000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="424000"
+              title="Play from 07:04"
+            >
+              07:04
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              On écoute en silence... Les hurlements sont de plus en plus
+              nombreux. C’est sûr, ce sont des loups !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="432000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="432000"
+              title="Play from 07:12"
+            >
+              07:12
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Maintenant, ils hurlent tous ensemble. Et ils se rapprochent. On
+              ne voit rien, mais ils semblent tout près. Autour de nous.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="444000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="444000"
+              title="Play from 07:24"
+            >
+              07:24
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Je n'entends plus que les battements de mon cœur et les loups. Il
+              faut rester calme. Attendre. Sans bouger.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="481000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="481000"
+              title="Play from 08:01"
+            >
+              08:01
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Isa:</strong> Soudain, ça s’arrête. Plus rien. Ils sont
+              partis. C’est un miracle ! Nous nous endormons serrés les uns
+              contre les autres.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="493000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="493000"
+              title="Play from 08:13"
+            >
+              08:13
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Au matin, je me demande : est-ce qu’on a rêvé ? Mais il faut
+              partir. On marche, quand tout à coup, Marc crie : “Hé, il y a des
+              grilles derrière les arbres !”.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="508000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="508000"
+              title="Play from 08:28"
+            >
+              08:28
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Plus loin, on voit une grande pancarte : Parc... animalier... des
+              Pyrénées. Incroyable ! On a dormi à côté d’un zoo !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="521000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="521000"
+              title="Play from 08:41"
+            >
+              08:41
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Après cette nuit, nous n'avons plus fait de camping sauvage, vous
+              pouvez me croire… Mais nous avons continué nos belles randonnées
+              dans les Pyrénées !
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="copy-card">
+        <div class="copy-card-header">
+          <h2>Highlighted Text</h2>
+
+          <button id="copy-transcript-button" type="button">
+            Copy Transcript
+          </button>
+        </div>
+
+        <!--
+        One continuous block separated by <br><br>,
+        intentionally also marked transcript_tag_body so
+        french-dictionary.js processes it.
+      -->
+        <div
+          id="output"
+          class="output transcript_tag_body"
+          aria-label="Copy-friendly highlighted French transcript"
+        >
+          <strong>Isa:</strong> Cette année-là, j'ai 19 ans, je termine ma
+          première année à l’université de Perpignan, et c’est bientôt les
+          grandes vacances : deux longs mois de vacances en perspective… Le pied
+          ! Avec des copains, on a un projet : faire du camping à la montagne.
+
+          <br /><br />
+
+          On veut traverser les Pyrénées de la mer Méditerranée jusqu’à l’océan
+          Atlantique… Le 7 juillet 2000, c’est parti : 2 voitures, 4 filles, 3
+          garçons, et 500 km de nature devant nous ! On est prêt !
+
+          <br /><br />
+
+          <strong>Isa:</strong> C’est la première fois qu’on fait de la
+          randonnée. On n’est pas très sportifs, mais on a tout ce qu’il faut :
+          de bonnes chaussures de marche, un sac à dos léger, de l’eau, du pain
+          et du camembert… Le kit de survie du randonneur !
+
+          <br /><br />
+
+          Tous les jours, on se lève avec le soleil et on se couche quand il
+          fait nuit. On vit au rythme de la nature.
+
+          <br /><br />
+
+          Au milieu du voyage, on marche vers le Nord. Direction Lourdes, la
+          ville des miracles ! Le ciel est bleu, le soleil brille, on est en
+          pleine forme…
+
+          <br /><br />
+
+          <strong>Isa:</strong> Forêts, lacs, cascades, ruisseaux… Le paysage
+          est magnifique ! On respire le bon air frais !
+
+          <br /><br />
+
+          Et surtout : personne sur notre chemin… On est seuls ! Enfin, presque…
+          On rencontre des vaches et des moutons.
+
+          <br /><br />
+
+          Après 20 km, on est très, très fatigués mais loin du camping. On
+          réalise qu’on est perdus et qu’il est trop tard pour continuer à
+          marcher.
+
+          <br /><br />
+
+          La nuit tombe. Il faut dormir à la belle étoile, ici, dans la vallée.
+          Heureusement, il fait 30 degrés !
+
+          <br /><br />
+
+          <strong>Isa:</strong> On trouve un joli endroit pour pique-niquer. On
+          chante, on est joyeux ! Marie a peur des araignées, ça nous amuse.
+
+          <br /><br />
+
+          Bientôt, il fait nuit noire et il faut sortir nos sacs de couchage et
+          nos matelas... On s’endort très vite.
+
+          <br /><br />
+
+          Mais au milieu de la nuit, un hurlement nous réveille. Un long
+          hurlement de bête. Un, puis deux, puis trois… Espacés. Lointains.
+
+          <br /><br />
+
+          Je m’assoie terrorisée. Qu’est-ce que c’est que ça ?! Sûrement pas un
+          mouton !
+
+          <br /><br />
+
+          <strong>Isa:</strong> Marie se réveille, puis Marc, puis Louise…
+          Bientôt, tout le monde est réveillé. On est comme paralysés.
+
+          <br /><br />
+
+          On écoute en silence... Les hurlements sont de plus en plus nombreux.
+          C’est sûr, ce sont des loups !
+
+          <br /><br />
+
+          Maintenant, ils hurlent tous ensemble. Et ils se rapprochent. On ne
+          voit rien, mais ils semblent tout près. Autour de nous.
+
+          <br /><br />
+
+          Je n'entends plus que les battements de mon cœur et les loups. Il faut
+          rester calme. Attendre. Sans bouger.
+
+          <br /><br />
+
+          <strong>Isa:</strong> Soudain, ça s’arrête. Plus rien. Ils sont
+          partis. C’est un miracle ! Nous nous endormons serrés les uns contre
+          les autres.
+
+          <br /><br />
+
+          Au matin, je me demande : est-ce qu’on a rêvé ? Mais il faut partir.
+          On marche, quand tout à coup, Marc crie : “Hé, il y a des grilles
+          derrière les arbres !”.
+
+          <br /><br />
+
+          Plus loin, on voit une grande pancarte : Parc... animalier... des
+          Pyrénées. Incroyable ! On a dormi à côté d’un zoo !
+
+          <br /><br />
+
+          Après cette nuit, nous n'avons plus fait de camping sauvage, vous
+          pouvez me croire… Mais nous avons continué nos belles randonnées dans
+          les Pyrénées !
+        </div>
+      </section>
+    </main>
+
+    <!-- Keep these files beside this HTML. -->
+    <script src="vocabulary.js"></script>
+
+    <script>
+      try {
+        if (
+          !Array.isArray(window.allWords) &&
+          typeof allWords !== 'undefined' &&
+          Array.isArray(allWords)
+        ) {
+          window.allWords = allWords;
+
+          console.log(
+            `✅ Vocabulary bridge ready: ${window.allWords.length} entries`,
+          );
+        }
+      } catch (error) {
+        console.warn('Vocabulary bridge failed:', error);
+      }
+    </script>
+
+    <script src="french-dictionary.js"></script>
+
+    <script>
+      (() => {
+        'use strict';
+
+        const audio = document.getElementById('main_player');
+
+        const status = document.getElementById('status');
+
+        const timestampButton = document.getElementById('toggle-timestamps');
+
+        const imageButton = document.getElementById('toggle-images');
+
+        const restartButton = document.getElementById('restart-french');
+
+        const copyTranscriptButton = document.getElementById(
+          'copy-transcript-button',
+        );
+
+        const copyOutput = document.getElementById('output');
+
+        const frenchSections = [
+          { start: 86, end: 125 },
+          { start: 175, end: 214 },
+          { start: 248, end: 288 },
+          { start: 343, end: 386 },
+          { start: 416, end: 455 },
+          { start: 481, end: 531 },
+        ];
+
+        const firstFrench = frenchSections[0].start;
+
+        const lastFrenchEnd = frenchSections[frenchSections.length - 1].end;
+
+        let seekingProgrammatically = false;
+        let lastTimestampMs = null;
+
+        const clickTimers = new WeakMap();
+
+        function isInsideFrenchSection(time) {
+          return frenchSections.some(
+            (section) => time >= section.start && time < section.end,
+          );
+        }
+
+        function findNextFrenchSection(time) {
+          return frenchSections.find((section) => section.start > time);
+        }
+
+        function enforceFrenchOnly() {
+          if (seekingProgrammatically) {
+            return;
+          }
+
+          const currentTime = audio.currentTime;
+
+          if (isInsideFrenchSection(currentTime)) {
+            return;
+          }
+
+          if (currentTime < firstFrench) {
+            seekingProgrammatically = true;
+
+            audio.currentTime = firstFrench;
+
+            seekingProgrammatically = false;
+
+            return;
+          }
+
+          const nextSection = findNextFrenchSection(currentTime);
+
+          if (nextSection) {
+            seekingProgrammatically = true;
+
+            audio.currentTime = nextSection.start;
+
+            seekingProgrammatically = false;
+
+            return;
+          }
+
+          if (currentTime >= lastFrenchEnd) {
+            audio.pause();
+
+            audio.currentTime = lastFrenchEnd;
+
+            status.textContent = 'French sections finished.';
+          }
+        }
+
+        function setActiveTimestamp(ms) {
+          document.querySelectorAll('.tag_time.active').forEach((button) => {
+            button.classList.remove('active');
+          });
+
+          document
+            .querySelectorAll(`.tag_time[data-time="${ms}"]`)
+            .forEach((button) => {
+              button.classList.add('active');
+            });
+        }
+
+        /*
+         * Continuously highlight the current timeline timestamp.
+         */
+        function updateCurrentTimestampHighlight() {
+          const currentMs = audio.currentTime * 1000;
+
+          const buttons = [
+            ...document.querySelectorAll('.tag_time[data-time]'),
+          ].sort((a, b) => Number(a.dataset.time) - Number(b.dataset.time));
+
+          let activeMs = null;
+
+          for (let i = 0; i < buttons.length; i++) {
+            const currentButtonTime = Number(buttons[i].dataset.time);
+
+            const nextButtonTime =
+              i + 1 < buttons.length
+                ? Number(buttons[i + 1].dataset.time)
+                : Infinity;
+
+            if (currentMs >= currentButtonTime && currentMs < nextButtonTime) {
+              activeMs = currentButtonTime;
+
+              break;
+            }
+          }
+
+          if (activeMs !== null) {
+            setActiveTimestamp(activeMs);
+          } else {
+            document.querySelectorAll('.tag_time.active').forEach((button) => {
+              button.classList.remove('active');
+            });
+          }
+        }
+
+        function playFrom(ms) {
+          lastTimestampMs = ms;
+
+          setActiveTimestamp(ms);
+
+          audio.currentTime = ms / 1000;
+
+          audio.play().catch((error) => {
+            console.error('Playback failed:', error);
+          });
+        }
+
+        document.querySelectorAll('.tag_time').forEach((button) => {
+          const ms = Number(button.dataset.time);
+
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const oldTimer = clickTimers.get(button);
+
+            if (oldTimer) {
+              clearTimeout(oldTimer);
+            }
+
+            const timer = setTimeout(() => {
+              if (lastTimestampMs === ms) {
+                if (audio.paused) {
+                  audio.play().catch(console.error);
+                } else {
+                  audio.pause();
+                }
+              } else {
+                playFrom(ms);
+              }
+
+              clickTimers.delete(button);
+            }, 220);
+
+            clickTimers.set(button, timer);
+          });
+
+          button.addEventListener('dblclick', (event) => {
+            event.preventDefault();
+
+            const timer = clickTimers.get(button);
+
+            if (timer) {
+              clearTimeout(timer);
+
+              clickTimers.delete(button);
+            }
+
+            playFrom(ms);
+          });
+        });
+
+        timestampButton.addEventListener('click', () => {
+          const hidden = document.body.classList.toggle('hide-timestamps');
+
+          timestampButton.textContent = hidden
+            ? 'Show timestamps'
+            : 'Hide timestamps';
+        });
+
+        imageButton.addEventListener('click', () => {
+          const hidden = document.body.classList.toggle('hide-images');
+
+          imageButton.textContent = hidden ? 'Show images' : 'Hide images';
+        });
+
+        restartButton.addEventListener('click', () => {
+          lastTimestampMs = firstFrench * 1000;
+
+          setActiveTimestamp(lastTimestampMs);
+
+          audio.currentTime = firstFrench;
+
+          audio.play().catch(console.error);
+        });
+
+        audio.addEventListener('play', () => {
+          if (audio.currentTime < firstFrench) {
+            audio.currentTime = firstFrench;
+          }
+        });
+
+        audio.addEventListener('timeupdate', () => {
+          enforceFrenchOnly();
+          updateCurrentTimestampHighlight();
+        });
+
+        audio.addEventListener('seeked', () => {
+          enforceFrenchOnly();
+          updateCurrentTimestampHighlight();
+        });
+
+        /*
+         * Copy the final transcript as rich HTML,
+         * with plain text supplied as a fallback.
+         */
+        async function copyRichTranscript() {
+          if (!copyOutput) {
+            return;
+          }
+
+          const richHtml = copyOutput.innerHTML;
+
+          const plainText = copyOutput.innerText;
+
+          let copied = false;
+
+          try {
+            if (
+              navigator.clipboard &&
+              navigator.clipboard.write &&
+              window.ClipboardItem
+            ) {
+              const htmlBlob = new Blob([richHtml], { type: 'text/html' });
+
+              const textBlob = new Blob([plainText], { type: 'text/plain' });
+
+              const clipboardItem = new ClipboardItem({
+                'text/html': htmlBlob,
+                'text/plain': textBlob,
+              });
+
+              await navigator.clipboard.write([clipboardItem]);
+
+              copied = true;
+            }
+          } catch (error) {
+            console.warn(
+              'Rich clipboard unavailable; using selection fallback.',
+              error,
+            );
+          }
+
+          if (!copied) {
+            try {
+              const selection = window.getSelection();
+
+              const range = document.createRange();
+
+              range.selectNodeContents(copyOutput);
+
+              selection.removeAllRanges();
+
+              selection.addRange(range);
+
+              copied = document.execCommand('copy');
+
+              selection.removeAllRanges();
+            } catch (error) {
+              console.error('Transcript copy failed:', error);
+            }
+          }
+
+          if (copied) {
+            const originalText = copyTranscriptButton.textContent;
+
+            copyTranscriptButton.textContent = 'Copied!';
+
+            copyTranscriptButton.classList.add('copied');
+
+            setTimeout(() => {
+              copyTranscriptButton.textContent = originalText;
+
+              copyTranscriptButton.classList.remove('copied');
+            }, 1400);
+          } else {
+            alert(
+              'Automatic copy was blocked. Select the Highlighted Text section and press Ctrl+C.',
+            );
+          }
+        }
+
+        if (copyTranscriptButton) {
+          copyTranscriptButton.addEventListener('click', copyRichTranscript);
+        }
+
+        status.textContent =
+          'French-only audio enabled. Timestamps and images can be toggled independently.';
+
+        console.log('🇫🇷 S1E3 clean French study page enabled.');
+      })();
+    </script>
+  </body>
+</html>
