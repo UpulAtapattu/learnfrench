@@ -1,0 +1,1136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>S1E5 - The Legendary Labyrinth of Saint-Denis | French Study</title>
+
+    <style>
+      :root {
+        --orange: #ff8f5b;
+        --orange-dark: #e76f38;
+        --orange-light: #fff3ed;
+        --paper: #ffffff;
+        --ink: #292929;
+        --muted: #777777;
+        --border: #ead8cf;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: #f7f4f2;
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.65;
+      }
+
+      .page {
+        width: min(1000px, calc(100% - 32px));
+        margin: 28px auto 80px;
+      }
+
+      .study-header,
+      #transcript-copy-area,
+      .copy-card {
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+      }
+
+      .study-header {
+        padding: 20px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(22px, 3vw, 32px);
+        line-height: 1.25;
+      }
+
+      audio {
+        width: 100%;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .toolbar button,
+      #copy-transcript-button {
+        appearance: none;
+        border: 0;
+        border-radius: 7px;
+        padding: 8px 12px;
+        background: var(--orange);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .toolbar button:hover,
+      #copy-transcript-button:hover {
+        background: var(--orange-dark);
+      }
+
+      #copy-transcript-button.copied {
+        background: #4c9b61;
+      }
+
+      .status {
+        margin-top: 10px;
+        min-height: 1.3em;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      #transcript-copy-area {
+        padding: 12px 22px 24px;
+      }
+
+      .transcript-row,
+      .image-row {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        padding: 13px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      #transcript-copy-area > :last-child {
+        border-bottom: 0;
+      }
+
+      .timestamp-container {
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .tag_time {
+        width: 62px;
+        border: 0;
+        border-radius: 6px;
+        padding: 6px 7px;
+        background: var(--orange-light);
+        color: var(--orange-dark);
+        font:
+          600 13px/1.2 Arial,
+          Helvetica,
+          sans-serif;
+        cursor: pointer;
+      }
+
+      .tag_time:hover {
+        background: var(--orange-dark);
+        color: white;
+      }
+
+      /* Currently playing timestamp */
+      .tag_time.active {
+        background: #b7e4c7;
+        color: #1b4332;
+        font-weight: 700;
+        box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.15);
+      }
+
+      .transcript_tag_body {
+        font-size: 18px;
+        min-width: 0;
+      }
+
+      .transcript_tag_body strong {
+        font-weight: 700;
+      }
+      .transcript_tag_body em {
+        font-style: italic;
+      }
+
+      .image-row {
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .timeline-image-container {
+        padding: 5px 0;
+      }
+
+      .timeline-image-container img {
+        display: block;
+        width: auto;
+        max-width: min(100%, 620px);
+        max-height: 430px;
+        object-fit: contain;
+        border-radius: 10px;
+        border: 1px solid #eee;
+        background: white;
+      }
+
+      .image-caption {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      abbr.french-vocab-word {
+        text-decoration: none !important;
+        border-bottom: none !important;
+        color: inherit;
+        font: inherit;
+        background: rgba(255, 143, 91, 0.12);
+        border-radius: 3px;
+        padding: 0 2px;
+        cursor: help;
+      }
+
+      abbr.french-vocab-word:hover {
+        background: rgba(255, 143, 91, 0.3);
+      }
+
+      body.hide-timestamps .transcript-row,
+      body.hide-timestamps .image-row {
+        grid-template-columns: 1fr;
+      }
+
+      body.hide-timestamps .timestamp-container {
+        display: none;
+      }
+
+      body.hide-images .image-row {
+        display: none !important;
+      }
+
+      .copy-card {
+        margin-top: 22px;
+        padding: 20px 22px 24px;
+      }
+
+      .copy-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .copy-card h2 {
+        margin: 0;
+        font-size: 23px;
+        line-height: 1.25;
+      }
+
+      #output {
+        font-size: 18px;
+        line-height: 1.72;
+        user-select: text;
+        -webkit-user-select: text;
+      }
+
+      @media (max-width: 650px) {
+        .page {
+          width: min(100% - 16px, 1000px);
+          margin-top: 8px;
+        }
+
+        #transcript-copy-area,
+        .copy-card {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .transcript-row,
+        .image-row {
+          grid-template-columns: 58px minmax(0, 1fr);
+          gap: 8px;
+        }
+
+        .tag_time {
+          width: 54px;
+          font-size: 12px;
+        }
+
+        .transcript_tag_body,
+        #output {
+          font-size: 17px;
+        }
+
+        .copy-card-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        #copy-transcript-button {
+          width: 100%;
+        }
+      }
+
+      @media print {
+        .study-header,
+        .timestamp-container,
+        .image-row,
+        #copy-transcript-button {
+          display: none !important;
+        }
+
+        body {
+          background: white;
+        }
+
+        .page {
+          width: 100%;
+          margin: 0;
+        }
+
+        #transcript-copy-area,
+        .copy-card {
+          border: 0;
+          box-shadow: none;
+          padding: 0;
+        }
+
+        .transcript-row {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <section class="study-header">
+        <h1>S1E5 — The Legendary Labyrinth of Saint-Denis</h1>
+
+        <audio id="main_player" controls preload="metadata">
+          <source
+            src="https://player.timelinenotation.com/media/episode/audio/22566.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support HTML audio.
+        </audio>
+
+        <div class="toolbar">
+          <button id="toggle-timestamps" type="button">Hide timestamps</button>
+          <button id="toggle-images" type="button">Hide images</button>
+          <button id="restart-french" type="button">Restart French</button>
+        </div>
+
+        <div class="status" id="status"></div>
+      </section>
+
+      <div id="transcript-copy-area">
+        <div class="tag_block transcript-row" data-time="25000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="25000"
+              title="Play from 00:25"
+            >
+              00:25
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Baboune:</strong> Salut ! Je m'appelle Elisabeth, mais
+              tout le monde m'appelle Baboune. Tout le monde, sauf mes
+              professeurs de la Légion d'honneur. Quand j'arrive ici, j'ai 12
+              ans. C'est la rentrée scolaire et je découvre mon internat…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="47000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="47000"
+              title="Play from 00:47"
+            >
+              00:47
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Il y a un parc immense, une chapelle, une infirmerie, et les
+              dortoirs, bien sûr… C'est un endroit magnifique, hors du temps. Un
+              monde à part. Et je vais y rester 7 ans : une nouvelle vie
+              commence !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="55000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="55000"
+              title="Play from 00:55"
+            >
+              00:55
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img
+              src="img/15786.jpg"
+              alt="Episode image at 00:55"
+              loading="lazy"
+            />
+            <div class="image-caption">Elisabeth Fouché</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="69000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="69000"
+              title="Play from 01:09"
+            >
+              01:09
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Ici, il n'y a pas de garçons. Seulement des filles. On a toutes le
+              même uniforme : une robe bleue marine, un chemisier blanc, et une
+              ceinture de couleur… L’année de mon histoire, j’ai 18 ans et j’ai
+              une ceinture multicolore, enfin !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="72000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="72000"
+              title="Play from 01:12"
+            >
+              01:12
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img
+              src="img/15787.jpg"
+              alt="Episode image at 01:12"
+              loading="lazy"
+            />
+            <div class="image-caption">Elisabeth Fouché</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="90000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="90000"
+              title="Play from 01:30"
+            >
+              01:30
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Du matin au soir, on étudie. On fait aussi beaucoup de musique. On
+              a très peu de temps libre. Mais dans le parc, on se sent libres :
+              on chante, on s’amuse, on se raconte nos secrets…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="103000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="103000"
+              title="Play from 01:43"
+            >
+              01:43
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img
+              src="img/15788.jpg"
+              alt="Episode image at 01:43"
+              loading="lazy"
+            />
+            <div class="image-caption">Elisabeth Fouché</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="114000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="114000"
+              title="Play from 01:54"
+            >
+              01:54
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Ma vraie liberté, c'est la salle d'arts plastiques. Elle est au
+              fond du parc, monumentale, extraordinaire ! Il y a des sculptures,
+              des peintures partout… Et surtout, ici, personne ne nous surveille
+              !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="116000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="116000"
+              title="Play from 01:56"
+            >
+              01:56
+            </button>
+          </div>
+
+          <div class="timeline-image-container">
+            <img
+              src="img/15789.jpg"
+              alt="Episode image at 01:56"
+              loading="lazy"
+            />
+            <div class="image-caption">Elisabeth Fouché</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="131000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="131000"
+              title="Play from 02:11"
+            >
+              02:11
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Mes copines fument des cigarettes. C'est interdit, mais on s'en
+              fiche. On n'a plus peur des punitions.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="140000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="140000"
+              title="Play from 02:20"
+            >
+              02:20
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Un jour, on est là, devant l'atelier, et je remarque quelque chose
+              par terre. Quelque chose que je n'ai jamais vu avant…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="154000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="154000"
+              title="Play from 02:34"
+            >
+              02:34
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Il y a une ouverture ! Une trappe ! Bien sûr, on l'ouvre. Et là,
+              on voit un escalier qui descend sous la terre… incroyable, un
+              passage secret ! Sans hésiter, on descend l'escalier.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="170000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="170000"
+              title="Play from 02:50"
+            >
+              02:50
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Au bout, il y a un long couloir. Très sombre. On est super
+              excitées… Parce qu'à la Légion d'honneur, il y a une légende : la
+              légende des souterrains ! On dit qu'ils sont partout sous nos
+              pieds et qu’ils vont très loin…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="190000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="190000"
+              title="Play from 03:10"
+            >
+              03:10
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              On marche longtemps. On ne sait pas où on est. On voit d’autres
+              couloirs, parfois tout petits. Et soudain une grande pièce : à
+              l’intérieur, il y a des chaises, une table, une lampe…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="204000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="204000"
+              title="Play from 03:24"
+            >
+              03:24
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Quelqu'un vient souvent ici, mais qui ?! Et pourquoi ? Il y a
+              aussi du matériel médical… C’est super bizarre !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="213000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="213000"
+              title="Play from 03:33"
+            >
+              03:33
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Enfin, Céline voit un escalier : on a trouvé la sortie, ça y est !
+              Mais tout à coup, on entend une voix…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="223000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="223000"
+              title="Play from 03:43"
+            >
+              03:43
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Oh non, c’est l’infirmière, madame Barjot !!! Elle est très, très
+              stricte… Si elle nous voit, on est foutues ! Alors on se cache et
+              on attend… Finalement, elle s’en va ! On peut partir !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="238000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="238000"
+              title="Play from 03:58"
+            >
+              03:58
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Quelle émotion, on a trouvé les célèbres labyrinthes de la Légion
+              d’honneur ! Mais quelle déception aussi ! L’aventure s’est
+              arrêtée… à l’infirmerie de l’école !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="252000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="252000"
+              title="Play from 04:12"
+            >
+              04:12
+            </button>
+          </div>
+
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Quelques mois plus tard, la Légion d'honneur, c'est fini ! Je pars
+              étudier à Paris. Mais j'ai des amis et des souvenirs pour la vie,
+              comme cet après-midi dans les labyrinthes !
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="copy-card">
+        <div class="copy-card-header">
+          <h2>Highlighted Text</h2>
+
+          <button id="copy-transcript-button" type="button">
+            Copy Transcript
+          </button>
+        </div>
+
+        <div
+          id="output"
+          class="output transcript_tag_body"
+          aria-label="Copy-friendly highlighted French transcript"
+        >
+          <strong>Baboune:</strong> Salut ! Je m'appelle Elisabeth, mais tout le
+          monde m'appelle Baboune. Tout le monde, sauf mes professeurs de la
+          Légion d'honneur. Quand j'arrive ici, j'ai 12 ans. C'est la rentrée
+          scolaire et je découvre mon internat…
+
+          <br /><br />
+
+          Il y a un parc immense, une chapelle, une infirmerie, et les dortoirs,
+          bien sûr… C'est un endroit magnifique, hors du temps. Un monde à part.
+          Et je vais y rester 7 ans : une nouvelle vie commence !
+
+          <br /><br />
+
+          Ici, il n'y a pas de garçons. Seulement des filles. On a toutes le
+          même uniforme : une robe bleue marine, un chemisier blanc, et une
+          ceinture de couleur… L’année de mon histoire, j’ai 18 ans et j’ai une
+          ceinture multicolore, enfin !
+
+          <br /><br />
+
+          Du matin au soir, on étudie. On fait aussi beaucoup de musique. On a
+          très peu de temps libre. Mais dans le parc, on se sent libres : on
+          chante, on s’amuse, on se raconte nos secrets…
+
+          <br /><br />
+
+          Ma vraie liberté, c'est la salle d'arts plastiques. Elle est au fond
+          du parc, monumentale, extraordinaire ! Il y a des sculptures, des
+          peintures partout… Et surtout, ici, personne ne nous surveille !
+
+          <br /><br />
+
+          Mes copines fument des cigarettes. C'est interdit, mais on s'en fiche.
+          On n'a plus peur des punitions.
+
+          <br /><br />
+
+          Un jour, on est là, devant l'atelier, et je remarque quelque chose par
+          terre. Quelque chose que je n'ai jamais vu avant…
+
+          <br /><br />
+
+          Il y a une ouverture ! Une trappe ! Bien sûr, on l'ouvre. Et là, on
+          voit un escalier qui descend sous la terre… incroyable, un passage
+          secret ! Sans hésiter, on descend l'escalier.
+
+          <br /><br />
+
+          Au bout, il y a un long couloir. Très sombre. On est super excitées…
+          Parce qu'à la Légion d'honneur, il y a une légende : la légende des
+          souterrains ! On dit qu'ils sont partout sous nos pieds et qu’ils vont
+          très loin…
+
+          <br /><br />
+
+          On marche longtemps. On ne sait pas où on est. On voit d’autres
+          couloirs, parfois tout petits. Et soudain une grande pièce : à
+          l’intérieur, il y a des chaises, une table, une lampe…
+
+          <br /><br />
+
+          Quelqu'un vient souvent ici, mais qui ?! Et pourquoi ? Il y a aussi du
+          matériel médical… C’est super bizarre !
+
+          <br /><br />
+
+          Enfin, Céline voit un escalier : on a trouvé la sortie, ça y est !
+          Mais tout à coup, on entend une voix…
+
+          <br /><br />
+
+          Oh non, c’est l’infirmière, madame Barjot !!! Elle est très, très
+          stricte… Si elle nous voit, on est foutues ! Alors on se cache et on
+          attend… Finalement, elle s’en va ! On peut partir !
+
+          <br /><br />
+
+          Quelle émotion, on a trouvé les célèbres labyrinthes de la Légion
+          d’honneur ! Mais quelle déception aussi ! L’aventure s’est arrêtée… à
+          l’infirmerie de l’école !
+
+          <br /><br />
+
+          Quelques mois plus tard, la Légion d'honneur, c'est fini ! Je pars
+          étudier à Paris. Mais j'ai des amis et des souvenirs pour la vie,
+          comme cet après-midi dans les labyrinthes !
+        </div>
+      </section>
+    </main>
+
+    <script src="vocabulary.js"></script>
+
+    <script>
+      try {
+        if (
+          !Array.isArray(window.allWords) &&
+          typeof allWords !== 'undefined' &&
+          Array.isArray(allWords)
+        ) {
+          window.allWords = allWords;
+          console.log(
+            `✅ Vocabulary bridge ready: ${window.allWords.length} entries`,
+          );
+        }
+      } catch (error) {
+        console.warn('Vocabulary bridge failed:', error);
+      }
+    </script>
+
+    <script src="french-dictionary.js"></script>
+
+    <script>
+      (() => {
+        'use strict';
+
+        const audio = document.getElementById('main_player');
+        const status = document.getElementById('status');
+        const timestampButton = document.getElementById('toggle-timestamps');
+        const imageButton = document.getElementById('toggle-images');
+        const restartButton = document.getElementById('restart-french');
+        const copyTranscriptButton = document.getElementById(
+          'copy-transcript-button',
+        );
+        const copyOutput = document.getElementById('output');
+
+        const frenchSections = [{ start: 25, end: 276 }];
+
+        const firstFrench = frenchSections[0].start;
+        const lastFrenchEnd = frenchSections[frenchSections.length - 1].end;
+
+        let seekingProgrammatically = false;
+        let lastTimestampMs = null;
+        const clickTimers = new WeakMap();
+
+        function isInsideFrenchSection(time) {
+          return frenchSections.some(
+            (section) => time >= section.start && time < section.end,
+          );
+        }
+
+        function findNextFrenchSection(time) {
+          return frenchSections.find((section) => section.start > time);
+        }
+
+        function enforceFrenchOnly() {
+          if (seekingProgrammatically) return;
+
+          const currentTime = audio.currentTime;
+
+          if (isInsideFrenchSection(currentTime)) return;
+
+          if (currentTime < firstFrench) {
+            seekingProgrammatically = true;
+            audio.currentTime = firstFrench;
+            seekingProgrammatically = false;
+            return;
+          }
+
+          const nextSection = findNextFrenchSection(currentTime);
+
+          if (nextSection) {
+            seekingProgrammatically = true;
+            audio.currentTime = nextSection.start;
+            seekingProgrammatically = false;
+            return;
+          }
+
+          if (currentTime >= lastFrenchEnd) {
+            audio.pause();
+            audio.currentTime = lastFrenchEnd;
+            status.textContent = 'French story finished.';
+          }
+        }
+
+        function setActiveTimestamp(ms) {
+          document.querySelectorAll('.tag_time.active').forEach((button) => {
+            button.classList.remove('active');
+          });
+
+          document
+            .querySelectorAll(`.tag_time[data-time="${ms}"]`)
+            .forEach((button) => {
+              button.classList.add('active');
+            });
+        }
+
+        function updateCurrentTimestampHighlight() {
+          const currentMs = audio.currentTime * 1000;
+
+          const transcriptButtons = [
+            ...document.querySelectorAll(
+              '.transcript-row .tag_time[data-time]',
+            ),
+          ].sort((a, b) => Number(a.dataset.time) - Number(b.dataset.time));
+
+          let activeMs = null;
+
+          for (let i = 0; i < transcriptButtons.length; i++) {
+            const currentButtonTime = Number(transcriptButtons[i].dataset.time);
+
+            const nextButtonTime =
+              i + 1 < transcriptButtons.length
+                ? Number(transcriptButtons[i + 1].dataset.time)
+                : lastFrenchEnd * 1000;
+
+            if (currentMs >= currentButtonTime && currentMs < nextButtonTime) {
+              activeMs = currentButtonTime;
+              break;
+            }
+          }
+
+          if (activeMs !== null) {
+            setActiveTimestamp(activeMs);
+          } else {
+            document.querySelectorAll('.tag_time.active').forEach((button) => {
+              button.classList.remove('active');
+            });
+          }
+        }
+
+        function playFrom(ms) {
+          lastTimestampMs = ms;
+          setActiveTimestamp(ms);
+          audio.currentTime = ms / 1000;
+
+          audio.play().catch((error) => {
+            console.error('Playback failed:', error);
+          });
+        }
+
+        document.querySelectorAll('.tag_time').forEach((button) => {
+          const ms = Number(button.dataset.time);
+
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const oldTimer = clickTimers.get(button);
+            if (oldTimer) clearTimeout(oldTimer);
+
+            const timer = setTimeout(() => {
+              if (lastTimestampMs === ms) {
+                if (audio.paused) {
+                  audio.play().catch(console.error);
+                } else {
+                  audio.pause();
+                }
+              } else {
+                playFrom(ms);
+              }
+
+              clickTimers.delete(button);
+            }, 220);
+
+            clickTimers.set(button, timer);
+          });
+
+          button.addEventListener('dblclick', (event) => {
+            event.preventDefault();
+
+            const timer = clickTimers.get(button);
+
+            if (timer) {
+              clearTimeout(timer);
+              clickTimers.delete(button);
+            }
+
+            playFrom(ms);
+          });
+        });
+
+        timestampButton.addEventListener('click', () => {
+          const hidden = document.body.classList.toggle('hide-timestamps');
+
+          timestampButton.textContent = hidden
+            ? 'Show timestamps'
+            : 'Hide timestamps';
+        });
+
+        imageButton.addEventListener('click', () => {
+          const hidden = document.body.classList.toggle('hide-images');
+
+          imageButton.textContent = hidden ? 'Show images' : 'Hide images';
+        });
+
+        restartButton.addEventListener('click', () => {
+          lastTimestampMs = firstFrench * 1000;
+          setActiveTimestamp(lastTimestampMs);
+          audio.currentTime = firstFrench;
+          audio.play().catch(console.error);
+        });
+
+        audio.addEventListener('play', () => {
+          if (audio.currentTime < firstFrench) {
+            audio.currentTime = firstFrench;
+          }
+        });
+
+        audio.addEventListener('timeupdate', () => {
+          enforceFrenchOnly();
+          updateCurrentTimestampHighlight();
+        });
+
+        audio.addEventListener('seeked', () => {
+          enforceFrenchOnly();
+          updateCurrentTimestampHighlight();
+        });
+
+        async function copyRichTranscript() {
+          if (!copyOutput) return;
+
+          const richHtml = copyOutput.innerHTML;
+          const plainText = copyOutput.innerText;
+          let copied = false;
+
+          try {
+            if (
+              navigator.clipboard &&
+              navigator.clipboard.write &&
+              window.ClipboardItem
+            ) {
+              const htmlBlob = new Blob([richHtml], { type: 'text/html' });
+              const textBlob = new Blob([plainText], { type: 'text/plain' });
+
+              const clipboardItem = new ClipboardItem({
+                'text/html': htmlBlob,
+                'text/plain': textBlob,
+              });
+
+              await navigator.clipboard.write([clipboardItem]);
+              copied = true;
+            }
+          } catch (error) {
+            console.warn(
+              'Rich clipboard unavailable; using selection fallback.',
+              error,
+            );
+          }
+
+          if (!copied) {
+            try {
+              const selection = window.getSelection();
+              const range = document.createRange();
+
+              range.selectNodeContents(copyOutput);
+              selection.removeAllRanges();
+              selection.addRange(range);
+
+              copied = document.execCommand('copy');
+
+              selection.removeAllRanges();
+            } catch (error) {
+              console.error('Transcript copy failed:', error);
+            }
+          }
+
+          if (copied) {
+            const originalText = copyTranscriptButton.textContent;
+
+            copyTranscriptButton.textContent = 'Copied!';
+            copyTranscriptButton.classList.add('copied');
+
+            setTimeout(() => {
+              copyTranscriptButton.textContent = originalText;
+              copyTranscriptButton.classList.remove('copied');
+            }, 1400);
+          } else {
+            alert(
+              'Automatic copy was blocked. Select the Highlighted Text section and press Ctrl+C.',
+            );
+          }
+        }
+
+        if (copyTranscriptButton) {
+          copyTranscriptButton.addEventListener('click', copyRichTranscript);
+        }
+
+        status.textContent =
+          'Story-only French audio enabled. Timestamps and images can be toggled independently.';
+
+        console.log('🇫🇷 S1E5 clean French study page enabled.');
+      })();
+    </script>
+  </body>
+</html>

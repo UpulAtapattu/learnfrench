@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>S1E4 - Hide and Seek with Death in Douala! | French Study</title>
+
+  <style>
+    :root {
+      --orange: #ff8f5b;
+      --orange-dark: #e76f38;
+      --orange-light: #fff3ed;
+      --paper: #ffffff;
+      --ink: #292929;
+      --muted: #777777;
+      --border: #ead8cf;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: #f7f4f2;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.65;
+    }
+
+    .page {
+      width: min(1000px, calc(100% - 32px));
+      margin: 28px auto 80px;
+    }
+
+    .study-header,
+    #transcript-copy-area,
+    .copy-card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.05);
+    }
+
+    .study-header {
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(22px,3vw,32px);
+      line-height: 1.25;
+    }
+
+    audio { width: 100%; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .toolbar button,
+    #copy-transcript-button {
+      appearance: none;
+      border: 0;
+      border-radius: 7px;
+      padding: 8px 12px;
+      background: var(--orange);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .toolbar button:hover,
+    #copy-transcript-button:hover {
+      background: var(--orange-dark);
+    }
+
+    #copy-transcript-button.copied {
+      background: #4c9b61;
+    }
+
+    .status {
+      margin-top: 10px;
+      min-height: 1.3em;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    #transcript-copy-area {
+      padding: 12px 22px 24px;
+    }
+
+    .transcript-row,
+    .image-row {
+      display: grid;
+      grid-template-columns: 72px minmax(0,1fr);
+      gap: 14px;
+      align-items: start;
+      padding: 13px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    #transcript-copy-area > :last-child {
+      border-bottom: 0;
+    }
+
+    .timestamp-container {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .tag_time {
+      width: 62px;
+      border: 0;
+      border-radius: 6px;
+      padding: 6px 7px;
+      background: var(--orange-light);
+      color: var(--orange-dark);
+      font: 600 13px/1.2 Arial, Helvetica, sans-serif;
+      cursor: pointer;
+    }
+
+    .tag_time:hover {
+      background: var(--orange-dark);
+      color: white;
+    }
+
+    .tag_time.active {
+      background: #b7e4c7;
+      color: #1b4332;
+      font-weight: 700;
+      box-shadow: 0 0 0 2px rgba(45,106,79,.15);
+    }
+
+    .transcript_tag_body {
+      font-size: 18px;
+      min-width: 0;
+    }
+
+    .transcript_tag_body strong { font-weight: 700; }
+    .transcript_tag_body em { font-style: italic; }
+
+    .image-row {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .timeline-image-container {
+      padding: 5px 0;
+    }
+
+    .timeline-image-container img {
+      display: block;
+      width: auto;
+      max-width: min(100%,620px);
+      max-height: 430px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid #eee;
+      background: white;
+    }
+
+    .image-caption {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    abbr.french-vocab-word {
+      text-decoration: none !important;
+      border-bottom: none !important;
+      color: inherit;
+      font: inherit;
+      background: rgba(255,143,91,.12);
+      border-radius: 3px;
+      padding: 0 2px;
+      cursor: help;
+    }
+
+    abbr.french-vocab-word:hover {
+      background: rgba(255,143,91,.30);
+    }
+
+    body.hide-timestamps .transcript-row,
+    body.hide-timestamps .image-row {
+      grid-template-columns: 1fr;
+    }
+
+    body.hide-timestamps .timestamp-container {
+      display: none;
+    }
+
+    body.hide-images .image-row {
+      display: none !important;
+    }
+
+    .copy-card {
+      margin-top: 22px;
+      padding: 20px 22px 24px;
+    }
+
+    .copy-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .copy-card h2 {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.25;
+    }
+
+    #output {
+      font-size: 18px;
+      line-height: 1.72;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    @media (max-width:650px) {
+      .page {
+        width: min(100% - 16px,1000px);
+        margin-top: 8px;
+      }
+
+      #transcript-copy-area,
+      .copy-card {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .transcript-row,
+      .image-row {
+        grid-template-columns: 58px minmax(0,1fr);
+        gap: 8px;
+      }
+
+      .tag_time {
+        width: 54px;
+        font-size: 12px;
+      }
+
+      .transcript_tag_body,
+      #output {
+        font-size: 17px;
+      }
+
+      .copy-card-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #copy-transcript-button { width: 100%; }
+    }
+
+    @media print {
+      .study-header,
+      .timestamp-container,
+      .image-row,
+      #copy-transcript-button {
+        display: none !important;
+      }
+
+      body { background: white; }
+
+      .page {
+        width: 100%;
+        margin: 0;
+      }
+
+      #transcript-copy-area,
+      .copy-card {
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      .transcript-row { display: block; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+
+    <section class="study-header">
+      <h1>S1E4 — Hide and Seek with Death in Douala!</h1>
+
+      <audio id="main_player" controls preload="metadata">
+        <source src="https://player.timelinenotation.com/media/episode/audio/22563.mp3" type="audio/mpeg">
+        Your browser does not support HTML audio.
+      </audio>
+
+      <div class="toolbar">
+        <button id="toggle-timestamps" type="button">Hide timestamps</button>
+        <button id="toggle-images" type="button">Hide images</button>
+        <button id="restart-french" type="button">Restart French</button>
+      </div>
+
+      <div class="status" id="status"></div>
+    </section>
+
+
+    <div id="transcript-copy-area">
+
+      <div class="tag_block transcript-row" data-time="126000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="126000" title="Play from 02:06">
+            02:06
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body"><strong>Sanagari:</strong> Je m’appelle Sanagari et je vais vous raconter un épisode très marquant de ma vie : ma première rencontre avec la mort. Mais ne vous inquiétez pas, ce n’est pas une histoire triste !</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="139000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="139000" title="Play from 02:19">
+            02:19
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">À l’époque, je suis un petit garçon, j’ai 6 ou 7 ans, je crois, et je vis à Douala avec ma mère.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="147000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="147000" title="Play from 02:27">
+            02:27
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Douala, c’est la capitale économique du Cameroun et nous, on habite dans un quartier résidentiel de Bali, à l’ouest de la ville. On a une maison dans une cité où il y a plein d’enfants.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="161000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="161000" title="Play from 02:41">
+            02:41
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Attention, je dis “cité” mais je ne parle pas des quartiers pauvres des banlieues françaises avec de grands immeubles gris.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="170000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="170000" title="Play from 02:50">
+            02:50
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Non, ma cité, c’est comme un petit village avec des maisons, où tout le monde se connaît.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="216000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="216000" title="Play from 03:36">
+            03:36
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body"><strong>Sanagari:</strong> Dans ma cité, je suis un enfant heureux. Devant la maison, il y a une grande cour où je joue souvent avec mes voisins.</div>
+        </div>
+      </div>
+
+      <div class="tag_block image-row" data-time="220000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time image-time" type="button" data-time="220000" title="Play from 03:40">
+            03:40
+          </button>
+        </div>
+
+        <div class="timeline-image-container">
+          <img src="img/15520.jpg" alt="Episode image at 03:40" loading="lazy">
+          <div class="image-caption">Sanagari Amenophis</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="226000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="226000" title="Play from 03:46">
+            03:46
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">On a aussi un puits pour laver les vêtements mais nous, on s’amuse avec l’eau. Autour de ma cité, il y a des commerces, une station essence, un hôpital et un marché.</div>
+        </div>
+      </div>
+
+      <div class="tag_block image-row" data-time="237000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time image-time" type="button" data-time="237000" title="Play from 03:57">
+            03:57
+          </button>
+        </div>
+
+        <div class="timeline-image-container">
+          <img src="img/15519.jpg" alt="Episode image at 03:57" loading="lazy">
+          <div class="image-caption">Sanagari Amenophis</div>
+        </div>
+      </div>
+
+      <div class="tag_block image-row" data-time="238000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time image-time" type="button" data-time="238000" title="Play from 03:58">
+            03:58
+          </button>
+        </div>
+
+        <div class="timeline-image-container">
+          <img src="15518.jpg" alt="Episode image at 03:58" loading="lazy">
+          <div class="image-caption">Sanagari Amenophis</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="241000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="241000" title="Play from 04:01">
+            04:01
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Avec les copains, on adore aller acheter du lait en poudre et des sucettes au marché. C’est délicieux !</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="274000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="274000" title="Play from 04:34">
+            04:34
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body"><strong>Sanagari:</strong> Un après-midi, je vais chez mon meilleur ami René. Ce jour-là, on est très contents parce que son père n’est pas là.</div>
+        </div>
+      </div>
+
+      <div class="tag_block image-row" data-time="278000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time image-time" type="button" data-time="278000" title="Play from 04:38">
+            04:38
+          </button>
+        </div>
+
+        <div class="timeline-image-container">
+          <img src="img/15521.jpg" alt="Episode image at 04:38" loading="lazy">
+          <div class="image-caption">Sanagari Amenophis</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="284000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="284000" title="Play from 04:44">
+            04:44
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">D’habitude, comme le père de René est très sévère, il faut bien se tenir alors on joue à des jeux de société calmes. Mais là, c’est différent, on a la maison pour nous, on peut aller partout.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="302000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="302000" title="Play from 05:02">
+            05:02
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Personne… ne… surveille ! On décide de jouer à cache-cache : mon ami compte et moi, je me cache sous une table.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="315000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="315000" title="Play from 05:15">
+            05:15
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Il commence à me chercher mais il ne me trouve pas. Je ne fais aucun bruit. Soudain, je me retourne et je vois un autre enfant sous la table !</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="377000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="377000" title="Play from 06:17">
+            06:17
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body"><strong>Sanagari:</strong> C’est mon autre voisin, Baba. Mais qu’est ce qu’il fait là ? Ah, non, René va nous entendre ! Je lui dis : chut ! Mais il rit et me met quelque chose dans la bouche.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="391000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="391000" title="Play from 06:31">
+            06:31
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Le goût est horrible ! Je crache vite. C’est une petite boule blanche. Je panique parce que je réalise que c’est très grave.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="401000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="401000" title="Play from 06:41">
+            06:41
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">C’est de l’arata tchop die ! Le nom en Pidgin d’un poison qui sert à tuer les rats ! C’est sûr, je vais mourir ! Baba continue de rire et moi, je ne dis rien, je cours à la maison.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="464000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="464000" title="Play from 07:44">
+            07:44
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body"><strong>Sanagari:</strong> Le chemin vers la maison me semble très très long. Quand j’arrive, je cherche ma mère. Mais elle dort dans sa chambre. Alors je monte sur son lit et je m’allonge à côté d’elle.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="484000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="484000" title="Play from 08:04">
+            08:04
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Elle ouvre les yeux et me demande: “qu’est-ce que tu fais ?”. Je lui dis : “j’ai mangé une boule blanche, de l’arata tchop die, je vais mourir.”</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="495000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="495000" title="Play from 08:15">
+            08:15
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Elle me prend dans ses bras et me dit de me reposer. Et moi, j’accepte la mort, je n’ai plus peur.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="536000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="536000" title="Play from 08:56">
+            08:56
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body"><strong>Sanagari:</strong> Quand je me réveille, le paradis ressemble beaucoup à la chambre de ma mère. Alors, je ne suis pas mort ? Eh non !</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="549000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="549000" title="Play from 09:09">
+            09:09
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Ma mère me rassure, elle me dit: “Ne t'inquiète pas, j’ai demandé à Baba, la boule blanche, c’était juste du carfa !”</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="559000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="559000" title="Play from 09:19">
+            09:19
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Le carfa, c’est une boule blanche utilisée dans les maisons au Cameroun pour repousser les insectes.</div>
+        </div>
+      </div>
+
+      <div class="tag_block image-row" data-time="562000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time image-time" type="button" data-time="562000" title="Play from 09:22">
+            09:22
+          </button>
+        </div>
+
+        <div class="timeline-image-container">
+          <img src="img/15522.jpg" alt="Episode image at 09:22" loading="lazy">
+          <div class="image-caption">Sanagari Amenophis</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="566000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="566000" title="Play from 09:26">
+            09:26
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Moi, j’ai cru que c’était de l’arata tchop die. Bon, en fait, c’était une mauvaise blague de mon voisin Baba !</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="614000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="614000" title="Play from 10:14">
+            10:14
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body"><strong>Sanagari:</strong> Depuis, je repense souvent à ce moment. Et je suis toujours très étonné de ma réaction: j’étais très calme face à la mort.</div>
+        </div>
+      </div>
+
+      <div class="tag_block transcript-row" data-time="626000">
+        <div class="timestamp-container" aria-hidden="true">
+          <button class="tag_time" type="button" data-time="626000" title="Play from 10:26">
+            10:26
+          </button>
+        </div>
+
+        <div class="transcript_tag">
+          <div class="transcript_tag_body">Ma conclusion c’est qu’un enfant peut parfois être plus sage qu’un adulte.</div>
+        </div>
+      </div>
+    </div>
+
+
+    <section class="copy-card">
+      <div class="copy-card-header">
+        <h2>Highlighted Text</h2>
+        <button id="copy-transcript-button" type="button">Copy Transcript</button>
+      </div>
+
+      <div id="output" class="output transcript_tag_body" aria-label="Copy-friendly highlighted French transcript">
+<strong>Sanagari:</strong> Je m’appelle Sanagari et je vais vous raconter un épisode très marquant de ma vie : ma première rencontre avec la mort. Mais ne vous inquiétez pas, ce n’est pas une histoire triste !
+
+<br><br>
+
+À l’époque, je suis un petit garçon, j’ai 6 ou 7 ans, je crois, et je vis à Douala avec ma mère.
+
+<br><br>
+
+Douala, c’est la capitale économique du Cameroun et nous, on habite dans un quartier résidentiel de Bali, à l’ouest de la ville. On a une maison dans une cité où il y a plein d’enfants.
+
+<br><br>
+
+Attention, je dis “cité” mais je ne parle pas des quartiers pauvres des banlieues françaises avec de grands immeubles gris.
+
+<br><br>
+
+Non, ma cité, c’est comme un petit village avec des maisons, où tout le monde se connaît.
+
+<br><br>
+
+<strong>Sanagari:</strong> Dans ma cité, je suis un enfant heureux. Devant la maison, il y a une grande cour où je joue souvent avec mes voisins.
+
+<br><br>
+
+On a aussi un puits pour laver les vêtements mais nous, on s’amuse avec l’eau. Autour de ma cité, il y a des commerces, une station essence, un hôpital et un marché.
+
+<br><br>
+
+Avec les copains, on adore aller acheter du lait en poudre et des sucettes au marché. C’est délicieux !
+
+<br><br>
+
+<strong>Sanagari:</strong> Un après-midi, je vais chez mon meilleur ami René. Ce jour-là, on est très contents parce que son père n’est pas là.
+
+<br><br>
+
+D’habitude, comme le père de René est très sévère, il faut bien se tenir alors on joue à des jeux de société calmes. Mais là, c’est différent, on a la maison pour nous, on peut aller partout.
+
+<br><br>
+
+Personne… ne… surveille ! On décide de jouer à cache-cache : mon ami compte et moi, je me cache sous une table.
+
+<br><br>
+
+Il commence à me chercher mais il ne me trouve pas. Je ne fais aucun bruit. Soudain, je me retourne et je vois un autre enfant sous la table !
+
+<br><br>
+
+<strong>Sanagari:</strong> C’est mon autre voisin, Baba. Mais qu’est ce qu’il fait là ? Ah, non, René va nous entendre ! Je lui dis : chut ! Mais il rit et me met quelque chose dans la bouche.
+
+<br><br>
+
+Le goût est horrible ! Je crache vite. C’est une petite boule blanche. Je panique parce que je réalise que c’est très grave.
+
+<br><br>
+
+C’est de l’arata tchop die ! Le nom en Pidgin d’un poison qui sert à tuer les rats ! C’est sûr, je vais mourir ! Baba continue de rire et moi, je ne dis rien, je cours à la maison.
+
+<br><br>
+
+<strong>Sanagari:</strong> Le chemin vers la maison me semble très très long. Quand j’arrive, je cherche ma mère. Mais elle dort dans sa chambre. Alors je monte sur son lit et je m’allonge à côté d’elle.
+
+<br><br>
+
+Elle ouvre les yeux et me demande: “qu’est-ce que tu fais ?”. Je lui dis : “j’ai mangé une boule blanche, de l’arata tchop die, je vais mourir.”
+
+<br><br>
+
+Elle me prend dans ses bras et me dit de me reposer. Et moi, j’accepte la mort, je n’ai plus peur.
+
+<br><br>
+
+<strong>Sanagari:</strong> Quand je me réveille, le paradis ressemble beaucoup à la chambre de ma mère. Alors, je ne suis pas mort ? Eh non !
+
+<br><br>
+
+Ma mère me rassure, elle me dit: “Ne t'inquiète pas, j’ai demandé à Baba, la boule blanche, c’était juste du carfa !”
+
+<br><br>
+
+Le carfa, c’est une boule blanche utilisée dans les maisons au Cameroun pour repousser les insectes.
+
+<br><br>
+
+Moi, j’ai cru que c’était de l’arata tchop die. Bon, en fait, c’était une mauvaise blague de mon voisin Baba !
+
+<br><br>
+
+<strong>Sanagari:</strong> Depuis, je repense souvent à ce moment. Et je suis toujours très étonné de ma réaction: j’étais très calme face à la mort.
+
+<br><br>
+
+Ma conclusion c’est qu’un enfant peut parfois être plus sage qu’un adulte.
+      </div>
+    </section>
+
+  </main>
+
+
+  <script src="vocabulary.js"></script>
+
+  <script>
+    try {
+      if (
+        !Array.isArray(window.allWords) &&
+        typeof allWords !== 'undefined' &&
+        Array.isArray(allWords)
+      ) {
+        window.allWords = allWords;
+        console.log(`✅ Vocabulary bridge ready: ${window.allWords.length} entries`);
+      }
+    } catch (error) {
+      console.warn('Vocabulary bridge failed:', error);
+    }
+  </script>
+
+  <script src="french-dictionary.js"></script>
+
+
+  <script>
+    (() => {
+      'use strict';
+
+      const audio = document.getElementById('main_player');
+      const status = document.getElementById('status');
+      const timestampButton = document.getElementById('toggle-timestamps');
+      const imageButton = document.getElementById('toggle-images');
+      const restartButton = document.getElementById('restart-french');
+      const copyTranscriptButton = document.getElementById('copy-transcript-button');
+      const copyOutput = document.getElementById('output');
+
+      const frenchSections = [
+        { start: 126, end: 178 },
+        { start: 216, end: 251 },
+        { start: 274, end: 329 },
+        { start: 377, end: 417 },
+        { start: 464, end: 506 },
+        { start: 536, end: 576 },
+        { start: 614, end: 634 }
+      ];
+
+      const firstFrench = frenchSections[0].start;
+      const lastFrenchEnd = frenchSections[frenchSections.length - 1].end;
+
+      let seekingProgrammatically = false;
+      let lastTimestampMs = null;
+      const clickTimers = new WeakMap();
+
+      function isInsideFrenchSection(time) {
+        return frenchSections.some(section =>
+          time >= section.start && time < section.end
+        );
+      }
+
+      function findNextFrenchSection(time) {
+        return frenchSections.find(section => section.start > time);
+      }
+
+      function enforceFrenchOnly() {
+        if (seekingProgrammatically) return;
+
+        const currentTime = audio.currentTime;
+
+        if (isInsideFrenchSection(currentTime)) return;
+
+        if (currentTime < firstFrench) {
+          seekingProgrammatically = true;
+          audio.currentTime = firstFrench;
+          seekingProgrammatically = false;
+          return;
+        }
+
+        const nextSection = findNextFrenchSection(currentTime);
+
+        if (nextSection) {
+          seekingProgrammatically = true;
+          audio.currentTime = nextSection.start;
+          seekingProgrammatically = false;
+          return;
+        }
+
+        if (currentTime >= lastFrenchEnd) {
+          audio.pause();
+          audio.currentTime = lastFrenchEnd;
+          status.textContent = 'French sections finished.';
+        }
+      }
+
+      function setActiveTimestamp(ms) {
+        document.querySelectorAll('.tag_time.active').forEach(button => {
+          button.classList.remove('active');
+        });
+
+        document.querySelectorAll(`.tag_time[data-time="${ms}"]`).forEach(button => {
+          button.classList.add('active');
+        });
+      }
+
+      function updateCurrentTimestampHighlight() {
+        const currentMs = audio.currentTime * 1000;
+
+        const buttons = [
+          ...document.querySelectorAll('.tag_time[data-time]')
+        ].sort(
+          (a, b) => Number(a.dataset.time) - Number(b.dataset.time)
+        );
+
+        let activeMs = null;
+
+        for (let i = 0; i < buttons.length; i++) {
+          const currentButtonTime = Number(buttons[i].dataset.time);
+          const nextButtonTime =
+            i + 1 < buttons.length
+              ? Number(buttons[i + 1].dataset.time)
+              : Infinity;
+
+          if (
+            currentMs >= currentButtonTime &&
+            currentMs < nextButtonTime
+          ) {
+            activeMs = currentButtonTime;
+            break;
+          }
+        }
+
+        if (activeMs !== null) {
+          setActiveTimestamp(activeMs);
+        } else {
+          document.querySelectorAll('.tag_time.active').forEach(button => {
+            button.classList.remove('active');
+          });
+        }
+      }
+
+      function playFrom(ms) {
+        lastTimestampMs = ms;
+        setActiveTimestamp(ms);
+        audio.currentTime = ms / 1000;
+
+        audio.play().catch(error => {
+          console.error('Playback failed:', error);
+        });
+      }
+
+      document.querySelectorAll('.tag_time').forEach(button => {
+        const ms = Number(button.dataset.time);
+
+        button.addEventListener('click', event => {
+          event.preventDefault();
+
+          const oldTimer = clickTimers.get(button);
+          if (oldTimer) clearTimeout(oldTimer);
+
+          const timer = setTimeout(() => {
+            if (lastTimestampMs === ms) {
+              if (audio.paused) {
+                audio.play().catch(console.error);
+              } else {
+                audio.pause();
+              }
+            } else {
+              playFrom(ms);
+            }
+
+            clickTimers.delete(button);
+          }, 220);
+
+          clickTimers.set(button, timer);
+        });
+
+        button.addEventListener('dblclick', event => {
+          event.preventDefault();
+
+          const timer = clickTimers.get(button);
+
+          if (timer) {
+            clearTimeout(timer);
+            clickTimers.delete(button);
+          }
+
+          playFrom(ms);
+        });
+      });
+
+      timestampButton.addEventListener('click', () => {
+        const hidden = document.body.classList.toggle('hide-timestamps');
+
+        timestampButton.textContent =
+          hidden ? 'Show timestamps' : 'Hide timestamps';
+      });
+
+      imageButton.addEventListener('click', () => {
+        const hidden = document.body.classList.toggle('hide-images');
+
+        imageButton.textContent =
+          hidden ? 'Show images' : 'Hide images';
+      });
+
+      restartButton.addEventListener('click', () => {
+        lastTimestampMs = firstFrench * 1000;
+        setActiveTimestamp(lastTimestampMs);
+        audio.currentTime = firstFrench;
+        audio.play().catch(console.error);
+      });
+
+      audio.addEventListener('play', () => {
+        if (audio.currentTime < firstFrench) {
+          audio.currentTime = firstFrench;
+        }
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        enforceFrenchOnly();
+        updateCurrentTimestampHighlight();
+      });
+
+      audio.addEventListener('seeked', () => {
+        enforceFrenchOnly();
+        updateCurrentTimestampHighlight();
+      });
+
+      async function copyRichTranscript() {
+        if (!copyOutput) return;
+
+        const richHtml = copyOutput.innerHTML;
+        const plainText = copyOutput.innerText;
+        let copied = false;
+
+        try {
+          if (
+            navigator.clipboard &&
+            navigator.clipboard.write &&
+            window.ClipboardItem
+          ) {
+            const htmlBlob = new Blob([richHtml], { type: 'text/html' });
+            const textBlob = new Blob([plainText], { type: 'text/plain' });
+
+            const clipboardItem = new ClipboardItem({
+              'text/html': htmlBlob,
+              'text/plain': textBlob
+            });
+
+            await navigator.clipboard.write([clipboardItem]);
+            copied = true;
+          }
+        } catch (error) {
+          console.warn(
+            'Rich clipboard unavailable; using selection fallback.',
+            error
+          );
+        }
+
+        if (!copied) {
+          try {
+            const selection = window.getSelection();
+            const range = document.createRange();
+
+            range.selectNodeContents(copyOutput);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            copied = document.execCommand('copy');
+
+            selection.removeAllRanges();
+          } catch (error) {
+            console.error('Transcript copy failed:', error);
+          }
+        }
+
+        if (copied) {
+          const originalText = copyTranscriptButton.textContent;
+
+          copyTranscriptButton.textContent = 'Copied!';
+          copyTranscriptButton.classList.add('copied');
+
+          setTimeout(() => {
+            copyTranscriptButton.textContent = originalText;
+            copyTranscriptButton.classList.remove('copied');
+          }, 1400);
+        } else {
+          alert(
+            'Automatic copy was blocked. Select the Highlighted Text section and press Ctrl+C.'
+          );
+        }
+      }
+
+      if (copyTranscriptButton) {
+        copyTranscriptButton.addEventListener('click', copyRichTranscript);
+      }
+
+      status.textContent =
+        'French-only audio enabled. Timestamps and images can be toggled independently.';
+
+      console.log('🇫🇷 S1E4 clean French study page enabled.');
+    })();
+  </script>
+
+</body>
+</html>

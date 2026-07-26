@@ -1,0 +1,1276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>S1E2 - Barefoot on Martinique | French Study</title>
+
+    <style>
+      :root {
+        --orange: #ff8f5b;
+        --orange-dark: #e76f38;
+        --orange-light: #fff3ed;
+        --paper: #ffffff;
+        --ink: #292929;
+        --muted: #777777;
+        --border: #ead8cf;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: #f7f4f2;
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.65;
+      }
+
+      .page {
+        width: min(1000px, calc(100% - 32px));
+        margin: 28px auto 80px;
+      }
+
+      .study-header,
+      #transcript-copy-area,
+      .copy-card {
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+      }
+
+      .study-header {
+        padding: 20px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(22px, 3vw, 32px);
+        line-height: 1.25;
+      }
+
+      audio {
+        width: 100%;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .toolbar button,
+      #copy-transcript-button {
+        appearance: none;
+        border: 0;
+        border-radius: 7px;
+        padding: 8px 12px;
+        background: var(--orange);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .toolbar button:hover,
+      #copy-transcript-button:hover {
+        background: var(--orange-dark);
+      }
+
+      #copy-transcript-button.copied {
+        background: #4c9b61;
+      }
+
+      .status {
+        margin-top: 10px;
+        min-height: 1.3em;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      #transcript-copy-area {
+        padding: 12px 22px 24px;
+      }
+
+      .transcript-row,
+      .image-row {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        padding: 13px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      #transcript-copy-area > :last-child {
+        border-bottom: 0;
+      }
+
+      .timestamp-container {
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .tag_time {
+        width: 62px;
+        border: 0;
+        border-radius: 6px;
+        padding: 6px 7px;
+        background: var(--orange-light);
+        color: var(--orange-dark);
+        font:
+          600 13px/1.2 Arial,
+          Helvetica,
+          sans-serif;
+        cursor: pointer;
+      }
+
+      .tag_time:hover {
+        background: var(--orange-dark);
+        color: white;
+      }
+
+      /*
+     * Currently playing timestamp.
+     * Soft green so it is visually distinct from
+     * the orange dictionary highlighting.
+     */
+      .tag_time.active {
+        background: #b7e4c7;
+        color: #1b4332;
+        font-weight: 700;
+        box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.15);
+      }
+
+      .transcript_tag_body {
+        font-size: 18px;
+        min-width: 0;
+      }
+
+      .transcript_tag_body strong {
+        font-weight: 700;
+      }
+      .transcript_tag_body em {
+        font-style: italic;
+      }
+
+      .image-row {
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .timeline-image-container {
+        padding: 5px 0;
+      }
+
+      .timeline-image-container img {
+        display: block;
+        width: auto;
+        max-width: min(100%, 620px);
+        max-height: 430px;
+        object-fit: contain;
+        border-radius: 10px;
+        border: 1px solid #eee;
+        background: white;
+      }
+
+      .image-caption {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      abbr.french-vocab-word {
+        text-decoration: none !important;
+        border-bottom: none !important;
+        color: inherit;
+        font: inherit;
+        background: rgba(255, 143, 91, 0.12);
+        border-radius: 3px;
+        padding: 0 2px;
+        cursor: help;
+      }
+
+      abbr.french-vocab-word:hover {
+        background: rgba(255, 143, 91, 0.3);
+      }
+
+      body.hide-timestamps .transcript-row,
+      body.hide-timestamps .image-row {
+        grid-template-columns: 1fr;
+      }
+
+      body.hide-timestamps .timestamp-container {
+        display: none;
+      }
+
+      body.hide-images .image-row {
+        display: none !important;
+      }
+
+      .copy-card {
+        margin-top: 22px;
+        padding: 20px 22px 24px;
+      }
+
+      .copy-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .copy-card h2 {
+        margin: 0;
+        font-size: 23px;
+        line-height: 1.25;
+      }
+
+      #output {
+        font-size: 18px;
+        line-height: 1.72;
+        user-select: text;
+        -webkit-user-select: text;
+      }
+
+      @media (max-width: 650px) {
+        .page {
+          width: min(100% - 16px, 1000px);
+          margin-top: 8px;
+        }
+
+        #transcript-copy-area,
+        .copy-card {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .transcript-row,
+        .image-row {
+          grid-template-columns: 58px minmax(0, 1fr);
+          gap: 8px;
+        }
+
+        .tag_time {
+          width: 54px;
+          font-size: 12px;
+        }
+
+        .transcript_tag_body,
+        #output {
+          font-size: 17px;
+        }
+
+        .copy-card-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        #copy-transcript-button {
+          width: 100%;
+        }
+      }
+
+      @media print {
+        .study-header,
+        .timestamp-container,
+        .image-row,
+        #copy-transcript-button {
+          display: none !important;
+        }
+
+        body {
+          background: white;
+        }
+
+        .page {
+          width: 100%;
+          margin: 0;
+        }
+
+        #transcript-copy-area,
+        .copy-card {
+          border: 0;
+          box-shadow: none;
+          padding: 0;
+        }
+
+        .transcript-row {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <section class="study-header">
+        <h1>S1E2 — Barefoot on Martinique</h1>
+
+        <audio id="main_player" controls preload="metadata">
+          <source
+            src="https://player.timelinenotation.com/media/episode/audio/23943.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support HTML audio.
+        </audio>
+
+        <div class="toolbar">
+          <button id="toggle-timestamps" type="button">Hide timestamps</button>
+          <button id="toggle-images" type="button">Hide images</button>
+          <button id="restart-french" type="button">Restart French</button>
+        </div>
+
+        <div class="status" id="status"></div>
+      </section>
+
+      <div id="transcript-copy-area">
+        <div class="tag_block transcript-row" data-time="94000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="94000"
+              title="Play from 01:34"
+            >
+              01:34
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Patrick:</strong> Je m'appelle Patrick. Quand j'arrive en
+              Martinique, j'ai deux ans. Je n'ai pas de souvenirs d'avant.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="102000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="102000"
+              title="Play from 01:42"
+            >
+              01:42
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Pour moi, tout commence sur le bateau qui nous emmène là-bas. Dix
+              jours de traversée, une grosse tempête et enfin… l'arrivée sur
+              l'île aux fleurs.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="115000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="115000"
+              title="Play from 01:55"
+            >
+              01:55
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img src="img/14510.jpg" alt="Episode image at 01:55" loading="lazy" />
+            <div class="image-caption">Credit: pikist.com</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="118000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="118000"
+              title="Play from 01:58"
+            >
+              01:58
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              L'île aux fleurs, c'est l’autre nom de la Martinique. Très loin de
+              la France entre l'océan Atlantique et la mer des Caraïbes, la
+              Martinique est française.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="131000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="131000"
+              title="Play from 02:11"
+            >
+              02:11
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Mais là-bas, la diversité est incroyable. Des fleurs, des forêts,
+              des plages, des montagnes et un volcan… Pour moi, la normalité…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="179000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="179000"
+              title="Play from 02:59"
+            >
+              02:59
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Patrick:</strong> Comment est mon enfance ? Eh bien, en
+              Martinique, il fait chaud toute l'année.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="180000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="180000"
+              title="Play from 03:00"
+            >
+              03:00
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img src="img/14511.jpg" alt="Episode image at 03:00" loading="lazy" />
+            <div class="image-caption">Credit: Isabelle Grandbarbe</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="186000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="186000"
+              title="Play from 03:06"
+            >
+              03:06
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Alors, tout se passe à l'extérieur. On vit dehors. Notre maison a
+              des vérandas et les fenêtres sont très grandes pour laisser entrer
+              le vent.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="197000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="197000"
+              title="Play from 03:17"
+            >
+              03:17
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img src="img/14512.jpg" alt="Episode image at 03:17" loading="lazy" />
+            <div class="image-caption">Credit: Isabelle Grandbarbe</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="199000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="199000"
+              title="Play from 03:19"
+            >
+              03:19
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Avec ma sœur, nous jouons sous les vérandas. Ou bien dans le
+              jardin avec les chats, le chien, les poules… Et le weekend, nous
+              pique-niquons sur la plage. La vie est belle !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="215000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="215000"
+              title="Play from 03:35"
+            >
+              03:35
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Mais un jour, mon père nous annonce que nous allons rentrer en
+              France. À Paris. Où ça ? À Paris ? C'est où Paris ?!
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="253000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="253000"
+              title="Play from 04:13"
+            >
+              04:13
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Patrick:</strong> Pour rentrer en France, cette fois, on
+              prend l'avion. Pour un petit garçon de 5 ans, c'est très excitant
+              !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="263000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="263000"
+              title="Play from 04:23"
+            >
+              04:23
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Mais ce n’est pas tout. Une autre surprise nous attend. Une fois à
+              Paris, on traverse toute la ville en taxi… Et là, c'est le choc.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="276000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="276000"
+              title="Play from 04:36"
+            >
+              04:36
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Les voitures, les immeubles, la foule, les magasins… Les
+              publicités dans les rues ! Waouh !!! On vit comme ça à Paris ?!
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="286000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="286000"
+              title="Play from 04:46"
+            >
+              04:46
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              C'est totalement nouveau pour moi... Et je trouve ça ma-gni-fi-que
+              ! Quel spectacle !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="343000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="343000"
+              title="Play from 05:43"
+            >
+              05:43
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Patrick:</strong> Le lendemain, ma mère nous dit : "On va
+              vous acheter des chaussures de ville." Pour ma sœur et moi, c'est
+              un événement ! Des chaussures ?!
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="354000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="354000"
+              title="Play from 05:54"
+            >
+              05:54
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              En Martinique, on ne porte pas de vraies chaussures, seulement à
+              Noël et le jour du Carnaval… on vit en sandales ou — la plupart du
+              temps — pieds nus !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="366000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="366000"
+              title="Play from 06:06"
+            >
+              06:06
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Nous voilà donc dans le magasin avec ma mère et ma petite sœur
+              Martine. On essaie des modèles différents, des couleurs
+              différentes… On est super contents !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="423000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="423000"
+              title="Play from 07:03"
+            >
+              07:03
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Patrick:</strong> Finalement, ma sœur a une chaussure
+              bleue au pied gauche et une chaussure rouge au pied droit. Elle
+              tombe amoureuse de la rouge, ma mère prend la chaussure et cherche
+              la vendeuse.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="437000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="437000"
+              title="Play from 07:17"
+            >
+              07:17
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Mais à ce moment-là, ma sœur pleure. Pourquoi ?! C’est
+              incompréhensible ! Ma mère lui demande perplexe : "Qu’est-ce qui
+              se passe, ma doudou ?". Et ma sœur dit en pleurant : "Je voudrais
+              les deeeeux !".
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="456000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="456000"
+              title="Play from 07:36"
+            >
+              07:36
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Ah, c'est donc ça le problème ! Martine pense que ma mère ne va
+              acheter qu’UNE chaussure ! Elle ne sait pas qu’on achète toujours
+              une paire !
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="467000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="467000"
+              title="Play from 07:47"
+            >
+              07:47
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img src="img/14516.jpg" alt="Episode image at 07:47" loading="lazy" />
+            <div class="image-caption">Credit: Isabelle Grandbarbe</div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="531000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="531000"
+              title="Play from 08:51"
+            >
+              08:51
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              <strong>Patrick:</strong> Petit à petit, les chaussures de ville,
+              les grands magasins, et la foule des rues deviennent plus
+              familiers. Au début, on enlève nos chaussures un peu partout,
+              comme en Martinique…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="545000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="545000"
+              title="Play from 09:05"
+            >
+              09:05
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              Mais avec le temps, on s’habitue. Et bientôt Martine ne quitte
+              plus ses belles chaussures rouges ! Quand je repense à cette
+              histoire et à mon enfance, je réalise que l'île aux fleurs est
+              unique.
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block transcript-row" data-time="560000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time"
+              type="button"
+              data-time="560000"
+              title="Play from 09:20"
+            >
+              09:20
+            </button>
+          </div>
+          <div class="transcript_tag">
+            <div class="transcript_tag_body">
+              J’ai beaucoup voyagé dans ma vie, mais jamais je n'ai retrouvé un
+              endroit comme ça : un endroit où la nature est si belle, la vie si
+              douce, et la liberté si grande…
+            </div>
+          </div>
+        </div>
+
+        <div class="tag_block image-row" data-time="570000">
+          <div class="timestamp-container" aria-hidden="true">
+            <button
+              class="tag_time image-time"
+              type="button"
+              data-time="570000"
+              title="Play from 09:30"
+            >
+              09:30
+            </button>
+          </div>
+          <div class="timeline-image-container">
+            <img src="img/14517.jpg" alt="Episode image at 09:30" loading="lazy" />
+            <div class="image-caption">Credit: tristanmimet via Pixabay</div>
+          </div>
+        </div>
+      </div>
+
+      <section class="copy-card">
+        <div class="copy-card-header">
+          <h2>Highlighted Text</h2>
+          <button id="copy-transcript-button" type="button">
+            Copy Transcript
+          </button>
+        </div>
+
+        <div
+          id="output"
+          class="output transcript_tag_body"
+          aria-label="Copy-friendly highlighted French transcript"
+        >
+          <strong>Patrick:</strong> Je m'appelle Patrick. Quand j'arrive en
+          Martinique, j'ai deux ans. Je n'ai pas de souvenirs d'avant.
+
+          <br /><br />
+
+          Pour moi, tout commence sur le bateau qui nous emmène là-bas. Dix
+          jours de traversée, une grosse tempête et enfin… l'arrivée sur l'île
+          aux fleurs.
+
+          <br /><br />
+
+          L'île aux fleurs, c'est l’autre nom de la Martinique. Très loin de la
+          France entre l'océan Atlantique et la mer des Caraïbes, la Martinique
+          est française.
+
+          <br /><br />
+
+          Mais là-bas, la diversité est incroyable. Des fleurs, des forêts, des
+          plages, des montagnes et un volcan… Pour moi, la normalité…
+
+          <br /><br />
+
+          <strong>Patrick:</strong> Comment est mon enfance ? Eh bien, en
+          Martinique, il fait chaud toute l'année.
+
+          <br /><br />
+
+          Alors, tout se passe à l'extérieur. On vit dehors. Notre maison a des
+          vérandas et les fenêtres sont très grandes pour laisser entrer le
+          vent.
+
+          <br /><br />
+
+          Avec ma sœur, nous jouons sous les vérandas. Ou bien dans le jardin
+          avec les chats, le chien, les poules… Et le weekend, nous
+          pique-niquons sur la plage. La vie est belle !
+
+          <br /><br />
+
+          Mais un jour, mon père nous annonce que nous allons rentrer en France.
+          À Paris. Où ça ? À Paris ? C'est où Paris ?!
+
+          <br /><br />
+
+          <strong>Patrick:</strong> Pour rentrer en France, cette fois, on prend
+          l'avion. Pour un petit garçon de 5 ans, c'est très excitant !
+
+          <br /><br />
+
+          Mais ce n’est pas tout. Une autre surprise nous attend. Une fois à
+          Paris, on traverse toute la ville en taxi… Et là, c'est le choc.
+
+          <br /><br />
+
+          Les voitures, les immeubles, la foule, les magasins… Les publicités
+          dans les rues ! Waouh !!! On vit comme ça à Paris ?!
+
+          <br /><br />
+
+          C'est totalement nouveau pour moi... Et je trouve ça ma-gni-fi-que !
+          Quel spectacle !
+
+          <br /><br />
+
+          <strong>Patrick:</strong> Le lendemain, ma mère nous dit : "On va vous
+          acheter des chaussures de ville." Pour ma sœur et moi, c'est un
+          événement ! Des chaussures ?!
+
+          <br /><br />
+
+          En Martinique, on ne porte pas de vraies chaussures, seulement à Noël
+          et le jour du Carnaval… on vit en sandales ou — la plupart du temps —
+          pieds nus !
+
+          <br /><br />
+
+          Nous voilà donc dans le magasin avec ma mère et ma petite sœur
+          Martine. On essaie des modèles différents, des couleurs différentes…
+          On est super contents !
+
+          <br /><br />
+
+          <strong>Patrick:</strong> Finalement, ma sœur a une chaussure bleue au
+          pied gauche et une chaussure rouge au pied droit. Elle tombe amoureuse
+          de la rouge, ma mère prend la chaussure et cherche la vendeuse.
+
+          <br /><br />
+
+          Mais à ce moment-là, ma sœur pleure. Pourquoi ?! C’est
+          incompréhensible ! Ma mère lui demande perplexe : "Qu’est-ce qui se
+          passe, ma doudou ?". Et ma sœur dit en pleurant : "Je voudrais les
+          deeeeux !".
+
+          <br /><br />
+
+          Ah, c'est donc ça le problème ! Martine pense que ma mère ne va
+          acheter qu’UNE chaussure ! Elle ne sait pas qu’on achète toujours une
+          paire !
+
+          <br /><br />
+
+          <strong>Patrick:</strong> Petit à petit, les chaussures de ville, les
+          grands magasins, et la foule des rues deviennent plus familiers. Au
+          début, on enlève nos chaussures un peu partout, comme en Martinique…
+
+          <br /><br />
+
+          Mais avec le temps, on s’habitue. Et bientôt Martine ne quitte plus
+          ses belles chaussures rouges ! Quand je repense à cette histoire et à
+          mon enfance, je réalise que l'île aux fleurs est unique.
+
+          <br /><br />
+
+          J’ai beaucoup voyagé dans ma vie, mais jamais je n'ai retrouvé un
+          endroit comme ça : un endroit où la nature est si belle, la vie si
+          douce, et la liberté si grande…
+        </div>
+      </section>
+    </main>
+
+    <script src="vocabulary.js"></script>
+
+    <script>
+      try {
+        if (
+          !Array.isArray(window.allWords) &&
+          typeof allWords !== 'undefined' &&
+          Array.isArray(allWords)
+        ) {
+          window.allWords = allWords;
+          console.log(
+            `✅ Vocabulary bridge ready: ${window.allWords.length} entries`,
+          );
+        }
+      } catch (error) {
+        console.warn('Vocabulary bridge failed:', error);
+      }
+    </script>
+
+    <script src="french-dictionary.js"></script>
+
+    <script>
+      (() => {
+        'use strict';
+
+        const audio = document.getElementById('main_player');
+        const status = document.getElementById('status');
+        const timestampButton = document.getElementById('toggle-timestamps');
+        const imageButton = document.getElementById('toggle-images');
+        const restartButton = document.getElementById('restart-french');
+        const copyTranscriptButton = document.getElementById(
+          'copy-transcript-button',
+        );
+        const copyOutput = document.getElementById('output');
+
+        const frenchSections = [
+          { start: 94, end: 147 },
+          { start: 179, end: 225 },
+          { start: 253, end: 295 },
+          { start: 343, end: 380 },
+          { start: 423, end: 470 },
+          { start: 531, end: 576 },
+        ];
+
+        const firstFrench = frenchSections[0].start;
+        const lastFrenchEnd = frenchSections[frenchSections.length - 1].end;
+
+        let seekingProgrammatically = false;
+        let lastTimestampMs = null;
+        const clickTimers = new WeakMap();
+
+        function isInsideFrenchSection(time) {
+          return frenchSections.some(
+            (section) => time >= section.start && time < section.end,
+          );
+        }
+
+        function findNextFrenchSection(time) {
+          return frenchSections.find((section) => section.start > time);
+        }
+
+        function enforceFrenchOnly() {
+          if (seekingProgrammatically) return;
+
+          const currentTime = audio.currentTime;
+
+          if (isInsideFrenchSection(currentTime)) return;
+
+          if (currentTime < firstFrench) {
+            seekingProgrammatically = true;
+            audio.currentTime = firstFrench;
+            seekingProgrammatically = false;
+            return;
+          }
+
+          const nextSection = findNextFrenchSection(currentTime);
+
+          if (nextSection) {
+            seekingProgrammatically = true;
+            audio.currentTime = nextSection.start;
+            seekingProgrammatically = false;
+            return;
+          }
+
+          if (currentTime >= lastFrenchEnd) {
+            audio.pause();
+            audio.currentTime = lastFrenchEnd;
+            status.textContent = 'French sections finished.';
+          }
+        }
+
+        function setActiveTimestamp(ms) {
+          document.querySelectorAll('.tag_time.active').forEach((button) => {
+            button.classList.remove('active');
+          });
+
+          document
+            .querySelectorAll(`.tag_time[data-time="${ms}"]`)
+            .forEach((button) => {
+              button.classList.add('active');
+            });
+        }
+
+        /*
+         * Highlight whichever timeline timestamp
+         * corresponds to the audio position currently playing.
+         */
+        function updateCurrentTimestampHighlight() {
+          const currentMs = audio.currentTime * 1000;
+
+          const buttons = [
+            ...document.querySelectorAll('.tag_time[data-time]'),
+          ].sort((a, b) => Number(a.dataset.time) - Number(b.dataset.time));
+
+          let activeMs = null;
+
+          for (let i = 0; i < buttons.length; i++) {
+            const currentButtonTime = Number(buttons[i].dataset.time);
+
+            const nextButtonTime =
+              i + 1 < buttons.length
+                ? Number(buttons[i + 1].dataset.time)
+                : Infinity;
+
+            if (currentMs >= currentButtonTime && currentMs < nextButtonTime) {
+              activeMs = currentButtonTime;
+              break;
+            }
+          }
+
+          if (activeMs !== null) {
+            setActiveTimestamp(activeMs);
+          } else {
+            document.querySelectorAll('.tag_time.active').forEach((button) => {
+              button.classList.remove('active');
+            });
+          }
+        }
+
+        function playFrom(ms) {
+          lastTimestampMs = ms;
+          setActiveTimestamp(ms);
+          audio.currentTime = ms / 1000;
+
+          audio.play().catch((error) => {
+            console.error('Playback failed:', error);
+          });
+        }
+
+        document.querySelectorAll('.tag_time').forEach((button) => {
+          const ms = Number(button.dataset.time);
+
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const oldTimer = clickTimers.get(button);
+            if (oldTimer) clearTimeout(oldTimer);
+
+            const timer = setTimeout(() => {
+              if (lastTimestampMs === ms) {
+                if (audio.paused) {
+                  audio.play().catch(console.error);
+                } else {
+                  audio.pause();
+                }
+              } else {
+                playFrom(ms);
+              }
+
+              clickTimers.delete(button);
+            }, 220);
+
+            clickTimers.set(button, timer);
+          });
+
+          button.addEventListener('dblclick', (event) => {
+            event.preventDefault();
+
+            const timer = clickTimers.get(button);
+
+            if (timer) {
+              clearTimeout(timer);
+              clickTimers.delete(button);
+            }
+
+            playFrom(ms);
+          });
+        });
+
+        timestampButton.addEventListener('click', () => {
+          const hidden = document.body.classList.toggle('hide-timestamps');
+
+          timestampButton.textContent = hidden
+            ? 'Show timestamps'
+            : 'Hide timestamps';
+        });
+
+        imageButton.addEventListener('click', () => {
+          const hidden = document.body.classList.toggle('hide-images');
+
+          imageButton.textContent = hidden ? 'Show images' : 'Hide images';
+        });
+
+        restartButton.addEventListener('click', () => {
+          lastTimestampMs = firstFrench * 1000;
+          setActiveTimestamp(lastTimestampMs);
+          audio.currentTime = firstFrench;
+          audio.play().catch(console.error);
+        });
+
+        audio.addEventListener('play', () => {
+          if (audio.currentTime < firstFrench) {
+            audio.currentTime = firstFrench;
+          }
+        });
+
+        audio.addEventListener('timeupdate', () => {
+          enforceFrenchOnly();
+          updateCurrentTimestampHighlight();
+        });
+
+        audio.addEventListener('seeked', () => {
+          enforceFrenchOnly();
+          updateCurrentTimestampHighlight();
+        });
+
+        async function copyRichTranscript() {
+          if (!copyOutput) return;
+
+          const richHtml = copyOutput.innerHTML;
+          const plainText = copyOutput.innerText;
+          let copied = false;
+
+          try {
+            if (
+              navigator.clipboard &&
+              navigator.clipboard.write &&
+              window.ClipboardItem
+            ) {
+              const htmlBlob = new Blob([richHtml], { type: 'text/html' });
+              const textBlob = new Blob([plainText], { type: 'text/plain' });
+
+              const clipboardItem = new ClipboardItem({
+                'text/html': htmlBlob,
+                'text/plain': textBlob,
+              });
+
+              await navigator.clipboard.write([clipboardItem]);
+              copied = true;
+            }
+          } catch (error) {
+            console.warn(
+              'Rich clipboard unavailable; using selection fallback.',
+              error,
+            );
+          }
+
+          if (!copied) {
+            try {
+              const selection = window.getSelection();
+              const range = document.createRange();
+
+              range.selectNodeContents(copyOutput);
+
+              selection.removeAllRanges();
+              selection.addRange(range);
+
+              copied = document.execCommand('copy');
+
+              selection.removeAllRanges();
+            } catch (error) {
+              console.error('Transcript copy failed:', error);
+            }
+          }
+
+          if (copied) {
+            const originalText = copyTranscriptButton.textContent;
+
+            copyTranscriptButton.textContent = 'Copied!';
+            copyTranscriptButton.classList.add('copied');
+
+            setTimeout(() => {
+              copyTranscriptButton.textContent = originalText;
+              copyTranscriptButton.classList.remove('copied');
+            }, 1400);
+          } else {
+            alert(
+              'Automatic copy was blocked. Select the Highlighted Text section and press Ctrl+C.',
+            );
+          }
+        }
+
+        if (copyTranscriptButton) {
+          copyTranscriptButton.addEventListener('click', copyRichTranscript);
+        }
+
+        status.textContent =
+          'French-only audio enabled. Timestamps and images can be toggled independently.';
+
+        console.log('🇫🇷 S1E2 clean French study page enabled.');
+      })();
+    </script>
+  </body>
+</html>
